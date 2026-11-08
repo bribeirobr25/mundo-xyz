@@ -52,6 +52,7 @@ test("t.cookie.first and t.log.redact adjacent paths", () => {
   expect(logPath("/not-a-route")).toBe("/redacted");
   const mailbox = ["a", "b.co"].join("@");
   expect(logPath(`/api/${mailbox}`)).toBe("/redacted");
+  expect(logPath("/api/ABCD-EFGH-2345-67AB")).toBe("/redacted");
 });
 
 test("t.pub.stale-version does not refresh", async () => {
