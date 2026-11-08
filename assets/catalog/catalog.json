@@ -1,0 +1,41 @@
+{
+  "version": "1",
+  "assets": [
+    {
+      "id": "cafe_for_birds",
+      "copyKey": "asset.cafeForBirds",
+      "footprint": [2, 2],
+      "anchor": [1, 1],
+      "hit": [[0, 0], [2, 0], [2, 2], [0, 2]],
+      "depthKey": 2,
+      "states": ["open"],
+      "reactions": [{ "id": "birds", "frames": 4 }],
+      "svg": "cafe.svg",
+      "fill": "#c45c26",
+      "accent": "#f2d16b",
+      "provenance": {
+        "method": "code-drawn SVG from the isometric grammar",
+        "date": "2026-11-08",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "bus_stop",
+      "copyKey": "asset.busStop",
+      "footprint": [1, 1],
+      "anchor": [0, 0],
+      "hit": [[0, 0], [1, 0], [1, 1], [0, 1]],
+      "depthKey": 1,
+      "states": ["open"],
+      "reactions": [{ "id": "sign", "frames": 2 }],
+      "svg": "bus-stop.svg",
+      "fill": "#3d6b8c",
+      "accent": "#f4f1ea",
+      "provenance": {
+        "method": "code-drawn SVG from the isometric grammar",
+        "date": "2026-11-08",
+        "thirdPartyReference": false
+      }
+    }
+  ]
+}

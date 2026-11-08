@@ -1,0 +1,74 @@
+{
+  "status": "Six generated concept prototypes mapped and inspected: 0 through 5.",
+  "images": [
+    {
+      "prototype": 0,
+      "file": "prototypes/prototype-00.png",
+      "description": "Green isometric world with canal, red bridges and blue/yellow roof",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "fba1ab6b2d375f7390610cd673d08ebbdec60d2b3f83dca98bdd57a6ba7584ea",
+      "metadata": "Pixel-only PNG; source EXIF/XMP/comments and filenames not copied."
+    },
+    {
+      "prototype": 1,
+      "file": "prototypes/prototype-01.png",
+      "description": "Pale lavender isometric neighborhood",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "2fb4c50fa9bdab37764d7b409899b6365c77616b72a2503535545f0f1064fc6c",
+      "metadata": "Pixel-only PNG; source EXIF/XMP/comments and filenames not copied."
+    },
+    {
+      "prototype": 2,
+      "file": "prototypes/prototype-02.png",
+      "description": "Warm terracotta neighborhood with green-roof glass pavilion",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "83f5123a0a5c98b1888f6e1774323b542929c305442fa4ae66c2480dd22f6e2d",
+      "metadata": "Pixel-only PNG; source EXIF/XMP/comments and filenames not copied."
+    },
+    {
+      "prototype": 3,
+      "file": "prototypes/prototype-03.png",
+      "description": "Teal canals, orange roofs and amphitheater",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "bd982950b9da698f79e30ae3d9064b65166a28f126a2186aaaf4fc8a2312e22c",
+      "metadata": "Pixel-only PNG; source EXIF/XMP/comments and filenames not copied."
+    },
+    {
+      "prototype": 4,
+      "file": "prototypes/prototype-04.png",
+      "description": "Dark plum streets with glass pavilions and tower",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "c5dc39ead5225eea775c073b63c2a8a330cf8d878c20112d3ac96f369378d739",
+      "metadata": "Pixel-only PNG; source EXIF/XMP/comments and filenames not copied."
+    },
+    {
+      "prototype": 5,
+      "file": "prototypes/prototype-05.png",
+      "description": "Coastal terraced setting with yellow roofs and circular pavilion",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "sha256": "4d25a58e039fbe2f32364dfca281f64022c596b5449b904f5199a6deddb20c18",
+      "metadata": "Pixel-only PNG; source EXIF/XMP/comments and filenames not copied."
+    }
+  ],
+  "numbering_note": "Six images means indices 0\u20135. No prototype 6 or seventh image is evidenced or included.",
+  "excluded": "Unmapped additional variation and user-supplied third-party reference are excluded.",
+  "usage_note": "These are generated concept references, not the production asset catalog. Catalog asset licensing and implementation suitability remain separate review gates."
+}
