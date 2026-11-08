@@ -2,12 +2,17 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
+import { databaseTarget, type PoolTarget } from "../local-dev.js";
 
 const { Pool } = pg;
 
+export function poolConfig(databaseUrl: string | undefined, database: string): PoolTarget {
+  if (databaseUrl) return { connectionString: databaseUrl };
+  return databaseTarget(database);
+}
+
 export function createPool(databaseUrl = process.env.DATABASE_URL, database = "mundo_test"): pg.Pool {
-  if (databaseUrl) return new Pool({ connectionString: databaseUrl });
-  return new Pool({ host: "/var/run/postgresql", database });
+  return new Pool(poolConfig(databaseUrl, database));
 }
 
 export async function migrate(pool: pg.Pool): Promise<void> {

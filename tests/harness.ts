@@ -3,6 +3,7 @@ import { startHttp } from "../src/server/http.js";
 import { WorldService } from "../src/server/service.js";
 import type pg from "pg";
 import type { AppConfig } from "../src/domain/config.js";
+import { LOCAL_ORIGIN } from "../src/local-dev.js";
 
 export type Client = {
   url: string;
@@ -12,7 +13,7 @@ export type Client = {
 };
 
 export async function boot(pool: pg.Pool, overrides: Partial<AppConfig> = {}): Promise<Client> {
-  const service = WorldService.boot(pool, { appOrigin: "http://127.0.0.1:4173", ...overrides });
+  const service = WorldService.boot(pool, { appOrigin: LOCAL_ORIGIN, ...overrides });
   await service.seed();
   const http = await startHttp(service, 0);
   const jar = new Map<string, string>();
@@ -22,7 +23,7 @@ export async function boot(pool: pg.Pool, overrides: Partial<AppConfig> = {}): P
     close: http.close,
     call: async (path, init = {}) => {
       const headers: Record<string, string> = { "content-type": "application/json" };
-      if (init.origin !== null) headers.origin = init.origin ?? "http://127.0.0.1:4173";
+      if (init.origin !== null) headers.origin = init.origin ?? LOCAL_ORIGIN;
       if (jar.size) headers.cookie = [...jar.entries()].map(([key, value]) => `${key}=${value}`).join("; ");
       const response = await fetch(`${http.url}${path}`, {
         method: init.method ?? (init.body === undefined ? "GET" : "POST"),

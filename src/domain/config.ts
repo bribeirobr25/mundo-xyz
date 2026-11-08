@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { LOCAL_ORIGIN } from "../local-dev.js";
 
 export type RunMode = "local-test" | "production";
 export type PublishAccess = "invite" | "test-any-authenticated" | null;
@@ -106,7 +107,7 @@ export function loadConfig(overrides: Partial<AppConfig> = {}, root = process.cw
   } else if (!pepper) {
     pepper = LOCAL_TEST_PEPPER;
   }
-  const appOrigin = overrides.appOrigin ?? process.env.APP_ORIGIN ?? "http://127.0.0.1:4173";
+  const appOrigin = overrides.appOrigin ?? process.env.APP_ORIGIN ?? LOCAL_ORIGIN;
   return { ...(merged as unknown as AppConfig), runMode, publishAccess: access as PublishAccess, pepper, appOrigin };
 }
 

@@ -3,9 +3,10 @@ import { readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import type { AppConfig } from "../domain/config.js";
 import { assertNoExtra } from "../domain/action.js";
+import { listenPort } from "../local-dev.js";
 import type { Result, WorldService } from "./service.js";
 
-export function startHttp(service: WorldService, port = Number(process.env.PORT ?? 4173)): Promise<{ url: string; close: () => Promise<void> }> {
+export function startHttp(service: WorldService, port = listenPort()): Promise<{ url: string; close: () => Promise<void> }> {
   const server = createServer((req, res) => {
     void handle(service, req, res);
   });
