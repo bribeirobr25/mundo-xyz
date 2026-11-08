@@ -115,6 +115,7 @@ test("t.invite.redeem and t.pub.persists-refresh and t.pub.idem and t.e2e.j5-loc
   const first = await client.call(`/api/proposals/${proposalId}/publish`, { body: { proposalVersion: version, key } });
   const second = await client.call(`/api/proposals/${proposalId}/publish`, { body: { proposalVersion: version, key } });
   expect(first.body.code).toBe("published");
+  expect(second.body.code).toBe("already_published");
   expect(second.body.contributionId).toBe(first.body.contributionId);
   const again = await client.call("/api/world");
   expect((again.body.objects as { name: string }[]).some((object) => object.name.includes("Bus stop"))).toBe(true);
@@ -343,5 +344,7 @@ test("t.copy.invite-required is not the closed message", () => {
   expect(stageNotice("unsupported")).toContain("isn’t supported yet");
   expect(stageNotice("pii")).toContain("personal data");
   expect(stageNotice("empty")).toContain("short phrase");
+  expect(stageNotice("provider_failed")).toContain("unavailable");
+  expect(stageNotice("superseded")).toContain("newer preview");
   expect(stageNotice("")).toBeNull();
 });

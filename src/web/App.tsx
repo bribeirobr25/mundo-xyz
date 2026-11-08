@@ -198,7 +198,7 @@ export function App(): ReactElement {
       return;
     }
     if (result.body.code === "published" || result.body.code === "already_published") {
-      setStage("published");
+      setStage(String(result.body.code));
       setPreview(null);
       setConfirmKey(null);
       await load();

@@ -13,8 +13,8 @@
 | `interpreter-recommendation.md` | Research note behind the interpreter choice: model, pricing, retention, budget controls, evaluation. |
 | `explorations/ai-integration-exploration.md` | Exploration only: alternative AI connections, future image generation, privacy-preserving catalog demand and parsing options. Not part of the approved implementation plan; no decisions changed. |
 | `final-plan-review.md` | Final paragraph recheck, including the two surgical edits verified in these copies. |
-| `audits/plan-audit.md` | Historical (superseded): original independent adversarial audit of the first plan. |
-| `audits/plan-reaudit.md` | Historical (superseded): re-audit of the corrected plan. |
+| `audits/plan-audit.md` | Not in this repository. The historical audit contains denylist examples. |
+| `audits/plan-reaudit.md` | Not in this repository. The historical re-audit contains denylist examples. |
 
 Test ids in these documents were the plan. The repository tests cover the local slices that have been implemented. They are not product acceptance.
 

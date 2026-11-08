@@ -486,7 +486,9 @@ export class WorldService {
         });
         await client.query(retryFp === existing.rows[0].fingerprint ? "COMMIT" : "ROLLBACK");
         if (retryFp !== existing.rows[0].fingerprint) return { status: 422, body: { code: "fingerprint_mismatch" } };
-        return { status: 200, body: existing.rows[0].response };
+        const stored = existing.rows[0].response;
+        if (stored.code === "published") return { status: 200, body: { ...stored, code: "already_published" } };
+        return { status: 200, body: stored };
       }
       if (proposal.state === "applied") {
         const row = await client.query<{ id: string }>("SELECT id FROM contributions WHERE proposal_id = $1", [proposal.id]);

@@ -89,9 +89,13 @@ export function scanTree(root = ROOT) {
     if (file.endsWith(".png")) hits.push(...scanPngBytes(buf, rel));
     if (file.endsWith(".pdf")) hits.push(...scanPdf(buf, rel));
     if (file.endsWith(".docx")) {
-      const xml = buf.toString("utf8");
-      hits.push(...scanText(xml, rel));
-      if (xml.includes(droppedJourneyNote)) hits.push(`${rel}: journey note`);
+      try {
+        const xml = execFileSync("unzip", ["-p", file, "word/document.xml"], { encoding: "utf8" });
+        hits.push(...scanText(xml, rel));
+        if (xml.includes(droppedJourneyNote)) hits.push(`${rel}: journey note`);
+      } catch {
+        hits.push(`${rel}: docx unreadable`);
+      }
     }
     if (/\.(md|json|ts|tsx|js|mjs|css|html|yml|yaml|svg|sql|txt|example)$/.test(file)) {
       hits.push(...scanText(buf.toString("utf8"), rel));
@@ -166,6 +170,7 @@ async function main() {
     const range = process.argv[3] ?? "origin/main..HEAD";
     try {
       hits.push(...scanCommitRange(range));
+      execFileSync(bin, ["detect", "--redact", "--no-banner", "--exit-code", "1", "--log-opts", range], { stdio: "pipe" });
     } catch {
       hits.push("commit range unavailable");
     }

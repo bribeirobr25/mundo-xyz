@@ -43,6 +43,8 @@
   "fingerprintMismatch": "That confirmation no longer matches. Review the preview and confirm again.",
   "pseudonymRejected": "Choose a different pseudonym.",
   "recoveryRefused": "That recovery code could not be used.",
+  "providerFailed": "Preview is unavailable.",
+  "superseded": "A newer preview replaced that one.",
   "publishingBlocked": "Publishing is blocked.",
   "needsIdentity": "Choose a pseudonym to publish. No email is asked.",
   "pseudonym": "Pseudonym",

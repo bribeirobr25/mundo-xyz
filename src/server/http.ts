@@ -247,6 +247,7 @@ export function logPath(raw: string | undefined): string {
   const known = path === "/" || path === "/share" || path.startsWith("/api/") || path.startsWith("/assets/") || path.startsWith("/c/");
   if (!known) return "/redacted";
   if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(path)) return "/redacted";
+  if (path.split("/").some((segment) => /^[A-Z2-7-]{16,}$/.test(segment))) return "/redacted";
   return path;
 }
 
