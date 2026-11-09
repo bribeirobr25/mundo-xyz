@@ -468,13 +468,13 @@ export function Scene(props: {
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         const focus = cafe ?? home;
         const wide = viewW >= 800;
-        const fitted = wide ? 0.84 : 0.36;
+        const fitted = wide ? 0.96 : 0.44;
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         const focusCenter = focus
           ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
           : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
-        const focusX = wide ? 0.62 : 0.58;
-        const focusY = wide ? 0.64 : 0.44;
+        const focusX = wide ? 0.7 : 0.64;
+        const focusY = wide ? 0.58 : 0.5;
         const center = {
           sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
           sy: focusCenter.sy - (focusY - 0.5) * viewH / zoom,

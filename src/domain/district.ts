@@ -39,35 +39,38 @@ export const CORNER_CUTS: { x: number; y: number; corner: CornerName; cells: num
 export const MODULE = 5;
 export const BLOCK = 4;
 
-/** Canal water, a closed quad in grid space. Not an axis-aligned row. */
+/**
+ * Canal water, a closed quad in grid space. Wide enough that a 2x2 bridge
+ * footprint crosses it. Read back from the prototype band at the wide camera.
+ */
 export const CANAL: Array<[number, number]> = [
-  [-8.81, 6.95],
-  [18.52, 9.38],
-  [17.44, 7.39],
-  [-9.89, 4.96],
+  [-4.91, 5.48],
+  [15.19, 10.16],
+  [15.85, 11.69],
+  [-4.25, 7.01],
 ];
 
 /** Cream embankment, the same diagonal a little wider than the water. */
 export const CANAL_BANK: Array<[number, number]> = [
-  [-8.54, 7.44],
-  [18.79, 9.88],
-  [17.17, 6.89],
-  [-10.15, 4.46],
+  [-5.05, 5.16],
+  [15.05, 9.84],
+  [15.99, 12.01],
+  [-4.11, 7.33],
 ];
 
 /** Bounds kept for callers that still want a rectangle. The painter uses CANAL. */
 export const WATER: Plot = { x: -10, y: 5, w: 30, h: 5 };
 
 export const PLAZAS: Plot[] = [
-  { x: 1, y: 1, w: 4, h: 3 },
-  { x: 6, y: 0, w: 4, h: 2 },
-  { x: 8, y: 2, w: 4, h: 3 },
+  { x: 5, y: 3, w: 5, h: 5 },
+  { x: 3, y: -3, w: 5, h: 5 },
+  { x: 7, y: 1, w: 5, h: 4 },
 ];
 export const PLAZA: Plot = PLAZAS[0] ?? { x: 1, y: 1, w: 4, h: 3 };
 
 export const BRIDGES: Plot[] = [
-  { x: 1, y: 6, w: 2, h: 1 },
-  { x: 7, y: 7, w: 2, h: 1 },
+  { x: 2, y: 7, w: 2, h: 2 },
+  { x: 7, y: 7, w: 2, h: 2 },
 ];
 
 /** Lawn rectangles the picture paints. Streets are the gaps this list leaves. */

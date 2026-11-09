@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="160" viewBox="0 0 200 80">
-  <polygon points="100,10 190,46 100,74 10,46" fill="{{top}}"/>
-  <polygon points="10,46 100,74 100,78 10,50" fill="{{side}}"/>
-  <polygon points="190,46 100,74 100,78 190,50" fill="{{edge}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 220 140">
+  <polygon points="110,16 200,62 110,108 20,62" fill="{{top}}"/>
+  <polygon points="20,62 110,108 110,124 20,78" fill="{{side}}"/>
+  <polygon points="200,62 110,108 110,124 200,78" fill="{{edge}}"/>
 </svg>
