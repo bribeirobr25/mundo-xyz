@@ -48,6 +48,7 @@ export function Scene(props: {
   district: { w: number; h: number; rows: string[] } | null;
   onSelect: (id: string) => void;
   onPan: (dx: number, dy: number) => void;
+  onReady?: () => void;
 }): ReactElement {
   const host = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
@@ -508,6 +509,7 @@ export function Scene(props: {
       })) {
         created.stop();
       }
+      state.current.onReady?.();
       if (document.documentElement.dataset.localTest === "true") {
         (window as unknown as { __sharedWorldTest?: unknown }).__sharedWorldTest = {
           loseContext: () => {

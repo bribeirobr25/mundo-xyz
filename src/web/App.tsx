@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactElement, type ReactNode } from "react";
+import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactElement, type ReactNode } from "react";
 import copy from "../../copy/en.json" with { type: "json" };
 import { stageNotice } from "./notices.js";
 import { beginPoll, createPollBurst, isLatestPoll, POLL_BURST_MS } from "./poll.js";
@@ -15,6 +15,18 @@ class IllustrationBoundary extends Component<{ children: ReactNode; fallback: Re
 }
 
 const Scene = lazy(() => import("./scene.js").then((mod) => ({ default: mod.Scene })));
+
+function useNarrow(): boolean {
+  const [narrow, setNarrow] = useState(() => window.matchMedia("(max-width: 799px)").matches);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 799px)");
+    const onChange = (): void => setNarrow(query.matches);
+    onChange();
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+  return narrow;
+}
 
 type PublicConfig = {
   runMode: string;
@@ -92,6 +104,7 @@ export function App(): ReactElement {
   const [ack, setAck] = useState(false);
   const [invite, setInvite] = useState("");
   const [sceneUnavailable, setSceneUnavailable] = useState(false);
+  const [illustrated, setIllustrated] = useState(false);
   const [sceneKey, setSceneKey] = useState(0);
   const [inviteNote, setInviteNote] = useState<string | null>(null);
   const [recoverCode, setRecoverCode] = useState("");
@@ -99,6 +112,7 @@ export function App(): ReactElement {
   const [sheet, setSheet] = useState<"peek" | "open">("open");
   const [query, setQuery] = useState("");
   const [wide, setWide] = useState(window.innerWidth >= 800);
+  const [navOpen, setNavOpen] = useState(false);
   const [hint, setHint] = useState(() => {
     try {
       return sessionStorage.getItem("sw-hint") !== "off";
@@ -107,6 +121,8 @@ export function App(): ReactElement {
     }
   });
   const idempotency = useRef(crypto.randomUUID());
+  const confirmLock = useRef(false);
+  const publishLock = useRef(false);
   const worldTag = useRef<string | null>(null);
   const pollGeneration = useRef({ n: 0 });
   const params = new URLSearchParams(window.location.search);
@@ -157,7 +173,10 @@ export function App(): ReactElement {
     });
     void api("/api/me").then((result) => setMe(result.body as typeof me));
     void load();
-    const onLost = () => setSceneUnavailable(true);
+    const onLost = () => {
+      setSceneUnavailable(true);
+      setIllustrated(false);
+    };
     const onResize = () => setWide(window.innerWidth >= 800);
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setSurface("none");
@@ -264,49 +283,59 @@ export function App(): ReactElement {
       setStage("needs_identity");
       return;
     }
-    if (!proposalId) return;
-    const result = await api(`/api/proposals/${proposalId}/confirm`, {
-      method: "POST",
-      body: JSON.stringify({ idempotencyKey: idempotency.current }),
-    });
-    if (result.body.code === "conflict") {
-      setProposalVersion(Number(result.body.proposalVersion));
-      setPreview((current) => current && result.body.preview ? { ...current, ...(result.body.preview as Preview) } : current);
-      setConfirmKey(null);
-      setStage("conflict");
-      idempotency.current = crypto.randomUUID();
-      return;
-    }
-    if (result.body.confirmKey) {
-      setConfirmKey(String(result.body.confirmKey));
-      setProposalVersion(Number(result.body.proposalVersion));
-      setStage("confirming");
+    if (!proposalId || confirmLock.current) return;
+    confirmLock.current = true;
+    try {
+      const result = await api(`/api/proposals/${proposalId}/confirm`, {
+        method: "POST",
+        body: JSON.stringify({ idempotencyKey: idempotency.current }),
+      });
+      if (result.body.code === "conflict") {
+        setProposalVersion(Number(result.body.proposalVersion));
+        setPreview((current) => current && result.body.preview ? { ...current, ...(result.body.preview as Preview) } : current);
+        setConfirmKey(null);
+        setStage("conflict");
+        idempotency.current = crypto.randomUUID();
+        return;
+      }
+      if (result.body.confirmKey) {
+        setConfirmKey(String(result.body.confirmKey));
+        setProposalVersion(Number(result.body.proposalVersion));
+        setStage("confirming");
+      }
+    } finally {
+      confirmLock.current = false;
     }
   }
 
   async function publish() {
-    if (!proposalId || !confirmKey) return;
+    if (!proposalId || !confirmKey || publishLock.current) return;
+    publishLock.current = true;
     setStage("publishing");
-    const result = await api(`/api/proposals/${proposalId}/publish`, {
-      method: "POST",
-      body: JSON.stringify({ proposalVersion, key: confirmKey }),
-    });
-    if (result.body.code === "conflict") {
-      setProposalVersion(Number(result.body.proposalVersion));
-      setConfirmKey(null);
-      setStage("conflict");
-      idempotency.current = crypto.randomUUID();
-      return;
+    try {
+      const result = await api(`/api/proposals/${proposalId}/publish`, {
+        method: "POST",
+        body: JSON.stringify({ proposalVersion, key: confirmKey }),
+      });
+      if (result.body.code === "conflict") {
+        setProposalVersion(Number(result.body.proposalVersion));
+        setConfirmKey(null);
+        setStage("conflict");
+        idempotency.current = crypto.randomUUID();
+        return;
+      }
+      if (result.body.code === "published" || result.body.code === "already_published") {
+        setStage(String(result.body.code));
+        setPreview(null);
+        setConfirmKey(null);
+        setSurface("places");
+        await load();
+        return;
+      }
+      setStage(String(result.body.code ?? "unavailable"));
+    } finally {
+      publishLock.current = false;
     }
-    if (result.body.code === "published" || result.body.code === "already_published") {
-      setStage(String(result.body.code));
-      setPreview(null);
-      setConfirmKey(null);
-      setSurface("places");
-      await load();
-      return;
-    }
-    setStage(String(result.body.code ?? "unavailable"));
   }
 
   async function createIdentity() {
@@ -350,30 +379,71 @@ export function App(): ReactElement {
   }
 
   const banner = config?.runMode === "local-test"
-    ? `Test mode — fixture interpreter${config.testIdentity ? " · test identity" : ""}`
+    ? `${copy.testBannerFixture}${config.testIdentity ? ` · ${copy.testBannerIdentity}` : ""}`
     : "";
   const notice = stageNotice(stage);
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  const narrow = useNarrow();
+  const drafting = surface === "compose" && !preview && stage !== "confirming" && stage !== "published" && stage !== "publishing";
+  const reviewing = stage === "confirming" || stage === "publishing";
+
+  function onDockKey(event: ReactKeyboardEvent<HTMLElement>) {
+    const step: Record<string, [number, number]> = {
+      ArrowLeft: [-24, 0],
+      ArrowRight: [24, 0],
+      ArrowUp: [0, -24],
+      ArrowDown: [0, 24],
+    };
+    const delta = step[event.key];
+    if (!delta) return;
+    event.preventDefault();
+    panBy(delta[0], delta[1]);
+  }
+
+  function onResultKey(event: ReactKeyboardEvent<HTMLUListElement>) {
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+    const buttons = [...event.currentTarget.querySelectorAll("button")];
+    const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    if (index < 0) return;
+    event.preventDefault();
+    const next = event.key === "ArrowDown" ? Math.min(buttons.length - 1, index + 1) : Math.max(0, index - 1);
+    buttons[next]?.focus();
+  }
 
   return (
     <>
       <a className="skip" href="#neighborhood">Skip to the neighborhood</a>
       <header className="topbar">
-        <h1>Shared world</h1>
-        {banner ? <p className="chip" role="status">{banner}</p> : null}
+        <div className="brand">
+          <h1>{copy.appTitle}</h1>
+          {banner ? <p className="chip" role="status">{banner}</p> : null}
+        </div>
         <div className="top-actions">
-          <button type="button" aria-pressed={surface === "places"} onClick={() => openSurface("places")}>Places</button>
-          <button type="button" onClick={() => openSurface("compose")}>Add your idea</button>
-          <button type="button" onClick={() => setPaused((value) => !value)}>{paused ? "Resume motion" : "Pause motion"}</button>
-          <button type="button" className="secondary" onClick={toggleReduced} aria-pressed={reduced}>Reduced motion</button>
-          <button type="button" className="secondary" aria-pressed={surface === "account"} onClick={() => openSurface("account")}>Account</button>
+          <button type="button" aria-pressed={surface === "places"} aria-expanded={surface === "places"} onClick={() => openSurface("places")}>Places</button>
+          <button type="button" aria-pressed={surface === "account"} aria-expanded={surface === "account"} onClick={() => openSurface("account")}>Account</button>
         </div>
       </header>
-      <main className="world">
-        {forceDom || sceneUnavailable ? (
+      {error ? (
+        <p className="banner-alert" role="alert">
+          <span>{error}</span>
+          <button type="button" className="primary" onClick={() => void load()}>{copy.retry}</button>
+        </p>
+      ) : null}
+      {hint && surface === "none" && illustrated && !error ? (
+        <p className="hint-bar">
+          <span>{coarse ? "Drag to explore · Pinch to zoom" : "Drag to explore · Select a place"}</span>
+          <button type="button" onClick={dismissHint}>Dismiss</button>
+        </p>
+      ) : null}
+      <main className={panelOpen ? "world has-panel" : "world"}>
+        <p className="sr-only">{arrived} {copy.exploreFree}</p>
+        {!world && !error ? (
+          <p className="stage-note" role="status">{copy.illustrationLoading}</p>
+        ) : forceDom || sceneUnavailable ? (
           <p className="stage-note" role="status">{copy.illustrationUnavailable}</p>
-        ) : (
+        ) : world ? (
           <IllustrationBoundary fallback={<p className="stage-note" role="status">{copy.illustrationUnavailable}</p>}>
-            <Suspense fallback={<div className="stage" role="status">{copy.illustrationLoading}</div>}>
+            <Suspense fallback={<p className="stage-note" role="status">{copy.illustrationLoading}</p>}>
               <Scene
                 key={sceneKey}
                 objects={world?.objects ?? []}
@@ -387,88 +457,116 @@ export function App(): ReactElement {
                 deterministic={Boolean(deterministic)}
                 coverRight={wide && panelOpen ? 360 : 0}
                 district={world?.district ?? null}
-                onSelect={(id) => { setSelectedId(id); setSurface("inspect"); setSheet("open"); }}
+                onSelect={(id) => { setSelectedId(id); setSurface("inspect"); setSheet(window.innerWidth >= 800 ? "open" : "peek"); }}
                 onPan={panBy}
+                onReady={() => setIllustrated(true)}
               />
             </Suspense>
           </IllustrationBoundary>
-        )}
-        <div className="corner" id="neighborhood">
-          <button
-            type="button"
-            className="secondary"
-            aria-label="Neighborhood"
-            onKeyDown={(event) => {
-              if (event.key === "ArrowLeft") panBy(-24, 0);
-              if (event.key === "ArrowRight") panBy(24, 0);
-              if (event.key === "ArrowUp") panBy(0, -24);
-              if (event.key === "ArrowDown") panBy(0, 24);
-            }}
-          >Neighborhood</button>
-          <button type="button" className="secondary" onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}>Zoom out</button>
-          <button type="button" className="secondary" onClick={() => setZoom((value) => Math.min(2, value + 0.25))}>Zoom in</button>
-          <button type="button" className="secondary" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1); }}>Back to café</button>
-          <details className="nav">
-            <summary>Navigation</summary>
-            <div className="row">
-              <button type="button" className="secondary" onClick={() => panBy(-24, 0)}>Pan left</button>
-              <button type="button" className="secondary" onClick={() => panBy(24, 0)}>Pan right</button>
-              <button type="button" className="secondary" onClick={() => panBy(0, -24)}>Pan up</button>
-              <button type="button" className="secondary" onClick={() => panBy(0, 24)}>Pan down</button>
-            </div>
-          </details>
-        </div>
-        {hint ? (
-          <p className="hint" role="note">
-            {arrived} Explore freely — no account needed. Drag empty ground to look around, or select a place to read it.
-            <button type="button" className="secondary" onClick={dismissHint}>Dismiss</button>
-          </p>
         ) : null}
-        {error ? <p className="error toast" role="alert">{error} <button type="button" onClick={() => void load()}>Retry</button></p> : null}
+        <div className="overlay">
+        <div className="dock" id="neighborhood" tabIndex={-1} role="group" aria-label="World controls" onKeyDown={onDockKey}>
+          {!narrow ? (
+            <div className="cluster">
+              <button type="button" onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}>{copy.zoomOut}</button>
+              <button type="button" onClick={() => setZoom((value) => Math.min(2, value + 0.25))}>{copy.zoomIn}</button>
+              <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1); }}>Back to café</button>
+            </div>
+          ) : null}
+          <button type="button" aria-expanded={navOpen} aria-controls="world-nav" onClick={() => setNavOpen((value) => !value)}>Navigation</button>
+          {navOpen ? (
+            <div id="world-nav" className="row">
+              {narrow ? (
+                <>
+                  <button type="button" onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}>{copy.zoomOut}</button>
+                  <button type="button" onClick={() => setZoom((value) => Math.min(2, value + 0.25))}>{copy.zoomIn}</button>
+                  <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1); }}>Back to café</button>
+                </>
+              ) : null}
+              <button type="button" onClick={() => setPaused((value) => !value)}>{paused ? copy.resume : copy.pause}</button>
+              <button type="button" onClick={toggleReduced} aria-pressed={reduced}>{copy.reducedMotion}</button>
+              <button type="button" onClick={() => panBy(-24, 0)}>{copy.panLeft}</button>
+              <button type="button" onClick={() => panBy(24, 0)}>{copy.panRight}</button>
+              <button type="button" onClick={() => panBy(0, -24)}>{copy.panUp}</button>
+              <button type="button" onClick={() => panBy(0, 24)}>{copy.panDown}</button>
+            </div>
+          ) : null}
+        </div>
+        {surface === "none" && !error ? (
+          <button type="button" className="primary add-idea" onClick={() => openSurface("compose")}>{copy.addIdea}</button>
+        ) : null}
+        </div>
         {panelOpen ? (
           <aside className={sheet === "peek" ? "panel peek" : "panel"} aria-label="Neighborhood details">
             <div className="sheet-bar">
-              <button type="button" className="secondary" onClick={() => setSheet("open")}>Expand</button>
-              <button type="button" className="secondary" onClick={() => setSheet("peek")}>Collapse</button>
-              <button type="button" className="secondary" onClick={() => setSurface("none")}>Close</button>
+              <button type="button" onClick={() => setSheet("open")} aria-pressed={sheet === "open"}>Expand</button>
+              <button type="button" onClick={() => setSheet("peek")} aria-pressed={sheet === "peek"}>Collapse</button>
+              <button type="button" className="close" onClick={() => setSurface("none")}>Close</button>
             </div>
-            {surface === "places" ? (
-              <>
+            {stage === "published" || stage === "already_published" ? <p className="status success" role="status">{stage === "published" ? copy.published : copy.alreadyPublished}</p> : null}
+            {reviewing ? (
+              <article className="note">
+                <h2>{copy.publishQuestion}</h2>
+                <p>{copy.publishExplain}</p>
+                {preview ? <p className="preview-name">{preview.name}</p> : null}
+                <h3>{copy.policyHeading}</h3>
+                <p>{world?.policy}</p>
+                <div className="row">
+                  <button type="button" className="primary" disabled={stage === "publishing"} onClick={() => void publish()}>{copy.publish}</button>
+                  <button type="button" onClick={() => { setStage("preview"); setSurface("compose"); }}>{copy.keepEditing}</button>
+                </div>
+              </article>
+            ) : null}
+            {stage === "conflict" ? <p id="conflict-status" className="status" tabIndex={-1} role="status">{copy.conflict}</p> : null}
+            {notice ? <p className="status" role="status">{notice}</p> : null}
+            {stage === "invite_refused" ? <p className="status danger" role="alert">{copy.inviteRefused}</p> : null}
+            {recovery ? (
+              <p className="status" role="status">
+                Recovery code: {recovery}
+                <button type="button" className="primary" onClick={() => setRecovery(null)}>{copy.iUnderstand}</button>
+              </p>
+            ) : null}
+            {!reviewing && surface === "places" ? (
+              <div className="stack">
                 <h2>Places</h2>
                 <label htmlFor="place-search">Search places</label>
-                <input id="place-search" value={query} onChange={(event) => setQuery(event.target.value)} />
-                <ul
-                  className="list"
+                <input
+                  id="place-search"
+                  value={query}
+                  placeholder="Search places"
+                  onChange={(event) => setQuery(event.target.value)}
                   onKeyDown={(event) => {
-                    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-                    const buttons = [...event.currentTarget.querySelectorAll("button")];
-                    const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
-                    if (index < 0) return;
+                    if (event.key !== "ArrowDown") return;
                     event.preventDefault();
-                    const next = event.key === "ArrowDown" ? Math.min(buttons.length - 1, index + 1) : Math.max(0, index - 1);
-                    buttons[next]?.focus();
+                    document.querySelector<HTMLButtonElement>("#place-results button")?.focus();
                   }}
-                >
+                />
+                <p className="meta">{world ? `${listed.length} ${listed.length === 1 ? "place" : "places"}` : error ? "The world could not be loaded." : copy.illustrationLoading}</p>
+                <ul id="place-results" className="list" onKeyDown={onResultKey}>
                   {listed.map((object) => (
                     <li key={object.id}>
                       <button type="button" aria-current={object.id === selectedId ? "true" : undefined} onClick={() => { setSelectedId(object.id); setSurface("inspect"); }}>
-                        {object.name}{object.administrator ? " · Administrator" : ""}{object.notPublic ? " · Not public" : ""}
+                        <span className="place-name">{object.name}</span>
+                        <span className="place-meta">{object.administrator ? copy.administrator : object.authorLabel ?? ""}{object.notPublic ? ` · ${copy.notPublic}` : ""}</span>
                       </button>
                     </li>
                   ))}
                 </ul>
-                {!world?.objects.length ? <p>This world has no places yet.</p> : null}
-                {world?.objects.length && !listed.length ? <p>No place matches that search.</p> : null}
-              </>
+                {world && !world.objects.length ? <p>This world has no places yet.</p> : null}
+                {world && world.objects.length > 0 && !listed.length ? <p>No place matches that search.</p> : null}
+              </div>
             ) : null}
-            {surface === "inspect" && selected ? (
-              <article className="note">
-                <button type="button" className="secondary" onClick={() => setSurface("places")}>Back</button>
+            {!reviewing && surface === "inspect" && selected ? (
+              <article className="stack">
+                <button type="button" className="back" onClick={() => setSurface("places")}>Back</button>
                 <h2>{selected.name}</h2>
-                {selected.authorLabel ? <p>Created by {selected.authorLabel}.</p> : null}
-                <button type="button" onClick={() => openSurface("compose")}>Add your idea</button>
-                <button type="button" className="secondary" onClick={() => void navigator.clipboard.writeText(`${origin}/c/${selected.id}`)}>Copy link</button>
-                {selected.history ? (
+                {selected.sentence ? <p>{selected.sentence}</p> : null}
+                {selected.authorLabel ? <p className="meta">Created by {selected.authorLabel}.</p> : null}
+                <div className="row">
+                  <button type="button" className="primary" onClick={() => openSurface("compose")}>{copy.addIdea}</button>
+                  <button type="button" onClick={() => void navigator.clipboard.writeText(`${origin}/c/${selected.id}`)}>{copy.copyLink}</button>
+                </div>
+                {selected.history && sheet === "open" ? (
                   <details>
                     <summary>What changed</summary>
                     <p>{selected.history}</p>
@@ -476,87 +574,78 @@ export function App(): ReactElement {
                 ) : null}
               </article>
             ) : null}
-            {surface === "compose" || preview || stage === "confirming" || stage === "needs_identity" ? (
-              <div>
-                <label htmlFor="composer">What would you add?</label>
-                <textarea id="composer" value={text} onChange={(event) => setText(event.target.value)} maxLength={1000} />
-                <p>{text.length} / {config?.promptMaxGraphemes ?? 250}</p>
-                <p>Ideas you can try</p>
+            {!reviewing && surface === "account" ? (
+              <div className="stack">
+                <h2>Account</h2>
+                {me.signedIn ? (
+                  <p className="signed-in">
+                    <span>{copy.signedInAs.replaceAll("{name}", me.pseudonym ?? "")}</span>
+                    <button type="button" onClick={() => void signOut()}>{copy.signOut}</button>
+                  </p>
+                ) : (
+                  <form className="stack" onSubmit={(event) => { event.preventDefault(); void recover(); }}>
+                    <label htmlFor="recovery">{copy.recover}</label>
+                    <input id="recovery" value={recoverCode} onChange={(event) => setRecoverCode(event.target.value)} autoComplete="off" />
+                    <button type="submit" className="primary">{copy.recover}</button>
+                  </form>
+                )}
+                <label htmlFor="invite">{copy.redeemInvite}</label>
+                <input id="invite" value={invite} onChange={(event) => setInvite(event.target.value)} autoComplete="off" />
+                <button type="button" className="primary" onClick={() => void redeem()}>{copy.redeemInvite}</button>
+                {inviteNote ? <p role="status">{inviteNote}</p> : null}
+                <p className="meta">A recovery code is shown once when it is created. This screen cannot reveal a code you did not just receive.</p>
+                {me.role === "administrator" ? <p>Moderation is available to the administrator.</p> : null}
+                <button type="button" onClick={() => { setSceneUnavailable(false); setIllustrated(false); setSceneKey((value) => value + 1); }}>Reload illustration</button>
+              </div>
+            ) : null}
+            {drafting ? (
+              <form className="stack" onSubmit={(event) => { event.preventDefault(); void interpret(text); }}>
+                <p className="meta">{selected ? `Adding to ${selected.name}.` : copy.startHere}</p>
+                <label htmlFor="composer">{copy.whatAdd}</label>
+                <textarea
+                  id="composer"
+                  value={text}
+                  onChange={(event) => setText(event.target.value)}
+                  maxLength={1000}
+                  onFocus={(event) => event.currentTarget.scrollIntoView({ block: "nearest" })}
+                />
+                <p className="meta">{copy.charCount.replaceAll("{n}", String(text.length)).replaceAll("{max}", String(config?.promptMaxGraphemes ?? 250))}</p>
+                <p className="meta">{copy.describe}</p>
+                <p className="meta">{copy.ideasYouCanTry}</p>
                 <div className="row">
                   {suggestions.map((idea) => (
-                    <button key={idea} type="button" className="secondary" onClick={() => { setText(idea); void interpret(idea); }}>{idea}</button>
+                    <button key={idea} type="button" onClick={() => { setText(idea); void interpret(idea); }}>{idea}</button>
                   ))}
                 </div>
-                <button type="button" onClick={() => void interpret(text)}>Preview idea</button>
-              </div>
-            ) : null}
-            {preview ? (
-              <article className="note" tabIndex={-1} id="preview-heading">
-                <h2>Private preview — only you can see this.</h2>
-                <p>Here’s how the world understood your idea.</p>
-                <p>{preview.name}</p>
-                <div className="row">
-                  <button type="button" onClick={() => { setPreview(null); setStage("ready"); document.getElementById("composer")?.focus(); }}>Edit idea</button>
-                  <button type="button" className="secondary" onClick={() => proposalId && void api(`/api/proposals/${proposalId}/discard`, { method: "POST", body: "{}" }).then(() => { setPreview(null); setText(""); setStage("discarded"); })}>Discard draft</button>
-                  <button type="button" onClick={() => void confirm()}>This looks right</button>
-                </div>
-              </article>
-            ) : null}
-            {stage === "confirming" ? (
-              <article className="note">
-                <h2>Publish this to the shared world?</h2>
-                <p>Once published, other people can see it and continue it. You’ll be credited as its author.</p>
-                <h3>Content policy</h3>
-                <p>{world?.policy}</p>
-                <div className="row">
-                  <button type="button" onClick={() => void publish()}>Publish</button>
-                  <button type="button" className="secondary" onClick={() => setStage("preview")}>Keep editing</button>
-                </div>
-              </article>
-            ) : null}
-            {stage === "conflict" ? <p id="conflict-status" tabIndex={-1} role="status">The world changed. Review the refreshed preview, then confirm again.</p> : null}
-            {stage === "published" ? <p role="status">Published. It’s part of the shared world.</p> : null}
-            {stage === "needs_identity" ? (
-              <form onSubmit={(event) => { event.preventDefault(); void createIdentity(); }}>
-                <h2>Choose a pseudonym to publish. No email is asked.</h2>
-                <label htmlFor="pseudonym">Pseudonym</label>
-                <input id="pseudonym" value={pseudonym} onChange={(event) => setPseudonym(event.target.value)} />
-                <label><input type="checkbox" checked={ack} onChange={(event) => setAck(event.target.checked)} /> This recovery code is shown once. If you lose access and this code, this identity cannot be recovered.</label>
-                <button type="submit">Create pseudonym</button>
+                <button type="submit" className="primary" disabled={stage === "interpreting"}>Preview idea</button>
               </form>
             ) : null}
-            {recovery ? (
-              <p role="status">
-                Recovery code: {recovery}
-                <button type="button" onClick={() => setRecovery(null)}>I understand. I have saved the code.</button>
-              </p>
+            {!reviewing && preview && stage !== "published" ? (
+              <article className="note" tabIndex={-1} id="preview-heading">
+                <h2>{copy.privatePreview}</h2>
+                <p>{copy.understood}</p>
+                <p className="preview-name">{preview.name}</p>
+                <div className="row">
+                  <button type="button" className="primary" onClick={() => void confirm()}>{copy.looksRight}</button>
+                  <button type="button" onClick={() => { setPreview(null); setStage("ready"); setSurface("compose"); requestAnimationFrame(() => document.getElementById("composer")?.focus()); }}>{copy.editIdea}</button>
+                  <button type="button" onClick={() => proposalId && void api(`/api/proposals/${proposalId}/discard`, { method: "POST", body: "{}" }).then(() => { setPreview(null); setText(""); setStage("discarded"); })}>{copy.discard}</button>
+                </div>
+              </article>
             ) : null}
-            {surface === "account" ? (
-              <div>
-                <h2>Account</h2>
-                {me.signedIn ? <p>Signed in as {me.pseudonym} <button type="button" className="secondary" onClick={() => void signOut()}>Sign out</button></p> : null}
-                {!me.signedIn ? (
-                  <form onSubmit={(event) => { event.preventDefault(); void recover(); }}>
-                    <label htmlFor="recovery">Recover with a code</label>
-                    <input id="recovery" value={recoverCode} onChange={(event) => setRecoverCode(event.target.value)} autoComplete="off" />
-                    <button type="submit">Recover with a code</button>
-                  </form>
-                ) : null}
-                <label htmlFor="invite">Use invitation</label>
-                <input id="invite" value={invite} onChange={(event) => setInvite(event.target.value)} />
-                <button type="button" onClick={() => void redeem()}>Use invitation</button>
-                {inviteNote ? <p role="status">{inviteNote}</p> : null}
-                {me.role === "administrator" ? <p>Moderation is available to the administrator.</p> : null}
-                <button type="button" className="secondary" onClick={() => { setSceneUnavailable(false); setSceneKey((value) => value + 1); }}>Reload illustration</button>
-              </div>
+            {stage === "needs_identity" ? (
+              <form className="stack" onSubmit={(event) => { event.preventDefault(); void createIdentity(); }}>
+                <h2>{copy.needsIdentity}</h2>
+                <label htmlFor="pseudonym">{copy.pseudonym}</label>
+                <input id="pseudonym" value={pseudonym} onChange={(event) => setPseudonym(event.target.value)} autoComplete="nickname" />
+                <label className="check"><input type="checkbox" checked={ack} onChange={(event) => setAck(event.target.checked)} /> {copy.recoveryWarning}</label>
+                <button type="submit" className="primary">{copy.createIdentity}</button>
+              </form>
             ) : null}
-            {notice ? <p role="status">{notice}</p> : null}
-            {stage === "invite_refused" ? <p role="alert">That invitation could not be used.</p> : null}
             {world?.returnNote ? (
               <article className="note">
                 <p>{world.returnNote.text}</p>
-                <p>{world.returnNote.added}</p>
-                <button type="button" onClick={() => void api("/api/return/dismiss", { method: "POST", body: "{}" }).then(load)}>Dismiss</button>
+                <p className="meta">{world.returnNote.added}</p>
+                <button type="button" onClick={() => void api("/api/return/dismiss", { method: "POST", body: "{}" }).then(load)}>{copy.dismissReturn}</button>
               </article>
             ) : null}
           </aside>

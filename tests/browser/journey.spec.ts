@@ -95,6 +95,7 @@ test("t.vis.pause-resize keeps the home in frame", async ({ page }) => {
     const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
     return hook?.tickerStarted() === true;
   });
+  await page.getByRole("button", { name: "Navigation" }).click();
   await page.getByRole("button", { name: "Pause motion" }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
@@ -116,6 +117,7 @@ test("t.vis.pause-resume and reduced motion", async ({ page }) => {
     const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
     return hook?.tickerStarted() === true;
   });
+  await page.getByRole("button", { name: "Navigation" }).click();
   await page.getByRole("button", { name: "Pause motion" }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
   await page.getByRole("button", { name: "Resume motion" }).click();
