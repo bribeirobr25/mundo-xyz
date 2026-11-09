@@ -198,6 +198,17 @@ export function Scene(props: {
       const paletteById = new Map(catalog.palettes.map((palette) => [palette.id, palette]));
       let signature = "";
       let generation = 0;
+      const layoutStamp = (): string => {
+        const current = state.current;
+        let n = current.objects.length;
+        for (let i = 0; i < current.objects.length; i += 1) {
+          const object = current.objects[i];
+          if (!object) continue;
+          n = Math.imul(n, 33) + object.x + Math.imul(object.y, 17) + object.w + object.h + (object.hidden ? 1 : 0);
+        }
+        const preview = current.preview;
+        return `${n}:${current.selectedId ?? ""}:${preview ? `${preview.x},${preview.y},${preview.assetId}` : ""}`;
+      };
       let moving: MovingPart[] = [];
 
       const paletteFor = (asset: CatalogAsset, paletteId: string | null): Palette | null => {
@@ -208,11 +219,7 @@ export function Scene(props: {
       const rebuild = async () => {
         const current = state.current;
         const preview = current.preview;
-        const next = current.objects.map((object) =>
-          [object.id, object.x, object.y, object.w, object.h, object.assetId, object.paletteId, object.hidden, object.id === current.selectedId].join(":"),
-        ).join("|");
-        const previewKey = preview ? `${preview.x},${preview.y},${preview.assetId}` : "";
-        const key = `${next}~${previewKey}`;
+        const key = layoutStamp();
         if (key === signature) return;
         const gen = ++generation;
         signature = key;
@@ -384,14 +391,14 @@ export function Scene(props: {
       }
       function paintLawn(plot: Plot): void {
         const cut = cutFor(plot);
-        const curb = lawnQuad(plot.x - 0.08, plot.y - 0.08, plot.w + 0.16, plot.h + 0.16, cut);
-        const inner = lawnQuad(plot.x + 0.14, plot.y + 0.14, plot.w - 0.28, plot.h - 0.28, {
-          top: Math.max(0, cut.top - 0.14),
-          right: Math.max(0, cut.right - 0.14),
-          bottom: Math.max(0, cut.bottom - 0.14),
-          left: Math.max(0, cut.left - 0.14),
+        const curb = lawnQuad(plot.x - 0.04, plot.y - 0.04, plot.w + 0.08, plot.h + 0.08, cut);
+        const inner = lawnQuad(plot.x + 0.015, plot.y + 0.015, plot.w - 0.03, plot.h - 0.03, {
+          top: Math.max(0, cut.top - 0.015),
+          right: Math.max(0, cut.right - 0.015),
+          bottom: Math.max(0, cut.bottom - 0.015),
+          left: Math.max(0, cut.left - 0.015),
         });
-        groundLayer.poly(curb.flatMap((point) => [point.sx, point.sy])).fill(hex("field"));
+        groundLayer.poly(curb.flatMap((point) => [point.sx, point.sy])).fill(hex("curb"));
         groundLayer.poly(inner.flatMap((point) => [point.sx, point.sy])).fill(hex("grass"));
       }
 
@@ -486,12 +493,12 @@ export function Scene(props: {
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         const focus = cafe ?? home;
         const wide = viewW >= 800;
-        const fitted = wide ? 0.96 : 0.54;
+        const fitted = wide ? 0.96 : 0.515;
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         const focusCenter = focus
           ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
           : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
-        const focusX = wide ? 0.7 : 0.68;
+        const focusX = wide ? 0.7 : 0.695;
         const focusY = wide ? 0.58 : 0.49;
         const center = {
           sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
@@ -535,7 +542,16 @@ export function Scene(props: {
         poseAll(false);
         frameCamera();
         cullOffscreen();
+        present();
       };
+      let presented = "";
+      const present = () => {
+        const key = `${Math.floor(elapsed / 50)}|${camera.position.x.toFixed(1)}|${camera.position.y.toFixed(1)}|${camera.scale.x.toFixed(3)}|${world.children.length}`;
+        if (key === presented) return;
+        presented = key;
+        created.render();
+      };
+      created.ticker.remove(created.render, created);
       let cullKey = "";
       const cullOffscreen = () => {
         const width = created.canvas.clientWidth || 1;
@@ -553,6 +569,8 @@ export function Scene(props: {
       await rebuild();
       frameCamera();
       poseAll(state.current.reducedMotion || state.current.deterministic);
+      presented = "";
+      present();
       onVisibility = () => {
         const current = state.current;
         if (document.visibilityState === "visible" && shouldTick({

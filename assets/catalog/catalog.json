@@ -9,6 +9,7 @@
       "id": "plaza",
       "roles": {
         "field": "#187050",
+        "curb": "#d5e3c4",
         "grass": "#106048",
         "grassAlt": "#0c4838",
         "pad": "#f4efe4",
@@ -168,10 +169,10 @@
     {
       "id": "boat-day",
       "roles": {
-        "hull": "#f2c14e",
-        "trim": "#2a6ea8",
-        "cabin": "#f7f4ee",
-        "shadow": "#143f30"
+        "hull": "#243044",
+        "trim": "#1a2836",
+        "cabin": "#f2c14e",
+        "shadow": "#e7f7fb"
       }
     },
     {
@@ -302,7 +303,7 @@
           "motion": "none",
           "fit": 0.12,
           "at": [
-            0.28,
+            0.26,
             0.9
           ],
           "anchor": [
@@ -320,7 +321,7 @@
           "motion": "none",
           "fit": 0.12,
           "at": [
-            0.46,
+            0.44,
             0.9
           ],
           "anchor": [
@@ -338,7 +339,7 @@
           "motion": "none",
           "fit": 0.12,
           "at": [
-            0.64,
+            0.62,
             0.9
           ],
           "anchor": [
@@ -374,8 +375,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.18,
-            0.93
+            0.22,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -395,8 +396,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.28,
-            0.93
+            0.38,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -416,8 +417,8 @@
           "motion": "glance",
           "fit": 0.1,
           "at": [
-            0.38,
-            0.93
+            0.3,
+            0.86
           ],
           "anchor": [
             0.5,
@@ -440,8 +441,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.48,
-            0.93
+            0.46,
+            0.86
           ],
           "anchor": [
             0.5,
@@ -461,8 +462,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.58,
-            0.93
+            0.54,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -482,8 +483,8 @@
           "motion": "none",
           "fit": 0.09,
           "at": [
-            0.68,
-            0.93
+            0.62,
+            0.86
           ],
           "anchor": [
             0.5,
@@ -503,8 +504,8 @@
           "motion": "none",
           "fit": 0.08,
           "at": [
-            0.78,
-            0.93
+            0.7,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -524,8 +525,8 @@
           "motion": "none",
           "fit": 0.08,
           "at": [
-            0.88,
-            0.93
+            0.78,
+            0.86
           ],
           "anchor": [
             0.5,
@@ -669,7 +670,7 @@
           "fit": 0.85,
           "anchor": [
             0.5,
-            1
+            0.92
           ],
           "tokens": [
             "wall",
@@ -729,7 +730,7 @@
           "motion": "none",
           "fit": 0.95,
           "anchor": [
-            0.5,
+            0.72,
             0.86
           ],
           "tokens": [
@@ -762,7 +763,7 @@
           "id": "red",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.52,
+          "fit": 0.54,
           "at": [
             0.5,
             0.58
@@ -782,7 +783,7 @@
           "id": "cyan",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.54,
+          "fit": 0.58,
           "at": [
             0.28,
             0.92
@@ -844,10 +845,10 @@
           "id": "shell",
           "file": "frames/house.svg",
           "motion": "none",
-          "fit": 1.05,
+          "fit": 0.68,
           "anchor": [
-            0.5,
-            0.82
+            0.46,
+            0.6
           ],
           "tokens": [
             "wall",
@@ -905,10 +906,10 @@
           "id": "shell",
           "file": "frames/house.svg",
           "motion": "none",
-          "fit": 1.05,
+          "fit": 0.68,
           "anchor": [
-            0.5,
-            0.82
+            0.46,
+            0.6
           ],
           "tokens": [
             "wall",
@@ -1083,7 +1084,7 @@
           "id": "shell",
           "file": "frames/shadow.svg",
           "motion": "none",
-          "fit": 1.5,
+          "fit": 0.6,
           "anchor": [
             0.5,
             0.82
@@ -1096,10 +1097,10 @@
           "id": "hull",
           "file": "frames/boat.svg",
           "motion": "drift",
-          "fit": 1,
+          "fit": 0.48,
           "at": [
             0.5,
-            0.7
+            0.82
           ],
           "anchor": [
             0.5,
@@ -1108,10 +1109,9 @@
           "tokens": [
             "hull",
             "trim",
-            "cabin",
-            "shadow"
+            "cabin"
           ],
-          "amplitude": 5,
+          "amplitude": 2,
           "steps": 8,
           "phase": 0
         }
@@ -1218,7 +1218,7 @@
           "id": "shell",
           "file": "frames/tree-round.svg",
           "motion": "none",
-          "fit": 0.95,
+          "fit": 0.62,
           "anchor": [
             0.5,
             0.82
@@ -1276,7 +1276,7 @@
           "id": "shell",
           "file": "frames/tree-cone.svg",
           "motion": "none",
-          "fit": 1.05,
+          "fit": 0.6,
           "anchor": [
             0.5,
             0.82
@@ -1564,7 +1564,7 @@
           "id": "shell",
           "file": "frames/cycle.svg",
           "motion": "none",
-          "fit": 0.7,
+          "fit": 0.6,
           "anchor": [
             0.5,
             0.82

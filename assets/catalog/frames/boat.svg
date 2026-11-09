@@ -1,9 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="170" viewBox="0 0 150 85">
-  <ellipse cx="74" cy="70" rx="40" ry="7" fill="{{shadow}}" fill-opacity="0.35"/>
-  <polygon points="16,46 74,66 132,46 74,34" fill="{{hull}}"/>
-  <polygon points="16,46 74,66 74,76 22,54" fill="{{trim}}"/>
-  <polygon points="132,46 74,66 74,76 126,54" fill="{{hull}}"/>
-  <polygon points="58,24 92,38 74,46 42,32" fill="{{cabin}}"/>
-  <polygon points="42,32 74,46 74,54 42,40" fill="{{trim}}"/>
-  <polygon points="92,38 74,46 74,54 92,46" fill="{{cabin}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160" viewBox="0 0 150 80">
+  <polygon points="10,40 75,58 140,40 75,26" fill="{{hull}}"/>
+  <polygon points="10,40 75,58 75,66 20,46" fill="{{trim}}"/>
+  <polygon points="140,40 75,58 75,66 130,46" fill="{{hull}}"/>
+  <polygon points="58,16 90,28 75,36 46,24" fill="{{cabin}}"/>
+  <polygon points="46,24 75,36 75,44 46,32" fill="{{trim}}"/>
+  <polygon points="90,28 75,36 75,44 90,36" fill="{{cabin}}"/>
 </svg>
