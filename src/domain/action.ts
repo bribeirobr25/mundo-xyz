@@ -1,34 +1,7 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import type { ModelAction, ValidatedAction } from "./types.js";
-
-export type CatalogAsset = {
-  id: string;
-  copyKey: string;
-  footprint: [number, number];
-  anchor: [number, number];
-  hit: number[][];
-  depthKey: number;
-  states: string[];
-  reactions: { id: string; frames: number }[];
-  svg: string;
-  fill: string;
-  accent: string;
-  provenance: { method: string; date: string; thirdPartyReference: boolean };
-};
-
-export type Catalog = { version: string; assets: CatalogAsset[] };
-
-export function loadCatalog(root = process.cwd()): Catalog {
-  const catalog = JSON.parse(readFileSync(resolve(root, "assets/catalog/catalog.json"), "utf8")) as Catalog;
-  for (const asset of catalog.assets) {
-    if (!asset.provenance?.method || !asset.provenance.date || asset.provenance.thirdPartyReference !== false) {
-      throw new Error(`missing provenance: ${asset.id}`);
-    }
-    if (!asset.svg || asset.hit.length < 3) throw new Error(`missing atlas frame: ${asset.id}`);
-  }
-  return catalog;
-}
+export type { Catalog, CatalogAsset, CatalogLayer, Palette } from "./catalog.js";
+export { acceptedPalette, loadCatalog, paintSvg, shownAsset, validateCatalog } from "./catalog.js";
+import type { Catalog } from "./catalog.js";
 
 const RELATIONS = new Set(["next_to", "across_from", "near"]);
 

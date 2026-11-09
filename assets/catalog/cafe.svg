@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" role="img" aria-label="Café for birds">
-  <polygon points="60,8 112,36 60,64 8,36" fill="#c45c26"/>
-  <polygon points="8,36 60,64 60,92 8,64" fill="#8d3e16"/>
-  <polygon points="60,64 112,36 112,64 60,92" fill="#e7a15a"/>
-  <rect x="52" y="48" width="16" height="18" fill="#f4f1ea"/>
-  <circle cx="38" cy="28" r="3" fill="#1c1915"/>
-  <circle cx="78" cy="24" r="3" fill="#1c1915"/>
-</svg>

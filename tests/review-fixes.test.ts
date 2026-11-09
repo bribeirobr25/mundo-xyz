@@ -86,6 +86,13 @@ test("t.place.another-after-confirm adjacent states", async () => {
   const proposalId = String(preview.body.proposalId);
   const before = await client.call(`/api/proposals/${proposalId}/another-spot`, { method: "POST", body: {} });
   expect(before.status).toBe(200);
+  const movedPreview = before.body.preview as { assetId?: string; paletteId?: string; w?: number; h?: number; x?: number; y?: number };
+  const firstPreview = preview.body.preview as { x: number; y: number };
+  expect(movedPreview.assetId).toBe("bus_stop");
+  expect(movedPreview.paletteId).toBe("stop-day");
+  expect(movedPreview.w).toBe(1);
+  expect(movedPreview.h).toBe(1);
+  expect(`${movedPreview.x},${movedPreview.y}`).not.toBe(`${firstPreview.x},${firstPreview.y}`);
   const missing = await client.call("/api/proposals/00000000-0000-4000-8000-000000000000/another-spot", { method: "POST", body: {} });
   expect(missing.status).toBe(404);
   const me = await client.call("/api/identity", { body: { pseudonym: "River Stone", acknowledge: true } });

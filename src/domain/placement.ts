@@ -34,8 +34,9 @@ export function place(
 }
 
 function score(cell: Cell, origin: Cell, relation: Relation): number {
-  if (relation !== "across_from") return 0;
-  return cell.x < origin.x ? 0 : 1;
+  if (relation === "across_from") return cell.x < origin.x ? 0 : 1;
+  if (relation === "next_to") return -(cell.x + cell.y);
+  return 0;
 }
 
 function overlaps(x: number, y: number, w: number, h: number, occupants: Occupant[]): boolean {

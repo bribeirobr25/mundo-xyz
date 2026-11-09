@@ -1,5 +1,63 @@
 {
   "version": "1",
+  "motionStepMs": 480,
+  "ground": { "paletteId": "plaza" },
+  "palettes": [
+    {
+      "id": "plaza",
+      "roles": {
+        "field": "#efe6d4",
+        "grass": "#7dbe4a",
+        "grassAlt": "#69ad3e",
+        "pad": "#f7f3ea",
+        "path": "#e4d8c4",
+        "marker": "#8a8478",
+        "select": "#1c1915"
+      }
+    },
+    {
+      "id": "cafe-day",
+      "roles": {
+        "wall": "#3c7fd0",
+        "wallShade": "#245a9e",
+        "roof": "#f2c14e",
+        "roofShade": "#d9a43a",
+        "awning": "#fff8ec",
+        "stripe": "#f2c14e",
+        "trim": "#f7f1e4",
+        "beak": "#e07a2f",
+        "door": "#1c1915",
+        "glass": "#d7ebf8"
+      }
+    },
+    {
+      "id": "bird-blue",
+      "roles": { "bird": "#2c6ec4", "wing": "#1d4e90", "beak": "#f08a24", "eye": "#1c1915" }
+    },
+    {
+      "id": "bird-red",
+      "roles": { "bird": "#e24b4b", "wing": "#b43333", "beak": "#f2c14e", "eye": "#1c1915" }
+    },
+    {
+      "id": "bird-gold",
+      "roles": { "bird": "#f2c14e", "wing": "#d9a428", "beak": "#e07a2f", "eye": "#1c1915" }
+    },
+    {
+      "id": "stop-day",
+      "roles": {
+        "roof": "#e24b4b",
+        "roofShade": "#c43737",
+        "post": "#2a2622",
+        "panel": "#f7f3ea",
+        "bench": "#d08a3a",
+        "glass": "#d5eaf2",
+        "pad": "#f4efe6",
+        "sign": "#f7f3ea",
+        "mark": "#245a9e",
+        "wheel": "#1c1915"
+      }
+    }
+  ],
   "assets": [
     {
       "id": "cafe_for_birds",
@@ -9,12 +67,58 @@
       "hit": [[0, 0], [2, 0], [2, 2], [0, 2]],
       "depthKey": 2,
       "states": ["open"],
-      "reactions": [{ "id": "birds", "frames": 4 }],
-      "svg": "cafe.svg",
-      "fill": "#c45c26",
-      "accent": "#f2d16b",
+      "paletteId": "cafe-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/cafe-shell.svg",
+          "motion": "none",
+          "fit": 1.08,
+          "anchor": [0.5, 0.75],
+          "tokens": ["wall", "wallShade", "roof", "roofShade", "awning", "stripe", "trim", "beak", "door", "glass"]
+        },
+        {
+          "id": "bird-blue",
+          "file": "frames/bird.svg",
+          "paletteId": "bird-blue",
+          "motion": "hop",
+          "amplitude": 8,
+          "steps": 4,
+          "phase": 0,
+          "fit": 0.18,
+          "at": [0.62, 0.6],
+          "anchor": [0.5, 1],
+          "tokens": ["bird", "wing", "beak", "eye"]
+        },
+        {
+          "id": "bird-red",
+          "file": "frames/bird.svg",
+          "paletteId": "bird-red",
+          "motion": "hop",
+          "amplitude": 8,
+          "steps": 4,
+          "phase": 1,
+          "fit": 0.16,
+          "at": [0.68, 0.63],
+          "anchor": [0.5, 1],
+          "tokens": ["bird", "wing", "beak", "eye"]
+        },
+        {
+          "id": "bird-gold",
+          "file": "frames/bird.svg",
+          "paletteId": "bird-gold",
+          "motion": "hop",
+          "amplitude": 6,
+          "steps": 4,
+          "phase": 2,
+          "fit": 0.15,
+          "at": [0.73, 0.58],
+          "anchor": [0.5, 1],
+          "tokens": ["bird", "wing", "beak", "eye"]
+        }
+      ],
       "provenance": {
-        "method": "code-drawn SVG from the isometric grammar",
+        "method": "authored SVG layers from the isometric grammar, rasterized as separate textures",
         "date": "2026-11-08",
         "thirdPartyReference": false
       }
@@ -27,12 +131,31 @@
       "hit": [[0, 0], [1, 0], [1, 1], [0, 1]],
       "depthKey": 1,
       "states": ["open"],
-      "reactions": [{ "id": "sign", "frames": 2 }],
-      "svg": "bus-stop.svg",
-      "fill": "#3d6b8c",
-      "accent": "#f4f1ea",
+      "paletteId": "stop-day",
+      "layers": [
+        {
+          "id": "shelter",
+          "file": "frames/stop-shelter.svg",
+          "motion": "none",
+          "fit": 0.9,
+          "anchor": [0.5, 0.82],
+          "tokens": ["pad", "panel", "glass", "roof", "roofShade", "post", "bench"]
+        },
+        {
+          "id": "sign",
+          "file": "frames/stop-sign.svg",
+          "motion": "sway",
+          "amplitude": 4,
+          "steps": 2,
+          "phase": 0,
+          "fit": 0.3,
+          "at": [0.58, 0.58],
+          "anchor": [0.5, 1],
+          "tokens": ["post", "sign", "mark", "wheel"]
+        }
+      ],
       "provenance": {
-        "method": "code-drawn SVG from the isometric grammar",
+        "method": "authored SVG layers from the isometric grammar, rasterized as separate textures",
         "date": "2026-11-08",
         "thirdPartyReference": false
       }

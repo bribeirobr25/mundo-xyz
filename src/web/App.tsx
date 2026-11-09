@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import copy from "../../copy/en.json" with { type: "json" };
 import { stageNotice } from "./notices.js";
 import { Scene, type SceneObject } from "./scene.js";
 
@@ -22,6 +23,7 @@ type WorldObject = SceneObject & {
 
 type WorldResponse = {
   objects: WorldObject[];
+  homeId: string | null;
   phase: string;
   weather: string;
   returnNote: { contributionId: string; objectId: string | null; text: string; added: string } | null;
@@ -29,7 +31,7 @@ type WorldResponse = {
   publishingOpen: boolean;
 };
 
-type Preview = { name: string; x: number; y: number; w: number; h: number; fill: string; accent: string; explanation: string };
+type Preview = { name: string; x: number; y: number; w: number; h: number; assetId: string; paletteId: string; explanation: string };
 
 const origin = window.location.origin;
 
@@ -132,12 +134,14 @@ export function App(): ReactElement {
   }, [stage]);
 
   const selected = world?.objects.find((object) => object.id === selectedId) ?? null;
-  const suggestions = ["A bus stop for the café's regulars."];
+  const home = world?.objects.find((object) => object.id === world.homeId) ?? null;
+  const suggestions = copy.suggestions;
 
   const arrived = useMemo(() => {
-    if (selected) return `You arrived at ${selected.name}.`;
-    return "This is the shared world. Start here: Café for birds.";
-  }, [selected]);
+    if (selected) return copy.arrived.replaceAll("{name}", selected.name);
+    if (home?.hidden) return copy.arrived.replaceAll("{name}", home.name);
+    return copy.startHere;
+  }, [selected, home]);
 
   async function interpret(phrase: string) {
     setStage("interpreting");
@@ -276,6 +280,7 @@ export function App(): ReactElement {
               objects={world?.objects ?? []}
               preview={preview}
               selectedId={selectedId}
+              homeId={world?.homeId ?? null}
               zoom={zoom}
               pan={pan}
               paused={paused}
@@ -301,8 +306,8 @@ export function App(): ReactElement {
           {selected ? (
             <article className="note">
               <h2>{selected.name}</h2>
-              <p>Created by {selected.authorLabel}.</p>
-              <p>What changed: {selected.history}</p>
+              {selected.authorLabel ? <p>Created by {selected.authorLabel}.</p> : null}
+              {selected.history ? <p>What changed: {selected.history}</p> : null}
               <button type="button" onClick={() => document.getElementById("composer")?.focus()}>Add your idea</button>
             </article>
           ) : null}

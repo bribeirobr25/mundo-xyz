@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="760" viewBox="0 0 300 380">
+  <ellipse cx="150" cy="318" rx="92" ry="16" fill="{{post}}" fill-opacity="0.2"/>
+  <polygon points="150,248 258,302 150,356 42,302" fill="{{pad}}"/>
+  <polygon points="78,168 150,204 150,292 78,256" fill="{{panel}}"/>
+  <polygon points="222,168 150,204 150,292 222,256" fill="{{glass}}"/>
+  <polygon points="150,96 268,156 150,216 32,156" fill="{{roof}}"/>
+  <polygon points="150,96 268,156 150,216" fill="{{roofShade}}"/>
+  <polygon points="86,196 100,203 100,312 86,305" fill="{{post}}"/>
+  <polygon points="200,196 214,203 214,312 200,305" fill="{{post}}"/>
+  <polygon points="108,246 196,290 196,306 108,262" fill="{{bench}}"/>
+  <polygon points="108,262 196,306 184,316 96,272" fill="{{post}}"/>
+</svg>

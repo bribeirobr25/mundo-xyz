@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type pg from "pg";
-import { loadCatalog, validateModelAction, withPlacement, type Catalog } from "../domain/action.js";
+import { loadCatalog, shownAsset, validateModelAction, withPlacement, type Catalog, type CatalogAsset } from "../domain/action.js";
 import { loadConfig, type AppConfig } from "../domain/config.js";
 import { fingerprint } from "../domain/fingerprint.js";
 import { normalizeInput } from "../domain/input.js";
@@ -138,9 +138,7 @@ export class WorldService {
           y: row.y,
           w: row.footprint_w,
           h: row.footprint_h,
-          fill: "#8a8478",
-          accent: "#8a8478",
-          reactions: [],
+          ...shownAsset(true, false, row.catalog_asset_id, asset?.paletteId ?? ""),
         };
       }
       const authorLabel = row.system
@@ -162,9 +160,7 @@ export class WorldService {
         y: row.y,
         w: row.footprint_w,
         h: row.footprint_h,
-        fill: asset?.fill ?? "#888",
-        accent: asset?.accent ?? "#fff",
-        reactions: asset?.reactions ?? [],
+        ...shownAsset(row.hidden, own, row.catalog_asset_id, asset?.paletteId ?? ""),
         relation: row.relation,
         anchorHidden,
         history: row.system
@@ -177,6 +173,7 @@ export class WorldService {
             }),
       };
     });
+    const home = objects.rows.find((row) => row.system) ?? objects.rows[0];
     const hour = new Date().getUTCHours();
     const phase = hour >= this.config.dayStartHourUtc && hour < this.config.nightStartHourUtc ? "day" : "night";
     let returnNote: Record<string, unknown> | null = null;
@@ -224,6 +221,7 @@ export class WorldService {
       status: 200,
       body: {
         objects: publicObjects,
+        homeId: home?.id ?? null,
         phase,
         weather: this.config.weather,
         pollIntervalMs: this.config.pollIntervalMs,
@@ -231,6 +229,20 @@ export class WorldService {
         policy: this.policyText,
         publishingOpen: this.config.publishAccess !== null,
       },
+    };
+  }
+
+  private catalogPreview(asset: CatalogAsset, cell: { x: number; y: number }, sentence: string | null): Record<string, unknown> {
+    const assetName = this.text(asset.copyKey);
+    return {
+      name: sentence ? `${assetName} — ${sentence}` : assetName,
+      x: cell.x,
+      y: cell.y,
+      w: asset.footprint[0],
+      h: asset.footprint[1],
+      assetId: asset.id,
+      paletteId: asset.paletteId,
+      explanation: this.text("understood"),
     };
   }
 
@@ -325,23 +337,13 @@ export class WorldService {
     if (!updated.rowCount) {
       return { status: 200, body: { code: "superseded", proposalId: id, draftKept: true }, cookies: cap.fresh ? [this.capCookie(cap.token)] : undefined };
     }
-    const assetName = this.text(asset.copyKey);
     return {
       status: 200,
       body: {
         code: "ready",
         proposalId: id,
         proposalVersion: 1,
-        preview: {
-          name: `${assetName} — ${normalized.text}`,
-          x: placed.x,
-          y: placed.y,
-          w: asset.footprint[0],
-          h: asset.footprint[1],
-          fill: asset.fill,
-          accent: asset.accent,
-          explanation: this.text("understood"),
-        },
+        preview: this.catalogPreview(asset, placed, normalized.text),
         interpreter: "fixture",
         publicWrites: 0,
       },
@@ -368,7 +370,7 @@ export class WorldService {
       "UPDATE proposals SET action = $2, placement_skip = $3, proposal_version = proposal_version + 1, confirm_key_hash = NULL WHERE id = $1",
       [proposalId, JSON.stringify(action), skip],
     );
-    return { status: 200, body: { code: "ready", proposalId, preview: { x: placed.x, y: placed.y } } };
+    return { status: 200, body: { code: "ready", proposalId, preview: this.catalogPreview(asset, placed, proposal.private_text) } };
   }
 
   async discard(proposalId: string, capability: string | null, authorId: string | null): Promise<Result> {
@@ -620,7 +622,7 @@ export class WorldService {
         code: "conflict",
         proposalId: proposal.id,
         proposalVersion: version,
-        preview: { x: placed.x, y: placed.y, name: this.text(asset.copyKey) },
+        preview: this.catalogPreview(asset, placed, proposal.private_text),
         providerCalls: 0,
       },
     };

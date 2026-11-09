@@ -32,11 +32,14 @@ async function close(): Promise<void> {
 test("t.world.single and t.world.seed-labeled and t.world.empty-shape", async () => {
   const world = await client.call("/api/world");
   expect(world.status).toBe(200);
-  const objects = world.body.objects as { administrator?: boolean; sentence?: string | null; name: string }[];
+  const objects = world.body.objects as { administrator?: boolean; sentence?: string | null; name: string; assetId?: string; paletteId?: string }[];
   expect(objects).toHaveLength(1);
   expect(objects[0]?.administrator).toBe(true);
   expect(objects[0]?.sentence).toBeNull();
   expect(objects[0]?.name).toBe("Café for birds");
+  expect(objects[0]?.assetId).toBe("cafe_for_birds");
+  expect(objects[0]?.paletteId).toBe("cafe-day");
+  expect(objects[0]).not.toHaveProperty("fill");
   await close();
 });
 
@@ -56,6 +59,10 @@ test("t.copy.literals", async () => {
 test("t.preview.signed-out and t.preview.isolation and t.interp.negation and t.fail.01", async () => {
   const preview = await client.call("/api/interpret", { body: { text: PHRASE, anchorId: null } });
   expect(preview.body.code).toBe("ready");
+  const shown = preview.body.preview as { assetId?: string; paletteId?: string };
+  expect(shown.assetId).toBe("bus_stop");
+  expect(shown.paletteId).toBe("stop-day");
+  expect(shown).not.toHaveProperty("fill");
   expect(preview.body.interpreter).toBe("fixture");
   expect(preview.body.publicWrites).toBe(0);
   const other = await boot(pool);
@@ -118,7 +125,9 @@ test("t.invite.redeem and t.pub.persists-refresh and t.pub.idem and t.e2e.j5-loc
   expect(second.body.code).toBe("already_published");
   expect(second.body.contributionId).toBe(first.body.contributionId);
   const again = await client.call("/api/world");
-  expect((again.body.objects as { name: string }[]).some((object) => object.name.includes("Bus stop"))).toBe(true);
+  const objects = again.body.objects as { id: string; assetId?: string; name: string }[];
+  expect(objects.filter((object) => object.assetId === "bus_stop")).toHaveLength(1);
+  expect(new Set(objects.map((object) => object.id)).size).toBe(objects.length);
   const banner = await client.call("/api/public-config");
   expect(banner.body.fixture).toBe(true);
   expect(banner.body.runMode).toBe("local-test");
@@ -145,6 +154,12 @@ test("t.pub.conflict.persist", async () => {
   const conflict = await client.call(`/api/proposals/${String(aPreview.body.proposalId)}/confirm`, { body: { idempotencyKey: "a1" } });
   expect(conflict.body.code).toBe("conflict");
   expect(conflict.body.providerCalls).toBe(0);
+  const refreshed = conflict.body.preview as { assetId?: string; paletteId?: string; w?: number; h?: number; name?: string };
+  expect(refreshed.assetId).toBe("bus_stop");
+  expect(refreshed.paletteId).toBe("stop-day");
+  expect(refreshed.w).toBe(1);
+  expect(refreshed.h).toBe(1);
+  expect(refreshed.name).toContain("Bus stop");
   const again = await client.call(`/api/proposals/${String(aPreview.body.proposalId)}/confirm`, { body: { idempotencyKey: "a2" } });
   const done = await client.call(`/api/proposals/${String(aPreview.body.proposalId)}/publish`, {
     body: { proposalVersion: again.body.proposalVersion, key: again.body.confirmKey },

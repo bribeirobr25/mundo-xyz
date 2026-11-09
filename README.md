@@ -45,6 +45,20 @@ npm run cli -- mint-invite <author-id>
 
 The invite code is printed once.
 
+## Art, palettes, and placed instances
+
+The café and the bus stop are authored SVG layers in `assets/catalog/`. Those files stay in git. They are the reusable source for this local proof of concept. The scene paints each layer with a palette id from the catalog and draws it as its own texture. The plaza field, grass, and path use the ground palette. Prototypes in `docs/prototypes/` are style references only. They are not sliced into sprites.
+
+A palette is a validated set of named colors. An asset definition points at one palette and at layer files. The same bird drawing is painted with three palette ids. A placed café or bus stop is a row in `placed_objects`: an id, a catalog asset id, a catalog version, and a cell. The row does not store a color, a style string, or a copy of the drawing. The server resolves the palette when it reads the world. A client-supplied color is not accepted. Interpret, another spot, and a refreshed conflict preview each return that catalog asset id and palette id. The browser does not send them.
+
+The world response includes `homeId`, the seed row, including when that row is hidden from other visitors. The camera uses that id. The hidden row still omits its asset id and palette id, and the arrival line uses the redacted name.
+
+A next-to placement prefers a free cell in front of its anchor. The new drawing then sits beside that place. A cell behind the anchor would land in the same screen space as the anchor’s roof.
+
+Color skins are not a visitor choice, and there is no second night palette. The world already reports day or night from the clock. A later palette for that phase would be another validated id on the same layers, not a second building and not a style sent by the browser. That change is not in this catalog.
+
+Several bus stops in a local database are separate published rows. The browser journey creates one each time it runs. They are not one object drawn more than once. This scene does not claim it can draw a million instances. It draws the rows the server returns.
+
 ## What this is not
 
 - Not product acceptance. Hosting, backups, the legal checkpoint, and an uncoached human pair were not run.

@@ -16,6 +16,16 @@ test("t.e2e.j1 explore and t.e2e.j3 preview", async ({ page }) => {
   expect(serious.map((item) => item.id)).toEqual([]);
 });
 
+test("t.art.select-scene café footprint", async ({ page }) => {
+  await page.goto("/");
+  const host = page.locator("[data-scene-host] canvas");
+  await expect(host).toBeVisible();
+  const box = await host.boundingBox();
+  if (!box) throw new Error("scene");
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.getByText("Created by Administrator.")).toBeVisible();
+});
+
 test("t.a11y.dom webgl off still lists the world", async ({ page }) => {
   await page.goto("/?webgl=0");
   await expect(page.getByText("Illustration unavailable. The list still works.")).toBeVisible();
@@ -59,6 +69,28 @@ test("t.vis.mobile explore", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.screenshot({ path: "test-results/journey-mobile.png", fullPage: true });
+});
+
+test("t.vis.pause-resize keeps the home in frame", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto("/");
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
+    return hook?.tickerStarted() === true;
+  });
+  await page.getByRole("button", { name: "Pause motion" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
+  await page.getByRole("button", { name: "Reduced motion" }).click();
+  await page.setViewportSize({ width: 700, height: 500 });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
+  await page.getByRole("button", { name: "Resume motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
+  await page.getByRole("button", { name: "Reduced motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(true);
 });
 
 test("t.vis.pause-resume and reduced motion", async ({ page }) => {
