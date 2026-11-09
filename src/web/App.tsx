@@ -414,25 +414,27 @@ export function App(): ReactElement {
     <>
       <a className="skip" href="#neighborhood">Skip to the neighborhood</a>
       <header className="topbar">
-        <div className="brand">
-          <h1>{copy.appTitle}</h1>
-          {banner ? <p className="chip" role="status">{banner}</p> : null}
+        <div className="topbar-row">
+          <div className="brand">
+            <h1>{copy.appTitle}</h1>
+            {banner ? <p className="chip" role="status" title={banner}>Test mode</p> : null}
+          </div>
+          <div className="top-actions">
+            <button type="button" aria-pressed={surface === "places"} aria-expanded={surface === "places"} onClick={() => openSurface("places")}>Places</button>
+            <button type="button" aria-pressed={surface === "account"} aria-expanded={surface === "account"} onClick={() => openSurface("account")}>Account</button>
+          </div>
         </div>
-        <div className="top-actions">
-          <button type="button" aria-pressed={surface === "places"} aria-expanded={surface === "places"} onClick={() => openSurface("places")}>Places</button>
-          <button type="button" aria-pressed={surface === "account"} aria-expanded={surface === "account"} onClick={() => openSurface("account")}>Account</button>
-        </div>
+        {hint && surface === "none" && illustrated && !error ? (
+          <p className="hint-bar">
+            <span>{coarse ? "Drag to explore · Pinch to zoom" : "Drag to explore · Select a place"}</span>
+            <button type="button" onClick={dismissHint}>Dismiss</button>
+          </p>
+        ) : null}
       </header>
       {error ? (
         <p className="banner-alert" role="alert">
           <span>{error}</span>
           <button type="button" className="primary" onClick={() => void load()}>{copy.retry}</button>
-        </p>
-      ) : null}
-      {hint && surface === "none" && illustrated && !error ? (
-        <p className="hint-bar">
-          <span>{coarse ? "Drag to explore · Pinch to zoom" : "Drag to explore · Select a place"}</span>
-          <button type="button" onClick={dismissHint}>Dismiss</button>
         </p>
       ) : null}
       <main className={panelOpen ? "world has-panel" : "world"}>
@@ -475,7 +477,7 @@ export function App(): ReactElement {
           ) : null}
           <button type="button" aria-expanded={navOpen} aria-controls="world-nav" onClick={() => setNavOpen((value) => !value)}>Navigation</button>
           {navOpen ? (
-            <div id="world-nav" className="row">
+            <div id="world-nav" className={narrow ? "row nav-sheet" : "row"}>
               {narrow ? (
                 <>
                   <button type="button" onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}>{copy.zoomOut}</button>
@@ -577,6 +579,7 @@ export function App(): ReactElement {
             {!reviewing && surface === "account" ? (
               <div className="stack">
                 <h2>Account</h2>
+                {banner ? <p>{banner}</p> : null}
                 {me.signedIn ? (
                   <p className="signed-in">
                     <span>{copy.signedInAs.replaceAll("{name}", me.pseudonym ?? "")}</span>

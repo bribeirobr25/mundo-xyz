@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 test("t.e2e.j1 explore and t.e2e.j3 preview", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("Test mode — fixture interpreter")).toBeVisible();
+  await expect(page.getByRole("status", { name: "Test mode" })).toHaveAttribute("title", "Test mode — fixture interpreter");
   await page.getByRole("button", { name: "Places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.getByRole("button", { name: /Café for birds/ }).click();
@@ -151,7 +151,7 @@ test("t.vis.reload keeps the illustration", async ({ page }) => {
 
 test("t.origin.localhost preview and refused recovery", async ({ page }) => {
   await page.goto("http://localhost:4500/");
-  await expect(page.getByText("Test mode — fixture interpreter")).toBeVisible();
+  await expect(page.getByRole("status", { name: "Test mode" })).toHaveAttribute("title", "Test mode — fixture interpreter");
   await page.getByRole("button", { name: "Add your idea" }).click();
   await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
@@ -163,7 +163,10 @@ test("t.origin.localhost preview and refused recovery", async ({ page }) => {
 
 test("t.vis.hidden-no-ticker", async ({ page }) => {
   await page.goto("/?scene=deterministic");
-  await page.waitForTimeout(500);
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
+    return typeof hook?.tickerStarted === "function";
+  });
   const started = await page.evaluate(() => {
     const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
     return hook?.tickerStarted() ?? null;

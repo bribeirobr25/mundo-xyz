@@ -1,9 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 360 130">
-  <polygon points="24,28 330,28 286,78 4,78" fill="{{stripe}}"/>
-  <polygon points="24,28 72,28 48,78 4,78" fill="{{awning}}"/>
-  <polygon points="120,28 168,28 144,78 96,78" fill="{{awning}}"/>
-  <polygon points="216,28 264,28 240,78 192,78" fill="{{awning}}"/>
-  <polygon points="4,78 286,78 274,96 16,96" fill="{{stripe}}"/>
-  <polygon points="36,70 36,118 46,114 46,66" fill="{{stripe}}"/>
-  <polygon points="248,62 248,112 258,108 258,58" fill="{{stripe}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="280" viewBox="0 0 320 140">
+  <polygon points="18,16 304,16 292,62 8,62" fill="{{awning}}"/>
+  <polygon points="18,16 46,16 34,62 8,62" fill="{{stripe}}"/>
+  <polygon points="74,16 102,16 90,62 62,62" fill="{{stripe}}"/>
+  <polygon points="130,16 158,16 146,62 118,62" fill="{{stripe}}"/>
+  <polygon points="186,16 214,16 202,62 174,62" fill="{{stripe}}"/>
+  <polygon points="242,16 270,16 258,62 230,62" fill="{{stripe}}"/>
+  <polygon points="8,62 292,62 286,74 14,74" fill="{{stripe}}"/>
+  <polygon points="36,62 46,62 46,132 36,132" fill="{{stripe}}"/>
+  <polygon points="268,58 278,58 278,128 268,128" fill="{{stripe}}"/>
 </svg>

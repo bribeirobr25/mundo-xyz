@@ -9,13 +9,13 @@
       "id": "plaza",
       "roles": {
         "field": "#1a6b52",
-        "grass": "#1c7a58",
+        "grass": "#2a8f5c",
         "grassAlt": "#145743",
         "pad": "#f4f1ea",
         "path": "#f3ecdc",
         "marker": "#e7dcc8",
         "select": "#20372f",
-        "water": "#3aa2bd"
+        "water": "#3eb4d4"
       }
     },
     {
@@ -257,10 +257,10 @@
           "id": "shell",
           "file": "frames/cafe-shell.svg",
           "motion": "none",
-          "fit": 1.6,
+          "fit": 1.82,
           "anchor": [
-            0.5,
-            0.78
+            0.46,
+            0.86
           ],
           "tokens": [
             "wall",
@@ -277,10 +277,10 @@
           "id": "awning",
           "file": "frames/awning.svg",
           "motion": "none",
-          "fit": 0.34,
+          "fit": 0.74,
           "at": [
             0.5,
-            0.66
+            0.98
           ],
           "anchor": [
             0.5,
@@ -295,10 +295,10 @@
           "id": "table-a",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.1,
+          "fit": 0.14,
           "at": [
-            0.44,
-            0.76
+            0.3,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -313,10 +313,10 @@
           "id": "table-b",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.1,
+          "fit": 0.14,
           "at": [
-            0.56,
-            0.76
+            0.42,
+            0.8
           ],
           "anchor": [
             0.5,
@@ -331,10 +331,10 @@
           "id": "table-c",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.1,
+          "fit": 0.14,
           "at": [
-            0.48,
-            0.7
+            0.54,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -349,10 +349,10 @@
           "id": "table-d",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.1,
+          "fit": 0.14,
           "at": [
-            0.58,
-            0.7
+            0.66,
+            0.8
           ],
           "anchor": [
             0.5,
@@ -367,10 +367,10 @@
           "id": "sit-blue-a",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.13,
           "at": [
-            0.4,
-            0.78
+            0.28,
+            0.8
           ],
           "anchor": [
             0.5,
@@ -388,10 +388,10 @@
           "id": "sit-red-a",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.13,
           "at": [
-            0.46,
-            0.8
+            0.38,
+            0.82
           ],
           "anchor": [
             0.5,
@@ -409,10 +409,10 @@
           "id": "sit-gold",
           "file": "frames/bird-sit.svg",
           "motion": "glance",
-          "fit": 0.09,
+          "fit": 0.13,
           "at": [
-            0.52,
-            0.74
+            0.48,
+            0.8
           ],
           "anchor": [
             0.5,
@@ -433,10 +433,10 @@
           "id": "sit-blue-b",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.13,
           "at": [
             0.58,
-            0.8
+            0.82
           ],
           "anchor": [
             0.5,
@@ -454,10 +454,10 @@
           "id": "sit-red-b",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.13,
           "at": [
-            0.64,
-            0.76
+            0.68,
+            0.8
           ],
           "anchor": [
             0.5,
@@ -475,10 +475,10 @@
           "id": "sit-gold-b",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.12,
           "at": [
-            0.42,
-            0.7
+            0.76,
+            0.82
           ],
           "anchor": [
             0.5,
@@ -496,10 +496,10 @@
           "id": "sit-blue-c",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.1,
           "at": [
-            0.5,
-            0.68
+            0.36,
+            0.62
           ],
           "anchor": [
             0.5,
@@ -517,10 +517,10 @@
           "id": "sit-red-c",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.09,
+          "fit": 0.1,
           "at": [
-            0.6,
-            0.68
+            0.58,
+            0.6
           ],
           "anchor": [
             0.5,
@@ -580,7 +580,7 @@
           "id": "shell",
           "file": "frames/stop-shelter.svg",
           "motion": "none",
-          "fit": 0.9,
+          "fit": 0.62,
           "anchor": [
             0.5,
             0.82
@@ -661,10 +661,10 @@
           "id": "shell",
           "file": "frames/tower.svg",
           "motion": "none",
-          "fit": 1.28,
+          "fit": 0.8,
           "anchor": [
             0.5,
-            0.94
+            0.98
           ],
           "tokens": [
             "wall",
@@ -725,7 +725,7 @@
           "fit": 1.35,
           "anchor": [
             0.5,
-            0.82
+            0.96
           ],
           "tokens": [
             "top",
@@ -737,10 +737,10 @@
           "id": "cyan",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.55,
+          "fit": 0.32,
           "at": [
-            0.3,
-            0.78
+            0.32,
+            0.82
           ],
           "anchor": [
             0.5,
@@ -757,10 +757,10 @@
           "id": "red",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.55,
+          "fit": 0.32,
           "at": [
             0.5,
-            0.76
+            0.74
           ],
           "anchor": [
             0.5,
@@ -777,10 +777,10 @@
           "id": "blue",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.55,
+          "fit": 0.32,
           "at": [
-            0.7,
-            0.78
+            0.68,
+            0.66
           ],
           "anchor": [
             0.5,
@@ -1156,7 +1156,7 @@
           "id": "shell",
           "file": "frames/bridge.svg",
           "motion": "none",
-          "fit": 1.55,
+          "fit": 1.05,
           "anchor": [
             0.5,
             0.82

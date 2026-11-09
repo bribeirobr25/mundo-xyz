@@ -3,7 +3,7 @@ import { Application, Container, Graphics, Polygon, Rectangle, Sprite, Texture }
 import catalogJson from "../../assets/catalog/catalog.json" with { type: "json" };
 import type { Catalog, CatalogAsset, Palette } from "../domain/catalogModel.js";
 import { acceptedPalette, paintSvg } from "../domain/catalogModel.js";
-import { DISTRICT_H, DISTRICT_W, groundKind, type GroundKind } from "../domain/district.js";
+import { BRIDGES, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZA, WATER, type GroundKind } from "../domain/district.js";
 import { FRAME_SOURCES } from "../scene/frames.js";
 import { TILE_H, TILE_W, buildingHit, cellToScreen, footprintQuad } from "../scene/iso.js";
 import { SCENE_MAX_RESOLUTION } from "../scene/limits.js";
@@ -88,11 +88,11 @@ export function Scene(props: {
         if (!color) throw new Error("missing atlas frame");
         return color;
       };
-      el.style.setProperty("--plaza-field", tone("grass"));
+      el.style.setProperty("--plaza-field", tone("path"));
       const created = new Application();
       await created.init({
         preference: ["webgl"],
-        background: Number.parseInt(tone("grass").slice(1), 16),
+        background: Number.parseInt(tone("path").slice(1), 16),
         resizeTo: el,
         antialias: false,
         autoDensity: true,
@@ -343,52 +343,64 @@ export function Scene(props: {
         if (kind === "plaza") return Number.parseInt(tone("pad").slice(1), 16);
         return Number.parseInt(tone("grass").slice(1), 16);
       };
-      const darken = (color: number): number => {
-        const r = Math.max(0, ((color >> 16) & 255) - 28);
-        const g = Math.max(0, ((color >> 8) & 255) - 28);
-        const b = Math.max(0, (color & 255) - 28);
-        return (r << 16) + (g << 8) + b;
-      };
-
       function paintPoly(points: { sx: number; sy: number }[], kind: GroundKind): void {
-        const top = kindColor(kind);
-        const edge = points.map((point) => ({ sx: point.sx, sy: point.sy + 4 }));
-        groundLayer.poly(edge.flatMap((point) => [point.sx, point.sy])).fill(darken(top));
-        groundLayer.poly(points.flatMap((point) => [point.sx, point.sy])).fill(top);
+        groundLayer.poly(points.flatMap((point) => [point.sx, point.sy])).fill(kindColor(kind));
       }
       function paintFoot(x: number, y: number, w: number, h: number, kind: GroundKind): void {
         paintPoly(footprintQuad(x, y, w, h), kind);
       }
 
+      function paintRounded(x: number, y: number, w: number, h: number, radius: number, kind: GroundKind): void {
+        const quad = footprintQuad(x, y, w, h);
+        const draw = (dy: number) => {
+          const pts = quad.map((point) => ({ sx: point.sx, sy: point.sy + dy }));
+          const count = pts.length;
+          const corners = pts.map((curr, index) => {
+            const prev = pts[(index + count - 1) % count];
+            const next = pts[(index + 1) % count];
+            if (!prev || !next) return null;
+            const toPrev = { sx: prev.sx - curr.sx, sy: prev.sy - curr.sy };
+            const toNext = { sx: next.sx - curr.sx, sy: next.sy - curr.sy };
+            const prevLen = Math.hypot(toPrev.sx, toPrev.sy) || 1;
+            const nextLen = Math.hypot(toNext.sx, toNext.sy) || 1;
+            const cut = Math.min(radius, prevLen * 0.42, nextLen * 0.42);
+            return {
+              a: { sx: curr.sx + (toPrev.sx / prevLen) * cut, sy: curr.sy + (toPrev.sy / prevLen) * cut },
+              c: curr,
+              b: { sx: curr.sx + (toNext.sx / nextLen) * cut, sy: curr.sy + (toNext.sy / nextLen) * cut },
+            };
+          });
+          const last = corners[count - 1];
+          if (!last) return;
+          groundLayer.moveTo(last.b.sx, last.b.sy);
+          for (const corner of corners) {
+            if (!corner) continue;
+            groundLayer.lineTo(corner.a.sx, corner.a.sy);
+            groundLayer.lineTo(corner.b.sx, corner.b.sy);
+          }
+          groundLayer.closePath();
+        };
+        draw(0);
+        groundLayer.fill(kindColor(kind));
+      }
+
       function drawGround(): void {
         groundLayer.clear();
-        const skirt = 8;
-        const x0 = -skirt;
-        const y0 = -skirt;
-        const x1 = DISTRICT_W + skirt;
-        const y1 = DISTRICT_H + skirt;
-        for (let x = x0; x < x1; x += 1) {
-          if (((x % 4) + 4) % 4 !== 0) continue;
-          paintFoot(x, y0, 1, y1 - y0, "road");
-        }
-        for (let y = y0; y < y1; y += 1) {
-          if (((y % 4) + 4) % 4 !== 0) continue;
-          paintFoot(x0, y, x1 - x0, 1, "road");
-        }
-        let yMin = 99;
-        let yMax = -99;
-        for (let y = y0; y < y1; y += 1) {
-          if (groundKind(1, y) !== "water") continue;
-          yMin = Math.min(yMin, y);
-          yMax = Math.max(yMax, y);
-        }
-        if (yMin <= yMax) paintFoot(x0, yMin, x1 - x0, yMax - yMin + 1, "water");
-        for (let y = 0; y < DISTRICT_H; y += 1) {
-          for (let x = 0; x < DISTRICT_W; x += 1) {
-            const kind = groundKind(x, y);
-            if (kind === "plaza" || kind === "bridge") paintFoot(x, y, 1, 1, kind);
-          }
-        }
+        paintFoot(-6, WATER.y, WATER.x + WATER.w + 6, WATER.h, "water");
+        for (const plot of GRASS_PLOTS) paintRounded(plot.x, plot.y, plot.w, plot.h, 46, "grass");
+        for (const plot of [
+          { x: -5, y: 1, w: 5, h: 4 },
+          { x: 1, y: -4, w: 5, h: 4 },
+          { x: 7, y: -4, w: 4, h: 4 },
+          { x: 11, y: -4, w: 4, h: 4 },
+          { x: -5, y: 10, w: 5, h: 5 },
+          { x: 16, y: 6, w: 4, h: 4 },
+          { x: 16, y: 11, w: 4, h: 4 },
+          { x: 1, y: 16, w: 6, h: 4 },
+          { x: 9, y: 16, w: 6, h: 4 },
+        ]) paintRounded(plot.x, plot.y, plot.w, plot.h, 46, "grass");
+        paintRounded(PLAZA.x, PLAZA.y, PLAZA.w, PLAZA.h, 28, "plaza");
+        for (const bridge of BRIDGES) paintFoot(bridge.x, bridge.y, bridge.w, bridge.h, "bridge");
         groundLayer.eventMode = "none";
       }
 
@@ -423,11 +435,22 @@ export function Scene(props: {
         const maxSy = Math.max(...corners.map((point) => point.sy));
         const inset = viewW >= 800 ? current.coverRight : 0;
         const availW = Math.max(1, viewW - inset);
+        const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         let fitted: number;
         let center: { sx: number; sy: number };
         if (viewW < 800 && home) {
           fitted = Math.min(availW, viewH) / (8 * TILE_W);
           center = cellToScreen(home.x + home.w / 2, home.y + home.h / 2);
+        } else if (cafe) {
+          const spanX = maxSx - minSx;
+          const spanY = maxSy - minSy;
+          fitted = Math.max(availW / spanX, viewH / spanY) * 1.12;
+          const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
+          const cafeCenter = cellToScreen(cafe.x + cafe.w / 2, cafe.y + cafe.h / 2);
+          center = {
+            sx: cafeCenter.sx - (0.58 - 0.5) * availW / zoom,
+            sy: cafeCenter.sy - (0.62 - 0.5) * viewH / zoom,
+          };
         } else {
           const pad = 24;
           fitted = Math.min((availW - pad) / (maxSx - minSx), (viewH - pad) / (maxSy - minSy)) * 1.16;

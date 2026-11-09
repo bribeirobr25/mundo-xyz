@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="320" viewBox="0 0 100 160">
-  <path fill="{{face}}" fill-rule="evenodd" d="M16 8 L84 8 L84 132 L16 132 Z M30 24 L70 24 L70 116 L30 116 Z"/>
-  <path fill="{{edge}}" d="M84 8 L96 18 L96 142 L84 132 Z"/>
-  <path fill="{{side}}" d="M16 132 L84 132 L96 142 L28 142 Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="360" viewBox="0 0 120 180">
+  <path fill="{{face}}" fill-rule="evenodd" d="M8 176 L8 14 L112 14 L112 176 Z M36 176 L36 40 L84 40 L84 176 Z"/>
+  <path fill="{{edge}}" d="M8 14 L28 2 L132 2 L112 14 Z"/>
+  <path fill="{{side}}" d="M112 14 L132 2 L132 164 L112 176 Z"/>
 </svg>

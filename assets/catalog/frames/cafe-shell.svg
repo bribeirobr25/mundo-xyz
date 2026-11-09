@@ -1,13 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
-  <ellipse cx="250" cy="328" rx="150" ry="14" fill="{{door}}" fill-opacity="0.18"/>
-  <polygon points="80,150 230,220 230,292 80,222" fill="{{wallShade}}"/>
-  <polygon points="400,150 230,220 230,292 400,222" fill="{{wall}}"/>
-  <polygon points="145,248 250,298 355,248 250,202" fill="{{trim}}"/>
-  <polygon points="118,188 168,210 168,246 118,224" fill="{{glass}}"/>
-  <polygon points="292,196 334,178 334,248 292,266" fill="{{door}}"/>
-  <ellipse cx="128" cy="198" rx="16" ry="10" fill="{{roof}}"/>
-  <circle cx="140" cy="194" r="6" fill="{{roof}}"/>
-  <polygon points="145,190 162,196 145,202" fill="{{beak}}"/>
-  <polygon points="80,150 145,72 210,142 230,118 230,220" fill="{{roof}}"/>
-  <polygon points="230,118 310,64 400,150 230,220" fill="{{roofShade}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <ellipse cx="420" cy="478" rx="220" ry="14" fill="{{door}}" fill-opacity="0.16"/>
+  <polygon points="150,188 64,146 86,292 172,334" fill="{{wallShade}}"/>
+  <polygon points="150,188 600,300 622,438 172,326" fill="{{wall}}"/>
+  <polygon points="144,153 185,129 234,172 276,150 324,194 366,172 415,216 456,194 505,237 547,215 596,265 600,304 148,196" fill="{{roof}}"/>
+  <polygon points="185,129 234,172 235,185 187,151" fill="{{roofShade}}"/>
+  <polygon points="276,150 324,194 325,206 278,172" fill="{{roofShade}}"/>
+  <polygon points="366,172 415,216 416,228 368,194" fill="{{roofShade}}"/>
+  <polygon points="456,194 505,237 506,250 459,215" fill="{{roofShade}}"/>
+  <polygon points="547,215 596,265 597,271 549,237" fill="{{roofShade}}"/>
+  <polygon points="148,196 64,146 56,122 144,153" fill="{{roofShade}}"/>
+  <ellipse cx="236" cy="248" rx="40" ry="18" fill="{{roof}}"/>
+  <ellipse cx="214" cy="252" rx="16" ry="10" fill="{{roofShade}}"/>
+  <circle cx="272" cy="228" r="18" fill="{{roof}}"/>
+  <polygon points="286,220 330,232 286,244" fill="{{beak}}"/>
+  <circle cx="278" cy="224" r="3" fill="{{wallShade}}"/>
+  <polygon points="300,268 356,282 356,322 300,308" fill="{{glass}}"/>
+  <polygon points="392,290 448,304 448,344 392,330" fill="{{glass}}"/>
+  <polygon points="500,318 548,330 548,400 500,388" fill="{{door}}"/>
+  <polygon points="210,360 560,450 640,492 292,408" fill="{{trim}}"/>
 </svg>
