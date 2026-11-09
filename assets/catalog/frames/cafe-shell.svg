@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="440" viewBox="0 0 400 440">
   <polygon points="244,162 372,98 372,312 244,376" fill="{{wallShade}}"/>
   <polygon points="4,42 4,256 244,376 244,162" fill="{{wall}}"/>
-  <polygon points="13,54 45,71 103,42 71,25" fill="{{roof}}"/>
-  <polygon points="45,71 103,42 109,54 51,83" fill="{{roofShade}}"/>
-  <polygon points="71,83 103,100 161,71 129,54" fill="{{roof}}"/>
-  <polygon points="103,100 161,71 167,83 109,112" fill="{{roofShade}}"/>
-  <polygon points="129,112 161,129 219,100 187,83" fill="{{roof}}"/>
-  <polygon points="161,129 219,100 225,112 167,141" fill="{{roofShade}}"/>
-  <polygon points="187,141 219,158 277,129 245,112" fill="{{roof}}"/>
-  <polygon points="219,158 277,129 283,141 225,170" fill="{{roofShade}}"/>
+  <polygon points="8,52 48,7 38,67" fill="{{roof}}"/>
+  <polygon points="38,67 48,7 68,82" fill="{{roofShade}}"/>
+  <polygon points="68,82 108,37 98,97" fill="{{roof}}"/>
+  <polygon points="98,97 108,37 128,112" fill="{{roofShade}}"/>
+  <polygon points="128,112 168,67 158,127" fill="{{roof}}"/>
+  <polygon points="158,127 168,67 188,142" fill="{{roofShade}}"/>
+  <polygon points="188,142 227,96 217,156" fill="{{roof}}"/>
+  <polygon points="217,156 227,96 246,171" fill="{{roofShade}}"/>
   <polygon points="244,162 372,98 372,112 244,176" fill="{{roofShade}}"/>
   <path d="M62 172 Q124 92 188 154 Q148 150 110 166 Q86 160 62 172 Z" fill="{{roof}}"/>
   <ellipse cx="124" cy="170" rx="36" ry="14" fill="{{roof}}"/>

@@ -256,7 +256,7 @@ export function App(): ReactElement {
 
   useEffect(() => {
     if (!hint || !illustrated) return;
-    const timer = window.setTimeout(dismissHint, 4200);
+    const timer = window.setTimeout(dismissHint, 4000);
     return () => window.clearTimeout(timer);
   }, [hint, illustrated]);
 
@@ -582,7 +582,7 @@ export function App(): ReactElement {
                 <p>{world?.policy}</p>
                 <div className="row">
                   <button type="button" className="primary" disabled={stage === "publishing"} onClick={() => void publish()}>{copy.publish}</button>
-                  <button type="button" onClick={() => { setStage("preview"); setSurface("compose"); }}>{copy.keepEditing}</button>
+                  <button type="button" className="tonal" onClick={() => { setStage("preview"); setSurface("compose"); }}>{copy.keepEditing}</button>
                 </div>
               </article>
             ) : null}
@@ -645,11 +645,11 @@ export function App(): ReactElement {
                   <button type="button" className="tonal" onClick={() => setPaused((value) => !value)}>{paused ? copy.resume : copy.pause}</button>
                   <button type="button" className="tonal" aria-pressed={reduced} onClick={toggleReduced}>{copy.reducedMotion}</button>
                 </div>
-                {banner ? <p className="meta">{banner}</p> : null}
+                {banner ? <p className="meta" title={banner}>Test mode</p> : null}
                 {me.signedIn ? (
                   <p className="signed-in">
                     <span>{copy.signedInAs.replaceAll("{name}", me.pseudonym ?? "")}</span>
-                    <button type="button" onClick={() => void signOut()}>{copy.signOut}</button>
+                    <button type="button" className="tonal" onClick={() => void signOut()}>{copy.signOut}</button>
                   </p>
                 ) : (
                   <form className="stack" onSubmit={(event) => { event.preventDefault(); void recover(); }}>
@@ -664,7 +664,7 @@ export function App(): ReactElement {
                 {inviteNote ? <p role="status">{inviteNote}</p> : null}
                 <p className="meta">A recovery code is shown once when it is created. This screen cannot reveal a code you did not just receive.</p>
                 {me.role === "administrator" ? <p>Moderation is available to the administrator.</p> : null}
-                <button type="button" onClick={() => { setSceneUnavailable(false); setIllustrated(false); setSceneKey((value) => value + 1); }}>Reload illustration</button>
+                <button type="button" className="tonal" onClick={() => { setSceneUnavailable(false); setIllustrated(false); setSceneKey((value) => value + 1); }}>Reload illustration</button>
               </div>
             ) : null}
             {drafting ? (
@@ -696,8 +696,8 @@ export function App(): ReactElement {
                 <p className="preview-name">{preview.name}</p>
                 <div className="row">
                   <button type="button" className="primary" onClick={() => void confirm()}>{copy.looksRight}</button>
-                  <button type="button" onClick={() => { setPreview(null); setStage("ready"); setSurface("compose"); requestAnimationFrame(() => document.getElementById("composer")?.focus()); }}>{copy.editIdea}</button>
-                  <button type="button" onClick={() => proposalId && void api(`/api/proposals/${proposalId}/discard`, { method: "POST", body: "{}" }).then(() => { setPreview(null); setText(""); setStage("discarded"); })}>{copy.discard}</button>
+                  <button type="button" className="tonal" onClick={() => { setPreview(null); setStage("ready"); setSurface("compose"); requestAnimationFrame(() => document.getElementById("composer")?.focus()); }}>{copy.editIdea}</button>
+                  <button type="button" className="tonal" onClick={() => proposalId && void api(`/api/proposals/${proposalId}/discard`, { method: "POST", body: "{}" }).then(() => { setPreview(null); setText(""); setStage("discarded"); })}>{copy.discard}</button>
                 </div>
               </article>
             ) : null}
@@ -714,7 +714,7 @@ export function App(): ReactElement {
               <article className="note">
                 <p>{world.returnNote.text}</p>
                 <p className="meta">{world.returnNote.added}</p>
-                <button type="button" onClick={() => void api("/api/return/dismiss", { method: "POST", body: "{}" }).then(load)}>{copy.dismissReturn}</button>
+                <button type="button" className="tonal" onClick={() => void api("/api/return/dismiss", { method: "POST", body: "{}" }).then(load)}>{copy.dismissReturn}</button>
               </article>
             ) : null}
           </aside>

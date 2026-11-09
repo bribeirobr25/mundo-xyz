@@ -136,8 +136,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visib
 }
 .search-field input:focus-visible { outline: none; }
 .search-field:focus-within {
-  outline: none;
-  box-shadow: inset 0 0 0 2px var(--focus);
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 .world { position: relative; flex: 1; min-height: 0; background: #f6f3ea; }
 .stage { position: absolute; inset: 0; overflow: hidden; }
@@ -196,7 +196,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visib
   font-size: 14px;
   white-space: nowrap;
   pointer-events: none;
-  animation: hint-fade 4.2s ease-out forwards;
+  animation: hint-fade 4s ease-out forwards;
 }
 .row { display: flex; flex-wrap: wrap; gap: 8px; }
 .banner-alert {
@@ -364,7 +364,15 @@ label { font-weight: 650; }
     background: rgb(255 254 249 / 78%);
   }
   .cta-bar .add-idea { width: 100%; border-radius: 12px; box-shadow: none; }
-  .explore-hint { left: 16px; right: 16px; bottom: 228px; transform: none; text-align: center; }
+  .explore-hint {
+    left: 12px;
+    right: auto;
+    bottom: 68px;
+    transform: none;
+    max-width: calc(100% - 76px);
+    padding: 4px 10px;
+    font-size: 12px;
+  }
   .panel {
     top: auto;
     left: 0;
@@ -377,6 +385,9 @@ label { font-weight: 650; }
     animation: sheet-in 240ms ease-out;
   }
   .panel.peek { max-height: 320px; }
+}
+@media (max-width: 399px) {
+  .badge { display: none; }
 }
 @media (min-width: 800px) {
   .wordmark { font-size: 20px; }
