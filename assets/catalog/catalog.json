@@ -176,6 +176,15 @@
       }
     },
     {
+      "id": "boat-blue",
+      "roles": {
+        "hull": "#243044",
+        "trim": "#1a2836",
+        "cabin": "#4a78c8",
+        "shadow": "#e7f7fb"
+      }
+    },
+    {
       "id": "bridge-day",
       "roles": {
         "deck": "#d23b3b",
@@ -262,7 +271,7 @@
           "fit": 0.96,
           "anchor": [
             0.4,
-            0.42
+            0.38
           ],
           "tokens": [
             "wall",
@@ -303,8 +312,8 @@
           "motion": "none",
           "fit": 0.12,
           "at": [
-            0.26,
-            0.9
+            0.32,
+            0.76
           ],
           "anchor": [
             0.5,
@@ -322,7 +331,7 @@
           "fit": 0.12,
           "at": [
             0.44,
-            0.9
+            0.76
           ],
           "anchor": [
             0.5,
@@ -339,8 +348,8 @@
           "motion": "none",
           "fit": 0.12,
           "at": [
-            0.62,
-            0.9
+            0.56,
+            0.76
           ],
           "anchor": [
             0.5,
@@ -357,8 +366,8 @@
           "motion": "none",
           "fit": 0.12,
           "at": [
-            0.78,
-            0.9
+            0.68,
+            0.76
           ],
           "anchor": [
             0.5,
@@ -375,8 +384,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.22,
-            0.78
+            0.32,
+            0.68
           ],
           "anchor": [
             0.5,
@@ -396,8 +405,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.38,
-            0.78
+            0.44,
+            0.68
           ],
           "anchor": [
             0.5,
@@ -417,8 +426,8 @@
           "motion": "glance",
           "fit": 0.1,
           "at": [
-            0.3,
-            0.86
+            0.34,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -442,7 +451,7 @@
           "fit": 0.1,
           "at": [
             0.46,
-            0.86
+            0.78
           ],
           "anchor": [
             0.5,
@@ -462,8 +471,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.54,
-            0.78
+            0.56,
+            0.68
           ],
           "anchor": [
             0.5,
@@ -483,8 +492,8 @@
           "motion": "none",
           "fit": 0.09,
           "at": [
-            0.62,
-            0.86
+            0.58,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -504,8 +513,8 @@
           "motion": "none",
           "fit": 0.08,
           "at": [
-            0.7,
-            0.78
+            0.68,
+            0.68
           ],
           "anchor": [
             0.5,
@@ -525,8 +534,8 @@
           "motion": "none",
           "fit": 0.08,
           "at": [
-            0.78,
-            0.86
+            0.7,
+            0.78
           ],
           "anchor": [
             0.5,
@@ -967,10 +976,10 @@
           "id": "shell",
           "file": "frames/pavilion.svg",
           "motion": "none",
-          "fit": 1.0,
+          "fit": 0.78,
           "anchor": [
-            0.5,
-            0.84
+            0.62,
+            0.98
           ],
           "tokens": [
             "roof",
@@ -1027,8 +1036,8 @@
           "motion": "none",
           "fit": 0.6,
           "anchor": [
-            0.5,
-            0.86
+            0.72,
+            0.98
           ],
           "tokens": [
             "body",
@@ -1097,10 +1106,10 @@
           "id": "hull",
           "file": "frames/boat.svg",
           "motion": "drift",
-          "fit": 0.48,
+          "fit": 0.6,
           "at": [
             0.5,
-            0.82
+            0.78
           ],
           "anchor": [
             0.5,
@@ -1114,6 +1123,40 @@
           "amplitude": 2,
           "steps": 8,
           "phase": 0
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "canal_boat_blue",
+      "copyKey": "asset.boatBlue",
+      "footprint": [1, 1],
+      "anchor": [0, 0],
+      "hit": [[0, 0], [1, 0], [1, 1], [0, 1]],
+      "depthKey": 2,
+      "states": ["open"],
+      "paletteId": "boat-blue",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/shadow.svg",
+          "motion": "none",
+          "fit": 0.6,
+          "anchor": [0.5, 0.82],
+          "tokens": ["shadow"]
+        },
+        {
+          "id": "hull",
+          "file": "frames/boat.svg",
+          "motion": "none",
+          "fit": 0.6,
+          "at": [0.5, 0.78],
+          "anchor": [0.5, 1],
+          "tokens": ["hull", "trim", "cabin"]
         }
       ],
       "provenance": {
@@ -1577,7 +1620,7 @@
           "id": "rider",
           "file": "frames/bird.svg",
           "motion": "none",
-          "fit": 0.55,
+          "fit": 0.9,
           "at": [
             0.48,
             0.42

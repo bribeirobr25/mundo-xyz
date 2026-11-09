@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="260" viewBox="0 0 240 200">
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="300" viewBox="0 0 240 230">
   <polygon points="40,148 120,188 200,148 120,116" fill="{{shade}}"/>
   <polygon points="28,118 120,36 120,128 36,148" fill="{{shade}}"/>
   <polygon points="212,118 120,36 120,128 204,148" fill="{{roof}}"/>

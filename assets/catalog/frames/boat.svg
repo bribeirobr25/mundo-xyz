@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160" viewBox="0 0 150 80">
-  <polygon points="10,40 75,58 140,40 75,26" fill="{{hull}}"/>
-  <polygon points="10,40 75,58 75,66 20,46" fill="{{trim}}"/>
-  <polygon points="140,40 75,58 75,66 130,46" fill="{{hull}}"/>
-  <polygon points="58,16 90,28 75,36 46,24" fill="{{cabin}}"/>
-  <polygon points="46,24 75,36 75,44 46,32" fill="{{trim}}"/>
-  <polygon points="90,28 75,36 75,44 90,36" fill="{{cabin}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="128" viewBox="0 0 140 64">
+  <polygon points="6,34 70,48 134,34 70,22" fill="{{hull}}"/>
+  <polygon points="6,34 70,48 70,56 16,40" fill="{{trim}}"/>
+  <polygon points="134,34 70,48 70,56 124,40" fill="{{hull}}"/>
+  <polygon points="46,4 90,16 72,26 34,14" fill="{{cabin}}"/>
+  <polygon points="34,14 72,26 72,42 34,30" fill="{{trim}}"/>
+  <polygon points="90,16 72,26 72,42 96,30" fill="{{cabin}}"/>
 </svg>

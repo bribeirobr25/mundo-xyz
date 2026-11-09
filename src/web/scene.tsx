@@ -115,8 +115,16 @@ export function Scene(props: {
       created.stage.eventMode = "static";
       created.stage.hitArea = created.screen;
       let drag: { x: number; y: number } | null = null;
+      // Pointer deltas are drawn before React commits the pan, so a drag is not one jump.
+      const gesture = { baseX: 0, baseY: 0, sentX: 0, sentY: 0, live: false };
+      let followPointer = () => {};
       const onDown = (event: { global: { x: number; y: number } }) => {
         drag = { x: event.global.x, y: event.global.y };
+        gesture.baseX = state.current.pan.x;
+        gesture.baseY = state.current.pan.y;
+        gesture.sentX = 0;
+        gesture.sentY = 0;
+        gesture.live = true;
       };
       const onMove = (event: { global: { x: number; y: number } }) => {
         if (!drag) return;
@@ -124,6 +132,9 @@ export function Scene(props: {
         const dy = event.global.y - drag.y;
         if (Math.hypot(dx, dy) < 4) return;
         drag = { x: event.global.x, y: event.global.y };
+        gesture.sentX += dx;
+        gesture.sentY += dy;
+        followPointer();
         state.current.onPan(dx, dy);
       };
       const onUp = () => {
@@ -407,10 +418,10 @@ export function Scene(props: {
         const viewH = created.canvas.clientHeight || 1;
         const zoom = camera.scale.x || 1;
         return {
-          sx0: (0 - camera.position.x) / zoom - 240,
-          sx1: (viewW - camera.position.x) / zoom + 240,
-          sy0: (0 - camera.position.y) / zoom - 240,
-          sy1: (viewH - camera.position.y) / zoom + 240,
+          sx0: (0 - camera.position.x) / zoom - 560,
+          sx1: (viewW - camera.position.x) / zoom + 560,
+          sy0: (0 - camera.position.y) / zoom - 560,
+          sy1: (viewH - camera.position.y) / zoom + 560,
         };
       }
       function overlapsView(x: number, y: number, w: number, h: number, view: { sx0: number; sx1: number; sy0: number; sy1: number }): boolean {
@@ -505,14 +516,39 @@ export function Scene(props: {
           sy: focusCenter.sy - (focusY - 0.5) * viewH / zoom,
         };
         camera.scale.set(zoom);
-        camera.position.set(availW / 2 - center.sx * zoom + current.pan.x, viewH / 2 - center.sy * zoom + current.pan.y);
-        const groundKey = `${viewW}x${viewH}:${zoom.toFixed(3)}:${camera.position.x.toFixed(0)}:${camera.position.y.toFixed(0)}`;
-        if (groundKey !== drawnGround) {
-          drawnGround = groundKey;
+        const pendingX = gesture.live ? gesture.sentX - (current.pan.x - gesture.baseX) : 0;
+        const pendingY = gesture.live ? gesture.sentY - (current.pan.y - gesture.baseY) : 0;
+        if (gesture.live && !drag && pendingX === 0 && pendingY === 0) gesture.live = false;
+        camera.position.set(
+          availW / 2 - center.sx * zoom + current.pan.x + pendingX,
+          viewH / 2 - center.sy * zoom + current.pan.y + pendingY,
+        );
+        // The ground cache includes a margin, so a pan is a camera move until the view leaves it.
+        const shown = {
+          sx0: (0 - camera.position.x) / zoom,
+          sy0: (0 - camera.position.y) / zoom,
+          sx1: (viewW - camera.position.x) / zoom,
+          sy1: (viewH - camera.position.y) / zoom,
+        };
+        const edge = 80;
+        const stale = drawnGround === ""
+          || !drawnView
+          || Math.abs(drawnView.zoom - zoom) > 0.001
+          || drawnView.w !== viewW
+          || drawnView.h !== viewH
+          || shown.sx0 < drawnView.sx0 + edge
+          || shown.sx1 > drawnView.sx1 - edge
+          || shown.sy0 < drawnView.sy0 + edge
+          || shown.sy1 > drawnView.sy1 - edge;
+        if (stale) {
           drawGround();
+          const view = viewWorld();
+          drawnGround = "drawn";
+          drawnView = { sx0: view.sx0, sy0: view.sy0, sx1: view.sx1, sy1: view.sy1, zoom, w: viewW, h: viewH };
         }
       };
       let drawnGround = "";
+      let drawnView: { sx0: number; sy0: number; sx1: number; sy1: number; zoom: number; w: number; h: number } | null = null;
       const paint = () => {
         frameCamera();
         if (!created.ticker.started) created.render();
@@ -552,6 +588,12 @@ export function Scene(props: {
         created.render();
       };
       created.ticker.remove(created.render, created);
+      // The draw has to happen inside the ticker, which runs on animation frames.
+      // A render from the pointer handler is not presented until the next frame,
+      // and a later ticker pass then paints over it.
+      followPointer = () => {
+        frameCamera();
+      };
       let cullKey = "";
       const cullOffscreen = () => {
         const width = created.canvas.clientWidth || 1;
@@ -669,7 +711,8 @@ export function Scene(props: {
               point.x >= 1 && point.y >= 1 && point.x <= viewW - 2 && point.y <= viewH - 2;
             const current = state.current;
             const named: { name: string; x: number; y: number }[] = [];
-            for (const boat of current.objects.filter((object) => object.assetId === "canal_boat" && !object.hidden)) {
+            const boats = current.objects.filter((object) => (object.assetId === "canal_boat" || object.assetId === "canal_boat_blue") && !object.hidden);
+            for (const boat of boats) {
               const center = screenOf(boat.x + boat.w / 2, boat.y + boat.h / 2);
               named.push({ name: `boat ${boat.x},${boat.y}`, ...center });
               for (const [dx, dy] of [[24, 0], [-24, 0], [0, 16], [0, -16]] as const) {
@@ -743,7 +786,7 @@ export function Scene(props: {
             return {
               width,
               height,
-              boats: current.objects.filter((object) => object.assetId === "canal_boat" && !object.hidden).length,
+              boats: boats.length,
               bridges: current.objects.filter((object) => object.assetId === "red_bridge" && !object.hidden).length,
               samples: named.map((point) => ({ name: point.name, sx: point.x, sy: point.y, ...sample(point.x, point.y) })),
               components,

@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 160 90">
   <polygon points="14,30 112,30 148,12 50,12" fill="{{body}}"/>
-  <polygon points="14,30 112,30 112,76 14,76" fill="{{body}}"/>
-  <polygon points="112,30 148,12 148,58 112,76" fill="{{shade}}"/>
-  <polygon points="28,36 100,36 100,52 28,52" fill="{{window}}"/>
-  <polygon points="120,34 140,22 140,36 120,48" fill="{{window}}"/>
-  <polygon points="22,58 100,58 100,66 22,66" fill="{{stripe}}"/>
-  <circle cx="40" cy="76" r="8" fill="{{wheel}}"/>
-  <circle cx="90" cy="76" r="8" fill="{{wheel}}"/>
+  <polygon points="14,30 112,30 112,78 14,78" fill="{{body}}"/>
+  <polygon points="112,30 148,12 148,60 112,78" fill="{{shade}}"/>
+  <polygon points="24,38 48,38 48,54 24,54" fill="{{window}}"/>
+  <polygon points="54,38 78,38 78,54 54,54" fill="{{window}}"/>
+  <polygon points="84,38 104,38 104,54 84,54" fill="{{window}}"/>
+  <polygon points="120,36 140,24 140,40 120,52" fill="{{window}}"/>
+  <polygon points="18,62 106,62 106,68 18,68" fill="{{stripe}}"/>
+  <circle cx="38" cy="78" r="6" fill="{{wheel}}"/>
+  <circle cx="92" cy="78" r="6" fill="{{wheel}}"/>
 </svg>
