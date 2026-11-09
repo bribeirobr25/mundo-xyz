@@ -62,6 +62,45 @@ type Surface = "none" | "places" | "inspect" | "compose" | "account";
 
 const origin = window.location.origin;
 
+const SWATCH: Record<string, string> = {
+  "cafe-day": "#15489b",
+  "tower-day": "#b43333",
+  "bridge-day": "#d23b3b",
+  "bus-day": "#efb00d",
+  "house-blue": "#2f62c8",
+  "house-gold": "#f0b429",
+  "pavilion-day": "#c23b3b",
+  "bird-blue": "#3a7ca5",
+  "bird-red": "#d23b3b",
+  "bird-gold": "#f2c14e",
+  "tree-round": "#1f6b4a",
+  "tree-pine": "#143f30",
+  "bench-day": "#8a5a32",
+  "boat-day": "#efb00d",
+  "boat-blue": "#4a78c8",
+  "stop-day": "#53645c",
+  "plinth-day": "#e6d3b0",
+};
+
+function Icon({ name }: { name: "search" | "person" | "plus" | "minus" | "home" | "close" | "link" }): ReactElement {
+  const props = { width: 20, height: 20, viewBox: "0 0 20 20", fill: "none", "aria-hidden": true as const };
+  if (name === "search") {
+    return <svg {...props}><circle cx="8.5" cy="8.5" r="5.25" stroke="currentColor" strokeWidth="1.8" /><path d="M12.5 12.5L17 17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+  }
+  if (name === "person") {
+    return <svg {...props}><circle cx="10" cy="7" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M4.5 16.5c1.2-2.4 3.1-3.5 5.5-3.5s4.3 1.1 5.5 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+  }
+  if (name === "plus") return <svg {...props}><path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+  if (name === "minus") return <svg {...props}><path d="M4 10h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+  if (name === "home") {
+    return <svg {...props}><path d="M4 9.5L10 4l6 5.5V16a1 1 0 0 1-1 1h-3.2v-4.2H8.2V17H5a1 1 0 0 1-1-1V9.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>;
+  }
+  if (name === "link") {
+    return <svg {...props}><path d="M8.2 11.8l3.6-3.6M7.2 13.2l-1.4 1.4a2.6 2.6 0 0 1-3.7-3.7l1.4-1.4M12.8 6.8l1.4-1.4a2.6 2.6 0 0 1 3.7 3.7l-1.4 1.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
+  }
+  return <svg {...props}><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+}
+
 function storedMotion(): boolean | null {
   try {
     const value = localStorage.getItem("sw-motion");
@@ -112,7 +151,7 @@ export function App(): ReactElement {
   const [sheet, setSheet] = useState<"peek" | "open">("open");
   const [query, setQuery] = useState("");
   const [wide, setWide] = useState(window.innerWidth >= 800);
-  const [navOpen, setNavOpen] = useState(false);
+  const [dragY, setDragY] = useState(0);
   const [hint, setHint] = useState(() => {
     try {
       return sessionStorage.getItem("sw-hint") !== "off";
@@ -121,6 +160,7 @@ export function App(): ReactElement {
     }
   });
   const idempotency = useRef(crypto.randomUUID());
+  const dragOrigin = useRef<number | null>(null);
   const confirmLock = useRef(false);
   const publishLock = useRef(false);
   const worldTag = useRef<string | null>(null);
@@ -213,6 +253,12 @@ export function App(): ReactElement {
   useEffect(() => {
     if (stage === "conflict") document.getElementById("conflict-status")?.focus();
   }, [stage]);
+
+  useEffect(() => {
+    if (!hint || !illustrated) return;
+    const timer = window.setTimeout(dismissHint, 4200);
+    return () => window.clearTimeout(timer);
+  }, [hint, illustrated]);
 
   const selected = world?.objects.find((object) => object.id === selectedId) ?? null;
   const home = world?.objects.find((object) => object.id === world.homeId) ?? null;
@@ -387,6 +433,32 @@ export function App(): ReactElement {
   const drafting = surface === "compose" && !preview && stage !== "confirming" && stage !== "published" && stage !== "publishing";
   const reviewing = stage === "confirming" || stage === "publishing";
 
+  function onHandleDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (!narrow) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragOrigin.current = event.clientY;
+  }
+
+  function onHandleMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (dragOrigin.current === null) return;
+    setDragY(Math.max(-120, event.clientY - dragOrigin.current));
+  }
+
+  function onHandleUp(event: React.PointerEvent<HTMLDivElement>) {
+    if (dragOrigin.current === null) return;
+    const dy = event.clientY - dragOrigin.current;
+    dragOrigin.current = null;
+    setDragY(0);
+    if (dy > 140) setSurface("none");
+    else if (dy > 48) setSheet("peek");
+    else if (dy < -48) setSheet("open");
+  }
+
+  function openSearch() {
+    setSurface("places");
+    setSheet(window.innerWidth >= 800 ? "open" : "open");
+  }
+
   function onDockKey(event: ReactKeyboardEvent<HTMLElement>) {
     const step: Record<string, [number, number]> = {
       ArrowLeft: [-24, 0],
@@ -415,21 +487,36 @@ export function App(): ReactElement {
       <a className="skip" href="#neighborhood">Skip to the neighborhood</a>
       <header className="topbar">
         <div className="topbar-row">
-          <div className="brand">
-            <h1>{copy.appTitle}</h1>
-            {banner ? <p className="chip" role="status" title={banner}>Test mode</p> : null}
-          </div>
-          <div className="top-actions">
-            <button type="button" aria-pressed={surface === "places"} aria-expanded={surface === "places"} onClick={() => openSurface("places")}>Places</button>
-            <button type="button" aria-pressed={surface === "account"} aria-expanded={surface === "account"} onClick={() => openSurface("account")}>Account</button>
-          </div>
+          <h1 className="wordmark">{copy.appTitle}</h1>
+          <label className="search-field">
+            <Icon name="search" />
+            <input
+              id="place-search"
+              value={query}
+              placeholder="Search places"
+              aria-label="Search places"
+              onFocus={openSearch}
+              onChange={(event) => { setQuery(event.target.value); openSearch(); }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  const first = listed[0];
+                  if (!first) return;
+                  event.preventDefault();
+                  setSelectedId(first.id);
+                  setSurface("inspect");
+                  return;
+                }
+                if (event.key !== "ArrowDown") return;
+                event.preventDefault();
+                document.querySelector<HTMLButtonElement>("#place-results button")?.focus();
+              }}
+            />
+          </label>
+          {banner ? <p className="badge" role="status" aria-label="Test mode" title={banner}>Test</p> : null}
+          <button type="button" className="icon-button" aria-label="Account" title="Account" aria-pressed={surface === "account"} aria-expanded={surface === "account"} onClick={() => openSurface("account")}>
+            <Icon name="person" />
+          </button>
         </div>
-        {hint && surface === "none" && illustrated && !error ? (
-          <p className="hint-bar">
-            <span>{coarse ? "Drag to explore · Pinch to zoom" : "Drag to explore · Select a place"}</span>
-            <button type="button" onClick={dismissHint}>Dismiss</button>
-          </p>
-        ) : null}
       </header>
       {error ? (
         <p className="banner-alert" role="alert">
@@ -437,7 +524,7 @@ export function App(): ReactElement {
           <button type="button" className="primary" onClick={() => void load()}>{copy.retry}</button>
         </p>
       ) : null}
-      <main className={panelOpen ? "world has-panel" : "world"}>
+      <main className={panelOpen ? `world has-panel sheet-${sheet}` : "world"}>
         <p className="sr-only">{arrived} {copy.exploreFree}</p>
         {!world && !error ? (
           <p className="stage-note" role="status">{copy.illustrationLoading}</p>
@@ -466,45 +553,25 @@ export function App(): ReactElement {
             </Suspense>
           </IllustrationBoundary>
         ) : null}
-        <div className="overlay">
-        <div className="dock" id="neighborhood" tabIndex={-1} role="group" aria-label="World controls" onKeyDown={onDockKey}>
-          {!narrow ? (
-            <div className="cluster">
-              <button type="button" onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}>{copy.zoomOut}</button>
-              <button type="button" onClick={() => setZoom((value) => Math.min(2, value + 0.25))}>{copy.zoomIn}</button>
-              <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1); }}>Back to café</button>
-            </div>
-          ) : null}
-          <button type="button" aria-expanded={navOpen} aria-controls="world-nav" onClick={() => setNavOpen((value) => !value)}>Navigation</button>
-          {navOpen ? (
-            <div id="world-nav" className={narrow ? "row nav-sheet" : "row"}>
-              {narrow ? (
-                <>
-                  <button type="button" onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}>{copy.zoomOut}</button>
-                  <button type="button" onClick={() => setZoom((value) => Math.min(2, value + 0.25))}>{copy.zoomIn}</button>
-                  <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1); }}>Back to café</button>
-                </>
-              ) : null}
-              <button type="button" onClick={() => setPaused((value) => !value)}>{paused ? copy.resume : copy.pause}</button>
-              <button type="button" onClick={toggleReduced} aria-pressed={reduced}>{copy.reducedMotion}</button>
-              <button type="button" onClick={() => panBy(-24, 0)}>{copy.panLeft}</button>
-              <button type="button" onClick={() => panBy(24, 0)}>{copy.panRight}</button>
-              <button type="button" onClick={() => panBy(0, -24)}>{copy.panUp}</button>
-              <button type="button" onClick={() => panBy(0, 24)}>{copy.panDown}</button>
-            </div>
-          ) : null}
+        {hint && illustrated && !error ? <p className="explore-hint">{narrow || coarse ? "Drag to explore" : "Drag to explore · Select a place"}</p> : null}
+        <div className="map-controls" id="neighborhood" tabIndex={-1} role="group" aria-label="World controls" onKeyDown={onDockKey}>
+          <button type="button" className="icon-button" aria-label={copy.zoomIn} title={copy.zoomIn} onClick={() => setZoom((value) => Math.min(2, value + 0.25))}><Icon name="plus" /></button>
+          <button type="button" className="icon-button" aria-label={copy.zoomOut} title={copy.zoomOut} onClick={() => setZoom((value) => Math.max(0.5, value - 0.25))}><Icon name="minus" /></button>
+          <button type="button" className="icon-button" aria-label="Back to café" title="Back to café" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1); }}><Icon name="home" /></button>
         </div>
         {surface === "none" && !error ? (
-          <button type="button" className="primary add-idea" onClick={() => openSurface("compose")}>{copy.addIdea}</button>
+          <div className="cta-bar">
+            <button type="button" className="primary add-idea" onClick={() => openSurface("compose")}>{copy.addIdea}</button>
+          </div>
         ) : null}
-        </div>
         {panelOpen ? (
-          <aside className={sheet === "peek" ? "panel peek" : "panel"} aria-label="Neighborhood details">
-            <div className="sheet-bar">
-              <button type="button" onClick={() => setSheet("open")} aria-pressed={sheet === "open"}>Expand</button>
-              <button type="button" onClick={() => setSheet("peek")} aria-pressed={sheet === "peek"}>Collapse</button>
-              <button type="button" className="close" onClick={() => setSurface("none")}>Close</button>
-            </div>
+          <aside
+            className={sheet === "peek" ? "panel peek" : "panel"}
+            aria-label="Neighborhood details"
+            style={dragY ? { transform: `translateY(${dragY}px)` } : undefined}
+          >
+            {narrow ? <div className="handle" aria-hidden="true" onPointerDown={onHandleDown} onPointerMove={onHandleMove} onPointerUp={onHandleUp} /> : null}
+            <button type="button" className="icon-button panel-close" aria-label="Close" title="Close" onClick={() => setSurface("none")}><Icon name="close" /></button>
             {stage === "published" || stage === "already_published" ? <p className="status success" role="status">{stage === "published" ? copy.published : copy.alreadyPublished}</p> : null}
             {reviewing ? (
               <article className="note">
@@ -531,34 +598,16 @@ export function App(): ReactElement {
             {!reviewing && surface === "places" ? (
               <div className="stack">
                 <h2>Places</h2>
-                <label className="search-label" htmlFor="place-search">Search places</label>
-                <input
-                  id="place-search"
-                  className="search"
-                  value={query}
-                  placeholder="Search places"
-                  onChange={(event) => setQuery(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      const first = listed[0];
-                      if (!first) return;
-                      event.preventDefault();
-                      setSelectedId(first.id);
-                      setSurface("inspect");
-                      return;
-                    }
-                    if (event.key !== "ArrowDown") return;
-                    event.preventDefault();
-                    document.querySelector<HTMLButtonElement>("#place-results button")?.focus();
-                  }}
-                />
                 <p className="meta">{world ? `${listed.length} ${listed.length === 1 ? "place" : "places"}` : error ? "The world could not be loaded." : copy.illustrationLoading}</p>
                 <ul id="place-results" className="list" onKeyDown={onResultKey}>
                   {listed.map((object) => (
                     <li key={object.id}>
-                      <button type="button" aria-current={object.id === selectedId ? "true" : undefined} onClick={() => { setSelectedId(object.id); setSurface("inspect"); }}>
-                        <span className="place-name">{object.name}</span>
-                        <span className="place-meta">{object.administrator ? copy.administrator : object.authorLabel ?? ""}{object.notPublic ? ` · ${copy.notPublic}` : ""}</span>
+                      <button type="button" aria-current={object.id === selectedId ? "true" : undefined} onClick={() => { setSelectedId(object.id); setSurface("inspect"); setSheet(window.innerWidth >= 800 ? "open" : "peek"); }}>
+                        <span className="swatch" style={{ background: SWATCH[object.paletteId ?? ""] ?? "#155b46" }} aria-hidden="true" />
+                        <span className="place-copy">
+                          <span className="place-name">{object.name}</span>
+                          <span className="place-meta">{object.administrator ? copy.administrator : object.authorLabel ?? ""}{object.notPublic ? ` · ${copy.notPublic}` : ""}</span>
+                        </span>
                       </button>
                     </li>
                   ))}
@@ -568,17 +617,21 @@ export function App(): ReactElement {
               </div>
             ) : null}
             {!reviewing && surface === "inspect" && selected ? (
-              <article className="stack">
-                <button type="button" className="back" onClick={() => setSurface("places")}>Back</button>
-                <h2>{selected.name}</h2>
-                {selected.sentence ? <p>{selected.sentence}</p> : null}
-                {selected.authorLabel ? <p className="meta">Created by {selected.authorLabel}.</p> : null}
-                <div className="row">
-                  <button type="button" className="primary" onClick={() => openSurface("compose")}>{copy.addIdea}</button>
-                  <button type="button" onClick={() => void navigator.clipboard.writeText(`${origin}/c/${selected.id}`)}>{copy.copyLink}</button>
+              <article className="stack inspector">
+                <div className="inspector-title">
+                  <span className="swatch" style={{ background: SWATCH[selected.paletteId ?? ""] ?? "#155b46" }} aria-hidden="true" />
+                  <div>
+                    <h2>{selected.name}</h2>
+                    {selected.authorLabel ? <p className="meta">Created by {selected.authorLabel}.</p> : null}
+                  </div>
                 </div>
-                {selected.history && sheet === "open" ? (
-                  <details>
+                {selected.sentence ? <p>{selected.sentence}</p> : null}
+                <div className="inspector-actions">
+                  <button type="button" className="primary" onClick={() => openSurface("compose")}>{copy.addIdea}</button>
+                  <button type="button" className="icon-button" aria-label={copy.copyLink} title={copy.copyLink} onClick={() => void navigator.clipboard.writeText(`${origin}/c/${selected.id}`)}><Icon name="link" /></button>
+                </div>
+                {selected.history ? (
+                  <details className="quiet">
                     <summary>What changed</summary>
                     <p>{selected.history}</p>
                   </details>
@@ -588,7 +641,11 @@ export function App(): ReactElement {
             {!reviewing && surface === "account" ? (
               <div className="stack">
                 <h2>Account</h2>
-                {banner ? <p>{banner}</p> : null}
+                <div className="row">
+                  <button type="button" className="tonal" onClick={() => setPaused((value) => !value)}>{paused ? copy.resume : copy.pause}</button>
+                  <button type="button" className="tonal" aria-pressed={reduced} onClick={toggleReduced}>{copy.reducedMotion}</button>
+                </div>
+                {banner ? <p className="meta">{banner}</p> : null}
                 {me.signedIn ? (
                   <p className="signed-in">
                     <span>{copy.signedInAs.replaceAll("{name}", me.pseudonym ?? "")}</span>
@@ -626,7 +683,7 @@ export function App(): ReactElement {
                 <p className="meta">{copy.ideasYouCanTry}</p>
                 <div className="row">
                   {suggestions.map((idea) => (
-                    <button key={idea} type="button" onClick={() => { setText(idea); void interpret(idea); }}>{idea}</button>
+                    <button key={idea} type="button" className="tonal" onClick={() => { setText(idea); void interpret(idea); }}>{idea}</button>
                   ))}
                 </div>
                 <button type="submit" className="primary" disabled={stage === "interpreting"}>Preview idea</button>

@@ -5,7 +5,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("t.e2e.j1 explore and t.e2e.j3 preview", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("status", { name: "Test mode" })).toHaveAttribute("title", "Test mode — fixture interpreter");
-  await page.getByRole("button", { name: "Places" }).click();
+  await page.getByRole("textbox", { name: "Search places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.getByRole("button", { name: /Café for birds/ }).click();
   await expect(page.getByText("Created by Administrator.")).toBeVisible();
@@ -40,7 +40,7 @@ test("t.art.select-scene café footprint", async ({ page }) => {
 test("t.a11y.dom webgl off still lists the world", async ({ page }) => {
   await page.goto("/?webgl=0");
   await expect(page.getByText("Illustration unavailable. The list still works.")).toBeVisible();
-  await page.getByRole("button", { name: "Places" }).click();
+  await page.getByRole("textbox", { name: "Search places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.screenshot({ path: "test-results/journey-dom-list.png", fullPage: true });
 });
@@ -48,7 +48,7 @@ test("t.a11y.dom webgl off still lists the world", async ({ page }) => {
 test("t.e2e.j5 browser publish with invite", async ({ page }) => {
   const name = `Lane ${Math.floor(Math.random() * 9000) + 1000}`;
   await page.goto("/");
-  await page.getByRole("button", { name: "Places" }).click();
+  await page.getByRole("textbox", { name: "Search places" }).click();
   await page.getByRole("button", { name: /Café for birds/ }).click();
   await page.getByRole("button", { name: "Add your idea" }).first().click();
   await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
@@ -83,7 +83,7 @@ test("t.e2e.j5 browser publish with invite", async ({ page }) => {
 test("t.vis.mobile explore", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Places" }).click();
+  await page.getByRole("textbox", { name: "Search places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.screenshot({ path: "test-results/journey-mobile.png", fullPage: true });
 });
@@ -95,7 +95,7 @@ test("t.vis.pause-resize keeps the home in frame", async ({ page }) => {
     const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
     return hook?.tickerStarted() === true;
   });
-  await page.getByRole("button", { name: "Navigation" }).click();
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByRole("button", { name: "Pause motion" }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
@@ -117,7 +117,7 @@ test("t.vis.pause-resume and reduced motion", async ({ page }) => {
     const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
     return hook?.tickerStarted() === true;
   });
-  await page.getByRole("button", { name: "Navigation" }).click();
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByRole("button", { name: "Pause motion" }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
   await page.getByRole("button", { name: "Resume motion" }).click();
