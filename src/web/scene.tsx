@@ -351,71 +351,50 @@ export function Scene(props: {
       }
 
       const hex = (role: string) => Number.parseInt(tone(role).slice(1), 16);
-      function paintRounded(x: number, y: number, w: number, h: number, radius: number, color: number): void {
-        const quad = footprintQuad(x, y, w, h);
-        const pts = quad.map((point) => ({ sx: point.sx, sy: point.sy }));
-        const count = pts.length;
-        const corners = pts.map((curr, index) => {
-          const prev = pts[(index + count - 1) % count];
-          const next = pts[(index + 1) % count];
-          if (!prev || !next) return null;
-          const toPrev = { sx: prev.sx - curr.sx, sy: prev.sy - curr.sy };
-          const toNext = { sx: next.sx - curr.sx, sy: next.sy - curr.sy };
-          const prevLen = Math.hypot(toPrev.sx, toPrev.sy) || 1;
-          const nextLen = Math.hypot(toNext.sx, toNext.sy) || 1;
-          const cut = Math.min(radius, prevLen * 0.18, nextLen * 0.18);
-          return {
-            a: { sx: curr.sx + (toPrev.sx / prevLen) * cut, sy: curr.sy + (toPrev.sy / prevLen) * cut },
-            b: { sx: curr.sx + (toNext.sx / nextLen) * cut, sy: curr.sy + (toNext.sy / nextLen) * cut },
-          };
-        });
-        const last = corners[count - 1];
-        if (!last) return;
-        groundLayer.moveTo(last.b.sx, last.b.sy);
-        for (const corner of corners) {
-          if (!corner) continue;
-          groundLayer.lineTo(corner.a.sx, corner.a.sy);
-          groundLayer.lineTo(corner.b.sx, corner.b.sy);
-        }
-        groundLayer.closePath();
-        groundLayer.fill(color);
-      }
       function paintLawn(plot: Plot): void {
-        const curb = 0.12;
-        paintRounded(plot.x - curb, plot.y - curb, plot.w + curb * 2, plot.h + curb * 2, 16, hex("field"));
-        paintRounded(plot.x + 0.16, plot.y + 0.16, plot.w - 0.32, plot.h - 0.32, 14, hex("grass"));
-        const inset = 0.7;
-        if (plot.w > inset * 2 + 1 && plot.h > inset * 2 + 1) {
-          paintRounded(plot.x + inset, plot.y + inset, plot.w - inset * 2, plot.h - inset * 2, 12, hex("grassAlt"));
-        }
-        const spots: [number, number, "round" | "cone"][] = [
-          [0.28, 0.32, "round"],
-          [0.72, 0.58, "round"],
-          [0.46, 0.74, "cone"],
-        ];
-        for (const [u, v, shape] of spots) {
-          const point = cellToScreen(plot.x + 0.7 + u * (plot.w - 1.4), plot.y + 0.7 + v * (plot.h - 1.4));
-          if (shape === "cone") {
-            groundLayer.poly([point.sx, point.sy - 20, point.sx + 8, point.sy, point.sx - 8, point.sy]).fill(0x145743);
-          } else {
-            groundLayer.poly([
-              point.sx, point.sy - 16,
-              point.sx + 12, point.sy - 4,
-              point.sx + 6, point.sy,
-              point.sx - 8, point.sy,
-              point.sx - 12, point.sy - 8,
-            ]).fill(0x21784a);
-          }
-        }
+        groundLayer.poly(footprintQuad(plot.x - 0.08, plot.y - 0.08, plot.w + 0.16, plot.h + 0.16).flatMap((point) => [point.sx, point.sy])).fill(hex("field"));
+        groundLayer.poly(footprintQuad(plot.x + 0.14, plot.y + 0.14, plot.w - 0.28, plot.h - 0.28).flatMap((point) => [point.sx, point.sy])).fill(hex("grass"));
       }
 
+      function viewWorld() {
+        const viewW = created.canvas.clientWidth || 1;
+        const viewH = created.canvas.clientHeight || 1;
+        const zoom = camera.scale.x || 1;
+        return {
+          sx0: (0 - camera.position.x) / zoom - 240,
+          sx1: (viewW - camera.position.x) / zoom + 240,
+          sy0: (0 - camera.position.y) / zoom - 240,
+          sy1: (viewH - camera.position.y) / zoom + 240,
+        };
+      }
+      function overlapsView(x: number, y: number, w: number, h: number, view: { sx0: number; sx1: number; sy0: number; sy1: number }): boolean {
+        const quad = footprintQuad(x, y, w, h);
+        const minX = Math.min(...quad.map((point) => point.sx));
+        const maxX = Math.max(...quad.map((point) => point.sx));
+        const minY = Math.min(...quad.map((point) => point.sy));
+        const maxY = Math.max(...quad.map((point) => point.sy));
+        return maxX >= view.sx0 && minX <= view.sx1 && maxY >= view.sy0 && minY <= view.sy1;
+      }
       function drawGround(): void {
+        if (groundLayer.isCachedAsTexture) groundLayer.cacheAsTexture(false);
         groundLayer.clear();
-        paintFoot(-6, WATER.y, 28, WATER.h, "water");
-        for (const plot of GRASS_PLOTS) paintLawn(plot);
-        for (const plot of PLAZAS) paintRounded(plot.x, plot.y, plot.w, plot.h, 10, hex("pad"));
-        for (const bridge of BRIDGES) paintFoot(bridge.x, bridge.y, bridge.w, bridge.h, "bridge");
+        const view = viewWorld();
+        const x0 = Math.floor(view.sx0 / 64) - 6;
+        const x1 = Math.ceil(view.sx1 / 64) + 14;
+        paintFoot(x0, WATER.y, Math.max(4, x1 - x0), WATER.h, "water");
+        for (const plot of GRASS_PLOTS) {
+          if (plot.y + plot.h > WATER.y && plot.y < WATER.y + WATER.h) continue;
+          if (!overlapsView(plot.x, plot.y, plot.w, plot.h, view)) continue;
+          paintLawn(plot);
+        }
+        for (const plot of PLAZAS) {
+          if (overlapsView(plot.x, plot.y, plot.w, plot.h, view)) paintFoot(plot.x, plot.y, plot.w, plot.h, "plaza");
+        }
+        for (const bridge of BRIDGES) {
+          if (overlapsView(bridge.x, bridge.y, bridge.w, bridge.h, view)) paintFoot(bridge.x, bridge.y + 0.15, bridge.w, bridge.h - 0.3, "bridge");
+        }
         groundLayer.eventMode = "none";
+        groundLayer.cacheAsTexture({ resolution: 1, antialias: false });
       }
 
       let elapsed = 0;
@@ -452,20 +431,26 @@ export function Scene(props: {
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         const focus = cafe ?? home;
         const wide = viewW >= 800;
-        const fitted = wide ? 0.76 : Math.min(0.36, Math.max(0.3, viewH / (26 * TILE_H)));
+        const fitted = wide ? 0.84 : Math.min(0.72, Math.max(0.58, viewH / (14 * TILE_H)));
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         const focusCenter = focus
           ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
           : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
-        const focusX = wide ? 0.66 : 0.56;
-        const focusY = wide ? 0.72 : 0.48;
+        const focusX = wide ? 0.62 : 0.5;
+        const focusY = wide ? 0.64 : 0.5;
         const center = {
           sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
           sy: focusCenter.sy - (focusY - 0.5) * viewH / zoom,
         };
         camera.scale.set(zoom);
         camera.position.set(availW / 2 - center.sx * zoom + current.pan.x, viewH / 2 - center.sy * zoom + current.pan.y);
+        const groundKey = `${viewW}x${viewH}:${zoom.toFixed(3)}:${camera.position.x.toFixed(0)}:${camera.position.y.toFixed(0)}`;
+        if (groundKey !== drawnGround) {
+          drawnGround = groundKey;
+          drawGround();
+        }
       };
+      let drawnGround = "";
       const paint = () => {
         frameCamera();
         if (!created.ticker.started) created.render();

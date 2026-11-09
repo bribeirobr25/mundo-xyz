@@ -8,14 +8,14 @@
     {
       "id": "plaza",
       "roles": {
-        "field": "#c5ddc0",
-        "grass": "#1f6b4a",
-        "grassAlt": "#164e36",
-        "pad": "#f4f1ea",
-        "path": "#f3ecdc",
+        "field": "#187050",
+        "grass": "#106048",
+        "grassAlt": "#0c4838",
+        "pad": "#f4efe4",
+        "path": "#f0e8d8",
         "marker": "#e7dcc8",
         "select": "#20372f",
-        "water": "#3eb4d4"
+        "water": "#38a0b8"
       }
     },
     {
@@ -258,10 +258,10 @@
           "id": "shell",
           "file": "frames/cafe-shell.svg",
           "motion": "none",
-          "fit": 1.4,
+          "fit": 1.2,
           "anchor": [
-            0.66,
-            0.72
+            0.4,
+            0.68
           ],
           "tokens": [
             "wall",
@@ -271,21 +271,24 @@
             "trim",
             "beak",
             "door",
-            "glass"
+            "glass",
+            "awning",
+            "stripe",
+            "post"
           ]
         },
         {
           "id": "awning",
           "file": "frames/awning.svg",
           "motion": "none",
-          "fit": 0.74,
+          "fit": 0.05,
           "at": [
-            0.48,
-            0.66
+            0.42,
+            0.62
           ],
           "anchor": [
-            0.32,
-            0.16
+            0.5,
+            0.4
           ],
           "tokens": [
             "awning",
@@ -663,10 +666,10 @@
           "id": "shell",
           "file": "frames/tower.svg",
           "motion": "none",
-          "fit": 0.86,
+          "fit": 1.05,
           "anchor": [
             0.5,
-            0.98
+            1
           ],
           "tokens": [
             "wall",
@@ -739,10 +742,10 @@
           "id": "blue",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.5,
+          "fit": 0.42,
           "at": [
-            0.58,
-            0.3
+            0.7,
+            0.18
           ],
           "anchor": [
             0.5,
@@ -759,10 +762,10 @@
           "id": "red",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.58,
+          "fit": 0.48,
           "at": [
             0.5,
-            0.56
+            0.48
           ],
           "anchor": [
             0.5,
@@ -779,10 +782,10 @@
           "id": "cyan",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.66,
+          "fit": 0.54,
           "at": [
-            0.42,
-            0.84
+            0.28,
+            0.86
           ],
           "anchor": [
             0.5,
