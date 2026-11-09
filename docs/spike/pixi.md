@@ -9,3 +9,5 @@ The planning source check of tag v8.22.0 found no blur or visibility handling in
 Frame-time budgets in the plan are unmeasured proposals. This file does not record them as results.
 
 `scene=deterministic` is honored only when the public config says `local-test`.
+
+A 9 Nov 2026 production-build measurement kept this WebGL preference. The WebGPU chunk is emitted by the library and was not requested. The drawing and the motion were corrected in the catalog and the pose function. That measurement did not justify replacing PixiJS.

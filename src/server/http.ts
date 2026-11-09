@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
+import { gzipSync } from "node:zlib";
 import type { AppConfig } from "../domain/config.js";
 import { assertNoExtra } from "../domain/action.js";
 import { listenPort } from "../local-dev.js";
@@ -57,7 +59,7 @@ async function handle(service: WorldService, req: IncomingMessage, res: ServerRe
       return;
     }
     if (method === "GET" && url.pathname === "/api/world") {
-      send(res, await service.world(author?.id ?? null));
+      send(res, await service.world(author?.id ?? null), { etag: true, req });
       return;
     }
     if (method === "GET" && url.pathname === "/api/me") {
@@ -180,7 +182,7 @@ async function handle(service: WorldService, req: IncomingMessage, res: ServerRe
       return;
     }
     if (method === "GET" && (url.pathname === "/" || url.pathname.startsWith("/c/") || url.pathname.startsWith("/assets/"))) {
-      serveStatic(url.pathname, res);
+      serveStatic(url.pathname, req, res);
       return;
     }
     send(res, { status: 404, body: { code: "not_found", error: "Not found" } });
@@ -200,31 +202,88 @@ export function staticTarget(pathname: string): string | null {
   return file;
 }
 
-function serveStatic(pathname: string, res: ServerResponse): void {
+export function encodeStatic(
+  body: Buffer,
+  acceptEncoding: string | undefined,
+  pathname: string,
+): { body: Buffer; headers: Record<string, string> } {
+  const headers: Record<string, string> = {
+    "content-type": staticType(pathname),
+    "cache-control": pathname.startsWith("/assets/") ? "public, max-age=31536000, immutable" : "no-cache",
+    vary: "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+  };
+  if (acceptsGzip(acceptEncoding) && body.length >= GZIP_MIN_BYTES) {
+    headers["content-encoding"] = "gzip";
+    return { body: gzipSync(body), headers };
+  }
+  return { body, headers };
+}
+
+function staticType(pathname: string): string {
+  if (pathname.endsWith(".js")) return "text/javascript";
+  if (pathname.endsWith(".css")) return "text/css";
+  return "text/html; charset=utf-8";
+}
+
+const GZIP_MIN_BYTES = 200;
+const ETAG_HEX_CHARS = 16;
+
+function acceptsGzip(header: string | undefined): boolean {
+  if (!header) return false;
+  let gzip: number | null = null;
+  let star = 0;
+  for (const part of header.split(",")) {
+    const [token, ...params] = part.trim().split(";").map((piece) => piece.trim().toLowerCase());
+    const quality = params.find((param) => param.startsWith("q="));
+    const q = quality ? Number(quality.slice(2)) : 1;
+    if (!Number.isFinite(q) || q <= 0) {
+      if (token === "gzip") gzip = 0;
+      continue;
+    }
+    if (token === "gzip") gzip = q;
+    if (token === "*") star = q;
+  }
+  return (gzip ?? star) > 0;
+}
+
+function serveStatic(pathname: string, req: IncomingMessage, res: ServerResponse): void {
   const file = staticTarget(pathname);
   if (!file) {
     send(res, { status: 404, body: { code: "not_found", error: "Not found" } });
     return;
   }
   try {
-    const data = readFileSync(file);
-    const type = file.endsWith(".js") ? "text/javascript" : file.endsWith(".css") ? "text/css" : "text/html; charset=utf-8";
-    res.writeHead(200, { "content-type": type, "x-content-type-options": "nosniff" });
-    res.end(data);
+    const encoded = encodeStatic(readFileSync(file), req.headers["accept-encoding"], pathname);
+    res.writeHead(200, encoded.headers);
+    res.end(encoded.body);
   } catch {
     send(res, { status: 404, body: { code: "not_found", error: "Not found" } });
   }
 }
 
-function send(res: ServerResponse, result: Result): void {
-  const headers: Record<string, string | string[]> = { "content-type": "application/json; charset=utf-8" };
+function send(res: ServerResponse, result: Result, options: { etag?: boolean; req?: IncomingMessage } = {}): void {
+  const json = JSON.stringify(result.body);
+  const headers: Record<string, string | string[]> = {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+  };
   const cookies = [
     ...(result.cookies ?? []).map((cookie) => serializeCookie(cookie.name, cookie.value, cookie.maxAge)),
     ...(result.clearCookies ?? []).map((name) => serializeCookie(name, "", 0)),
   ];
+  if (options.etag && result.status === 200 && cookies.length === 0) {
+    const tag = `"${createHash("sha256").update(json).digest("hex").slice(0, ETAG_HEX_CHARS)}"`;
+    headers.etag = tag;
+    if (options.req?.headers["if-none-match"] === tag) {
+      res.writeHead(304, { etag: tag, "cache-control": "no-store" });
+      res.end();
+      return;
+    }
+  }
   if (cookies.length) headers["set-cookie"] = cookies;
   res.writeHead(result.status, headers);
-  res.end(JSON.stringify(result.body));
+  res.end(json);
 }
 
 function serializeCookie(name: string, value: string, maxAge?: number): string {

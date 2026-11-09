@@ -5,6 +5,7 @@ import type { Catalog, CatalogAsset, Palette } from "../domain/catalogModel.js";
 import { acceptedPalette, paintSvg } from "../domain/catalogModel.js";
 import { FRAME_SOURCES } from "../scene/frames.js";
 import { FOCUS_FRACTION, TILE_H, TILE_W, buildingHit, cellToScreen, footprintQuad } from "../scene/iso.js";
+import { SCENE_MAX_RESOLUTION } from "../scene/limits.js";
 import { partPose } from "../scene/pose.js";
 import { shouldTick } from "../scene/tickerPolicy.js";
 
@@ -73,6 +74,7 @@ export function Scene(props: {
     let stopped = false;
     let revoke = () => {};
     let observer: ResizeObserver | null = null;
+    let onVisibility: (() => void) | null = null;
     const boot = async () => {
       const ground = catalog.palettes.find((palette) => palette.id === catalog.ground.paletteId);
       if (!ground) throw new Error("missing atlas frame");
@@ -89,7 +91,7 @@ export function Scene(props: {
         resizeTo: el,
         antialias: true,
         autoDensity: true,
-        resolution: Math.min(2, window.devicePixelRatio || 1),
+        resolution: Math.min(SCENE_MAX_RESOLUTION, window.devicePixelRatio || 1),
       });
       if (stopped) {
         created.destroy();
@@ -284,9 +286,16 @@ export function Scene(props: {
       }
 
       const poseAll = (reduced: boolean) => {
-        const step = reduced ? 0 : Math.floor(created.ticker.lastTime / catalog.motionStepMs);
         for (const part of moving) {
-          const pose = partPose(part.motion, step, part.steps, part.phase, part.amplitude, reduced);
+          const pose = partPose(
+            part.motion,
+            reduced ? 0 : created.ticker.lastTime,
+            catalog.motionStepMs,
+            part.steps,
+            part.phase,
+            part.amplitude,
+            reduced,
+          );
           part.sprite.position.set(part.baseX + pose.x, part.baseY + pose.y);
           part.sprite.rotation = pose.rotation;
         }
@@ -337,7 +346,7 @@ export function Scene(props: {
       await rebuild();
       frameCamera();
       poseAll(state.current.reducedMotion || state.current.deterministic);
-      const onVisibility = () => {
+      onVisibility = () => {
         const current = state.current;
         if (document.visibilityState === "visible" && shouldTick({
           hidden: false,
@@ -348,13 +357,18 @@ export function Scene(props: {
           poseAll(true);
           created.stop();
         }
-        window.dispatchEvent(new Event("shared-world-visible"));
       };
-      document.addEventListener("visibilitychange", onVisibility);
-      window.addEventListener("pageshow", onVisibility);
-      window.addEventListener("online", onVisibility);
-      window.addEventListener("focus", onVisibility);
-      if (state.current.deterministic || !shouldTick({ hidden: false, paused: state.current.paused, reducedMotion: state.current.reducedMotion })) {
+      if (!stopped) {
+        document.addEventListener("visibilitychange", onVisibility);
+        window.addEventListener("pageshow", onVisibility);
+        window.addEventListener("online", onVisibility);
+        window.addEventListener("focus", onVisibility);
+      }
+      if (state.current.deterministic || !shouldTick({
+        hidden: document.visibilityState === "hidden",
+        paused: state.current.paused,
+        reducedMotion: state.current.reducedMotion,
+      })) {
         created.stop();
       }
       if (document.documentElement.dataset.localTest === "true") {
@@ -386,6 +400,12 @@ export function Scene(props: {
     });
     return () => {
       stopped = true;
+      if (onVisibility) {
+        document.removeEventListener("visibilitychange", onVisibility);
+        window.removeEventListener("pageshow", onVisibility);
+        window.removeEventListener("online", onVisibility);
+        window.removeEventListener("focus", onVisibility);
+      }
       appRef.current = null;
       applyRest.current = null;
       frameRef.current = null;

@@ -1,7 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactElement, type ReactNode } from "react";
 import copy from "../../copy/en.json" with { type: "json" };
 import { stageNotice } from "./notices.js";
-import { Scene, type SceneObject } from "./scene.js";
+import { beginPoll, createPollBurst, isLatestPoll, POLL_BURST_MS } from "./poll.js";
+import type { SceneObject } from "./scene.js";
+
+class IllustrationBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError(): { failed: boolean } {
+    return { failed: true };
+  }
+  render(): ReactNode {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+const Scene = lazy(() => import("./scene.js").then((mod) => ({ default: mod.Scene })));
 
 type PublicConfig = {
   runMode: string;
@@ -70,21 +83,33 @@ export function App(): ReactElement {
   const [inviteNote, setInviteNote] = useState<string | null>(null);
   const [recoverCode, setRecoverCode] = useState("");
   const idempotency = useRef(crypto.randomUUID());
+  const worldTag = useRef<string | null>(null);
+  const pollGeneration = useRef({ n: 0 });
   const params = new URLSearchParams(window.location.search);
   const deterministic = config?.runMode === "local-test" && params.get("scene") === "deterministic";
   const forceDom = params.get("webgl") === "0";
 
   const load = useCallback(async () => {
+    const id = beginPoll(pollGeneration.current);
     try {
-      const next = await api("/api/world");
-      if (next.status !== 200) {
+      const headers: Record<string, string> = {};
+      if (worldTag.current) headers["if-none-match"] = worldTag.current;
+      const response = await fetch("/api/world", { headers, credentials: "include" });
+      if (!isLatestPoll(id, pollGeneration.current)) return;
+      if (response.status === 304) {
+        setError("");
+        return;
+      }
+      if (!response.ok) {
         setError("The world could not be loaded.");
         return;
       }
-      setWorld(next.body as unknown as WorldResponse);
+      worldTag.current = response.headers.get("etag");
+      setWorld((await response.json()) as WorldResponse);
       setError("");
     } catch {
-      setError("You appear to be offline. Nothing was published.");
+      if (!isLatestPoll(id, pollGeneration.current)) return;
+      setError(copy.offline);
     }
   }, []);
 
@@ -111,21 +136,20 @@ export function App(): ReactElement {
 
   useEffect(() => {
     if (!config) return;
-    const poll = () => void load();
+    const burst = createPollBurst(POLL_BURST_MS, () => void load());
+    const poll = () => burst.push(performance.now());
     const timer = window.setInterval(poll, config.pollIntervalMs);
     const onShow = () => poll();
     document.addEventListener("visibilitychange", onShow);
     window.addEventListener("pageshow", onShow);
     window.addEventListener("online", onShow);
     window.addEventListener("focus", onShow);
-    window.addEventListener("shared-world-visible", onShow);
     return () => {
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onShow);
       window.removeEventListener("pageshow", onShow);
       window.removeEventListener("online", onShow);
       window.removeEventListener("focus", onShow);
-      window.removeEventListener("shared-world-visible", onShow);
     };
   }, [config, load]);
 
@@ -273,21 +297,25 @@ export function App(): ReactElement {
             <button type="button" className="secondary" onClick={() => setPan((p) => ({ ...p, y: p.y + 24 }))}>Pan down</button>
           </div>
           {forceDom || sceneUnavailable ? (
-            <p role="status">Illustration unavailable. The list still works.</p>
+            <p role="status">{copy.illustrationUnavailable}</p>
           ) : (
-            <Scene
-              key={sceneKey}
-              objects={world?.objects ?? []}
-              preview={preview}
-              selectedId={selectedId}
-              homeId={world?.homeId ?? null}
-              zoom={zoom}
-              pan={pan}
-              paused={paused}
-              reducedMotion={reduced}
-              deterministic={Boolean(deterministic)}
-              onSelect={setSelectedId}
-            />
+            <IllustrationBoundary fallback={<p role="status">{copy.illustrationUnavailable}</p>}>
+              <Suspense fallback={<div className="stage" role="status">{copy.illustrationLoading}</div>}>
+                <Scene
+                  key={sceneKey}
+                  objects={world?.objects ?? []}
+                  preview={preview}
+                  selectedId={selectedId}
+                  homeId={world?.homeId ?? null}
+                  zoom={zoom}
+                  pan={pan}
+                  paused={paused}
+                  reducedMotion={reduced}
+                  deterministic={Boolean(deterministic)}
+                  onSelect={setSelectedId}
+                />
+              </Suspense>
+            </IllustrationBoundary>
           )}
           {error ? <p className="error" role="alert">{error} <button type="button" onClick={() => void load()}>Retry</button></p> : null}
         </section>

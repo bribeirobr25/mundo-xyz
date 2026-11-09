@@ -3,7 +3,8 @@ import { loadConfig } from "../src/domain/config.js";
 import { normalizeInput } from "../src/domain/input.js";
 import { place } from "../src/domain/placement.js";
 import { fingerprint } from "../src/domain/fingerprint.js";
-import { staticTarget } from "../src/server/http.js";
+import { encodeStatic, staticTarget } from "../src/server/http.js";
+import { gunzipSync } from "node:zlib";
 import { stageNotice } from "../src/web/notices.js";
 import { loadCatalog } from "../src/domain/action.js";
 import { boot, preparePool, type Client } from "./harness.js";
@@ -335,6 +336,54 @@ test("t.share.opaque and t.gate.six-shape fingerprint", async () => {
   });
   expect(fp1).not.toBe(fp2);
   await close();
+});
+
+test("t.perf.world-etag and adjacent cache responses", async () => {
+  const first = await fetch(`${client.url}/api/world`);
+  const tag = first.headers.get("etag");
+  const body = await first.text();
+  expect(first.status).toBe(200);
+  expect(first.headers.get("cache-control")).toBe("no-store");
+  expect(tag).toMatch(/^"[0-9a-f]{16}"$/);
+  const same = await fetch(`${client.url}/api/world`, { headers: { "if-none-match": tag ?? "" } });
+  expect(same.status).toBe(304);
+  expect(await same.text()).toBe("");
+  const other = await fetch(`${client.url}/api/world`, { headers: { "if-none-match": '"0000000000000000"' } });
+  expect(other.status).toBe(200);
+  expect(await other.text()).toBe(body);
+  const config = await fetch(`${client.url}/api/public-config`);
+  expect(config.headers.get("cache-control")).toBe("no-store");
+  expect(config.headers.get("etag")).toBeNull();
+  await close();
+});
+
+test("t.perf.static-encoding and adjacent", () => {
+  const source = Buffer.from("shared-world-static-body-".repeat(20));
+  const gzipped = encodeStatic(source, "gzip, deflate", "/assets/app.js");
+  expect(gzipped.headers["cache-control"]).toBe("public, max-age=31536000, immutable");
+  expect(gzipped.headers["content-encoding"]).toBe("gzip");
+  expect(gzipped.headers.vary).toBe("Accept-Encoding");
+  expect(gunzipSync(gzipped.body).equals(source)).toBe(true);
+  const identity = encodeStatic(source, undefined, "/assets/app.js");
+  expect(identity.headers["content-encoding"]).toBeUndefined();
+  expect(identity.body.equals(source)).toBe(true);
+  const html = encodeStatic(source, "gzip", "/");
+  expect(html.headers["cache-control"]).toBe("no-cache");
+  expect(html.headers["content-encoding"]).toBe("gzip");
+  const tiny = encodeStatic(Buffer.from("short"), "gzip", "/assets/app.js");
+  expect(tiny.headers["content-encoding"]).toBeUndefined();
+  expect(tiny.body.equals(Buffer.from("short"))).toBe(true);
+  const refused = encodeStatic(source, "gzip;q=0, identity", "/assets/app.js");
+  expect(refused.headers["content-encoding"]).toBeUndefined();
+  expect(refused.body.equals(source)).toBe(true);
+  const refusedZero = encodeStatic(source, "gzip;q=0.0", "/assets/app.js");
+  expect(refusedZero.headers["content-encoding"]).toBeUndefined();
+  const identityOnly = encodeStatic(source, "identity", "/assets/app.js");
+  expect(identityOnly.headers["content-encoding"]).toBeUndefined();
+  const partial = encodeStatic(source, "gzip;q=0.5, deflate", "/assets/app.js");
+  expect(partial.headers["content-encoding"]).toBe("gzip");
+  const none = encodeStatic(source, "gzip;q=0, *;q=0", "/assets/app.js");
+  expect(none.headers["content-encoding"]).toBeUndefined();
 });
 
 test("t.static.escape and adjacent paths", () => {

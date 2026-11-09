@@ -63,6 +63,7 @@
   "loadFailed": "The world could not be loaded.",
   "retry": "Retry",
   "illustrationUnavailable": "Illustration unavailable. The list still works.",
+  "illustrationLoading": "The illustration is loading. The list already works.",
   "pause": "Pause motion",
   "resume": "Resume motion",
   "reducedMotion": "Reduced motion",

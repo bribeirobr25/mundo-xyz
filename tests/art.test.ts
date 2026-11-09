@@ -77,13 +77,25 @@ test("t.art.hidden-asset and t.art.motion and t.art.hit", () => {
   expect(shownAsset(false, false, "bus_stop", "stop-day").paletteId).toBe("stop-day");
   expect(shownAsset(false, true, "bus_stop", "stop-day").assetId).toBe("bus_stop");
 
-  expect(partPose("hop", 0, 4, 0, 8, true)).toEqual({ x: 0, y: 0, rotation: 0 });
-  expect(partPose("hop", 0, 4, 0, 8, false).y).toBe(0);
-  expect(partPose("hop", 1, 4, 0, 8, false).y).toBe(-8);
-  expect(partPose("hop", 0, 4, 1, 8, false).y).toBe(-8);
-  expect(partPose("sway", 0, 2, 0, 4, false).y).toBe(0);
-  expect(Math.abs(partPose("sway", 0, 2, 0, 4, false).rotation)).toBeCloseTo((4 * Math.PI) / 180);
-  expect(partPose("none", 3, 4, 1, 8, false)).toEqual({ x: 0, y: 0, rotation: 0 });
+  const step = 480;
+  expect(partPose("hop", 0, step, 4, 0, 8, true)).toEqual({ x: 0, y: 0, rotation: 0 });
+  expect(partPose("hop", 0, step, 4, 0, 8, false).y).toBe(0);
+  expect(partPose("hop", step * 2, step, 4, 0, 8, false).y).toBeCloseTo(-8, 5);
+  const rising = partPose("hop", step, step, 4, 0, 8, false);
+  const earlier = partPose("hop", step / 2, step, 4, 0, 8, false);
+  expect(rising.y).toBeLessThan(-1);
+  expect(rising.y).toBeGreaterThan(-8);
+  expect(earlier.y).toBeLessThan(0);
+  expect(earlier.y).toBeGreaterThan(rising.y);
+  expect(partPose("hop", 0, step, 4, 1, 8, false).y).toBeCloseTo(rising.y, 5);
+  expect(partPose("sway", 0, step, 4, 0, 4, false).rotation).toBe(0);
+  const swayPeak = partPose("sway", step, step, 4, 0, 4, false);
+  const swayBetween = partPose("sway", step / 2, step, 4, 0, 4, false);
+  expect(swayPeak.rotation).toBeCloseTo((4 * Math.PI) / 180, 5);
+  expect(swayBetween.rotation).toBeGreaterThan(0);
+  expect(swayBetween.rotation).toBeLessThan(swayPeak.rotation);
+  expect(partPose("none", step, step, 4, 1, 8, false)).toEqual({ x: 0, y: 0, rotation: 0 });
+  expect(partPose("hop", step, step, 1, 0, 8, false)).toEqual({ x: 0, y: 0, rotation: 0 });
 
   const quad = footprintQuad(4, 4, 2, 2);
   const center = cellToScreen(5, 5);

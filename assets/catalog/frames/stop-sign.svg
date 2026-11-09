@@ -1,9 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="280" height="360" viewBox="0 0 140 180">
-  <polygon points="64,78 76,78 76,180 64,180" fill="{{post}}"/>
-  <polygon points="14,8 126,8 126,86 14,86" fill="{{sign}}"/>
-  <polygon points="26,20 114,20 114,70 26,70" fill="{{mark}}"/>
-  <polygon points="34,28 62,28 62,44 34,44" fill="{{sign}}"/>
-  <polygon points="70,28 106,28 106,44 70,44" fill="{{sign}}"/>
-  <circle cx="46" cy="62" r="7" fill="{{wheel}}"/>
-  <circle cx="94" cy="62" r="7" fill="{{wheel}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="280" viewBox="0 0 80 140">
+  <polygon points="36,52 44,52 44,140 36,140" fill="{{post}}"/>
+  <polygon points="6,6 74,6 74,52 6,52" fill="{{sign}}"/>
+  <polygon points="12,12 68,12 68,36 12,36" fill="{{mark}}"/>
+  <polygon points="16,16 30,16 30,26 16,26" fill="{{sign}}"/>
+  <polygon points="34,16 50,16 50,26 34,26" fill="{{sign}}"/>
+  <polygon points="54,16 64,16 64,26 54,26" fill="{{sign}}"/>
+  <circle cx="24" cy="42" r="4" fill="{{wheel}}"/>
+  <circle cx="56" cy="42" r="4" fill="{{wheel}}"/>
 </svg>

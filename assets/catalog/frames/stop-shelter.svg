@@ -1,12 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="760" viewBox="0 0 300 380">
-  <ellipse cx="150" cy="318" rx="92" ry="16" fill="{{post}}" fill-opacity="0.2"/>
-  <polygon points="150,248 258,302 150,356 42,302" fill="{{pad}}"/>
-  <polygon points="78,168 150,204 150,292 78,256" fill="{{panel}}"/>
-  <polygon points="222,168 150,204 150,292 222,256" fill="{{glass}}"/>
-  <polygon points="150,96 268,156 150,216 32,156" fill="{{roof}}"/>
-  <polygon points="150,96 268,156 150,216" fill="{{roofShade}}"/>
-  <polygon points="86,196 100,203 100,312 86,305" fill="{{post}}"/>
-  <polygon points="200,196 214,203 214,312 200,305" fill="{{post}}"/>
-  <polygon points="108,246 196,290 196,306 108,262" fill="{{bench}}"/>
-  <polygon points="108,262 196,306 184,316 96,272" fill="{{post}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="880" viewBox="0 0 360 440">
+  <ellipse cx="180" cy="390" rx="120" ry="18" fill="{{post}}" fill-opacity="0.16"/>
+  <polygon points="180,330 300,390 180,430 60,390" fill="{{pad}}"/>
+  <polygon points="100,230 180,270 180,360 100,320" fill="{{panel}}"/>
+  <polygon points="260,230 180,270 180,360 260,320" fill="{{glass}}"/>
+  <polygon points="118,250 150,266 150,300 118,284" fill="{{pad}}"/>
+  <polygon points="210,236 242,252 242,286 210,270" fill="{{pad}}"/>
+  <polygon points="180,110 290,165 180,220 70,165" fill="{{roof}}"/>
+  <polygon points="180,110 290,165 180,220" fill="{{roofShade}}"/>
+  <polygon points="92,176 108,168 108,372 92,380" fill="{{post}}"/>
+  <polygon points="248,176 264,168 264,340 248,348" fill="{{post}}"/>
+  <polygon points="118,300 236,360 236,376 118,316" fill="{{bench}}"/>
+  <polygon points="118,316 236,376 222,390 104,330" fill="{{post}}"/>
 </svg>

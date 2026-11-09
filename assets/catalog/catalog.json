@@ -75,18 +75,27 @@
           "motion": "none",
           "fit": 1.08,
           "anchor": [0.5, 0.75],
-          "tokens": ["wall", "wallShade", "roof", "roofShade", "awning", "stripe", "trim", "beak", "door", "glass"]
+          "tokens": ["wall", "wallShade", "roof", "roofShade", "trim", "beak", "door", "glass"]
+        },
+        {
+          "id": "awning",
+          "file": "frames/awning.svg",
+          "motion": "none",
+          "fit": 1,
+          "at": [0.5, 0.75],
+          "anchor": [0.5, 0.75],
+          "tokens": ["awning", "stripe"]
         },
         {
           "id": "bird-blue",
           "file": "frames/bird.svg",
           "paletteId": "bird-blue",
           "motion": "hop",
-          "amplitude": 8,
+          "amplitude": 10,
           "steps": 4,
           "phase": 0,
-          "fit": 0.18,
-          "at": [0.62, 0.6],
+          "fit": 0.14,
+          "at": [0.7, 0.9],
           "anchor": [0.5, 1],
           "tokens": ["bird", "wing", "beak", "eye"]
         },
@@ -95,11 +104,11 @@
           "file": "frames/bird.svg",
           "paletteId": "bird-red",
           "motion": "hop",
-          "amplitude": 8,
+          "amplitude": 10,
           "steps": 4,
           "phase": 1,
-          "fit": 0.16,
-          "at": [0.68, 0.63],
+          "fit": 0.13,
+          "at": [0.72, 0.84],
           "anchor": [0.5, 1],
           "tokens": ["bird", "wing", "beak", "eye"]
         },
@@ -108,18 +117,18 @@
           "file": "frames/bird.svg",
           "paletteId": "bird-gold",
           "motion": "hop",
-          "amplitude": 6,
+          "amplitude": 8,
           "steps": 4,
           "phase": 2,
-          "fit": 0.15,
-          "at": [0.73, 0.58],
+          "fit": 0.12,
+          "at": [0.82, 0.88],
           "anchor": [0.5, 1],
           "tokens": ["bird", "wing", "beak", "eye"]
         }
       ],
       "provenance": {
-        "method": "authored SVG layers from the isometric grammar, rasterized as separate textures",
-        "date": "2026-11-08",
+        "method": "authored SVG layers from the isometric grammar, rasterized once to WebGL textures",
+        "date": "2026-11-09",
         "thirdPartyReference": false
       }
     },
@@ -137,7 +146,7 @@
           "id": "shelter",
           "file": "frames/stop-shelter.svg",
           "motion": "none",
-          "fit": 0.9,
+          "fit": 0.95,
           "anchor": [0.5, 0.82],
           "tokens": ["pad", "panel", "glass", "roof", "roofShade", "post", "bench"]
         },
@@ -145,18 +154,18 @@
           "id": "sign",
           "file": "frames/stop-sign.svg",
           "motion": "sway",
-          "amplitude": 4,
-          "steps": 2,
+          "amplitude": 3,
+          "steps": 4,
           "phase": 0,
-          "fit": 0.3,
-          "at": [0.58, 0.58],
+          "fit": 0.26,
+          "at": [0.88, 0.76],
           "anchor": [0.5, 1],
           "tokens": ["post", "sign", "mark", "wheel"]
         }
       ],
       "provenance": {
-        "method": "authored SVG layers from the isometric grammar, rasterized as separate textures",
-        "date": "2026-11-08",
+        "method": "authored SVG layers from the isometric grammar, rasterized once to WebGL textures",
+        "date": "2026-11-09",
         "thirdPartyReference": false
       }
     }

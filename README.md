@@ -47,7 +47,7 @@ The invite code is printed once.
 
 ## Art, palettes, and placed instances
 
-The café and the bus stop are authored SVG layers in `assets/catalog/`. Those files stay in git. They are the reusable source for this local proof of concept. The scene paints each layer with a palette id from the catalog and draws it as its own texture. The plaza field, grass, and path use the ground palette. Prototypes in `docs/prototypes/` are style references only. They are not sliced into sprites.
+The café and the bus stop are authored SVG layers in `assets/catalog/`. Those files stay in git. They are the reusable source for this local proof of concept. The running page has a canvas and no SVG elements: each layer is painted with a palette id and rasterized once to a WebGL texture. A hop or a sway moves through the poses in between, and it rests when motion is paused, reduced, or the tab is hidden. Polling continues. Prototypes in `docs/prototypes/` are style references only. They are not sliced into sprites. The narrow layout is the base; a wide window places the list beside the scene. Delivery notes are in `docs/plan/architecture-performance.md`.
 
 A palette is a validated set of named colors. An asset definition points at one palette and at layer files. The same bird drawing is painted with three palette ids. A placed café or bus stop is a row in `placed_objects`: an id, a catalog asset id, a catalog version, and a cell. The row does not store a color, a style string, or a copy of the drawing. The server resolves the palette when it reads the world. A client-supplied color is not accepted. Interpret, another spot, and a refreshed conflict preview each return that catalog asset id and palette id. The browser does not send them.
 

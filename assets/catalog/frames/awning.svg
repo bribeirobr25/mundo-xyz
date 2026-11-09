@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1120" viewBox="0 0 640 560">
+  <polygon points="336,276 468,210 548,258 416,324" fill="{{awning}}"/>
+  <polygon points="344,292 476,226 556,274 424,340" fill="{{stripe}}"/>
+  <polygon points="352,308 484,242 564,290 432,356" fill="{{awning}}"/>
+  <polygon points="360,324 492,258 572,306 440,372" fill="{{stripe}}"/>
+</svg>
