@@ -1,11 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="280" viewBox="0 0 320 140">
-  <polygon points="18,16 304,16 292,62 8,62" fill="{{awning}}"/>
-  <polygon points="18,16 46,16 34,62 8,62" fill="{{stripe}}"/>
-  <polygon points="74,16 102,16 90,62 62,62" fill="{{stripe}}"/>
-  <polygon points="130,16 158,16 146,62 118,62" fill="{{stripe}}"/>
-  <polygon points="186,16 214,16 202,62 174,62" fill="{{stripe}}"/>
-  <polygon points="242,16 270,16 258,62 230,62" fill="{{stripe}}"/>
-  <polygon points="8,62 292,62 286,74 14,74" fill="{{stripe}}"/>
-  <polygon points="36,62 46,62 46,132 36,132" fill="{{stripe}}"/>
-  <polygon points="268,58 278,58 278,128 268,128" fill="{{stripe}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="420" viewBox="0 0 460 420">
+  <polygon points="40,30 85,52.5 53,116.5 8,94" fill="{{awning}}"/>
+  <polygon points="85,52.5 130,75 98,139 53,116.5" fill="{{stripe}}"/>
+  <polygon points="130,75 175,97.5 143,161.5 98,139" fill="{{awning}}"/>
+  <polygon points="175,97.5 220,120 188,184 143,161.5" fill="{{stripe}}"/>
+  <polygon points="220,120 265,142.5 233,206.5 188,184" fill="{{awning}}"/>
+  <polygon points="265,142.5 310,165 278,229 233,206.5" fill="{{stripe}}"/>
+  <polygon points="310,165 355,187.5 323,251.5 278,229" fill="{{awning}}"/>
+  <polygon points="355,187.5 400,210 368,274 323,251.5" fill="{{stripe}}"/>
+  <polygon points="8,94 368,274 356,298 0,118" fill="{{stripe}}"/>
+  <rect x="70" y="128" width="5" height="120" fill="{{post}}"/>
+  <rect x="250" y="218" width="5" height="120" fill="{{post}}"/>
 </svg>

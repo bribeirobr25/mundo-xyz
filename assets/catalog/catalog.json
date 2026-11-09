@@ -32,7 +32,8 @@
         "door": "#f0d7a0",
         "glass": "#d7ebf8",
         "top": "#efb00d",
-        "leg": "#e0b15a"
+        "leg": "#e0b15a",
+        "post": "#2a2622"
       }
     },
     {
@@ -257,10 +258,10 @@
           "id": "shell",
           "file": "frames/cafe-shell.svg",
           "motion": "none",
-          "fit": 1.82,
+          "fit": 1.48,
           "anchor": [
-            0.46,
-            0.86
+            0.4,
+            0.7
           ],
           "tokens": [
             "wall",
@@ -277,27 +278,28 @@
           "id": "awning",
           "file": "frames/awning.svg",
           "motion": "none",
-          "fit": 0.74,
+          "fit": 0.62,
           "at": [
-            0.5,
-            0.98
+            0.388,
+            0.68
           ],
           "anchor": [
-            0.5,
-            1
+            0.478,
+            0.286
           ],
           "tokens": [
             "awning",
-            "stripe"
+            "stripe",
+            "post"
           ]
         },
         {
           "id": "table-a",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.14,
+          "fit": 0.12,
           "at": [
-            0.3,
+            0.28,
             0.78
           ],
           "anchor": [
@@ -313,7 +315,7 @@
           "id": "table-b",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.14,
+          "fit": 0.12,
           "at": [
             0.42,
             0.8
@@ -331,7 +333,7 @@
           "id": "table-c",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.14,
+          "fit": 0.12,
           "at": [
             0.54,
             0.78
@@ -349,7 +351,7 @@
           "id": "table-d",
           "file": "frames/table.svg",
           "motion": "none",
-          "fit": 0.14,
+          "fit": 0.12,
           "at": [
             0.66,
             0.8
@@ -367,10 +369,10 @@
           "id": "sit-blue-a",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.13,
+          "fit": 0.12,
           "at": [
-            0.28,
-            0.8
+            0.24,
+            0.82
           ],
           "anchor": [
             0.5,
@@ -388,10 +390,10 @@
           "id": "sit-red-a",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.13,
+          "fit": 0.12,
           "at": [
-            0.38,
-            0.82
+            0.36,
+            0.84
           ],
           "anchor": [
             0.5,
@@ -409,10 +411,10 @@
           "id": "sit-gold",
           "file": "frames/bird-sit.svg",
           "motion": "glance",
-          "fit": 0.13,
+          "fit": 0.12,
           "at": [
             0.48,
-            0.8
+            0.82
           ],
           "anchor": [
             0.5,
@@ -433,10 +435,10 @@
           "id": "sit-blue-b",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.13,
+          "fit": 0.12,
           "at": [
             0.58,
-            0.82
+            0.84
           ],
           "anchor": [
             0.5,
@@ -454,10 +456,10 @@
           "id": "sit-red-b",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.13,
+          "fit": 0.12,
           "at": [
             0.68,
-            0.8
+            0.82
           ],
           "anchor": [
             0.5,
@@ -475,10 +477,10 @@
           "id": "sit-gold-b",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.12,
+          "fit": 0.11,
           "at": [
             0.76,
-            0.82
+            0.84
           ],
           "anchor": [
             0.5,
@@ -496,10 +498,10 @@
           "id": "sit-blue-c",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.1,
+          "fit": 0.09,
           "at": [
             0.36,
-            0.62
+            0.74
           ],
           "anchor": [
             0.5,
@@ -517,10 +519,10 @@
           "id": "sit-red-c",
           "file": "frames/bird-sit.svg",
           "motion": "none",
-          "fit": 0.1,
+          "fit": 0.09,
           "at": [
             0.58,
-            0.6
+            0.76
           ],
           "anchor": [
             0.5,
@@ -722,10 +724,10 @@
           "id": "shell",
           "file": "frames/plinth.svg",
           "motion": "none",
-          "fit": 1.35,
+          "fit": 1,
           "anchor": [
             0.5,
-            0.96
+            0.92
           ],
           "tokens": [
             "top",
@@ -734,13 +736,13 @@
           ]
         },
         {
-          "id": "cyan",
+          "id": "blue",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.32,
+          "fit": 0.3,
           "at": [
-            0.32,
-            0.82
+            0.52,
+            0.36
           ],
           "anchor": [
             0.5,
@@ -751,7 +753,7 @@
             "side",
             "edge"
           ],
-          "paletteId": "frame-cyan"
+          "paletteId": "frame-blue"
         },
         {
           "id": "red",
@@ -760,7 +762,7 @@
           "fit": 0.32,
           "at": [
             0.5,
-            0.74
+            0.6
           ],
           "anchor": [
             0.5,
@@ -774,13 +776,13 @@
           "paletteId": "frame-red"
         },
         {
-          "id": "blue",
+          "id": "cyan",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.32,
+          "fit": 0.34,
           "at": [
-            0.68,
-            0.66
+            0.48,
+            0.86
           ],
           "anchor": [
             0.5,
@@ -791,7 +793,7 @@
             "side",
             "edge"
           ],
-          "paletteId": "frame-blue"
+          "paletteId": "frame-cyan"
         }
       ],
       "provenance": {

@@ -1,10 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="320" viewBox="0 0 220 160">
-  <ellipse cx="110" cy="142" rx="78" ry="10" fill="{{interior}}" fill-opacity="0.35"/>
-  <polygon points="28,104 110,140 192,104 110,72" fill="{{interior}}"/>
-  <polygon points="30,86 40,90 40,122 30,118" fill="{{post}}"/>
-  <polygon points="180,86 190,90 190,122 180,118" fill="{{post}}"/>
-  <polygon points="102,112 112,116 112,146 102,142" fill="{{post}}"/>
-  <polygon points="18,84 110,28 110,108 18,100" fill="{{shade}}"/>
-  <polygon points="202,84 110,28 110,108 202,100" fill="{{roof}}"/>
-  <polygon points="64,92 110,72 156,92 110,112" fill="{{interior}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 240 180">
+  <polygon points="36,120 120,158 204,120 120,88" fill="{{shade}}"/>
+  <polygon points="24,100 120,26 120,112 32,128" fill="{{shade}}"/>
+  <polygon points="216,100 120,26 120,112 208,128" fill="{{roof}}"/>
+  <rect x="30" y="100" width="8" height="58" fill="{{post}}"/>
+  <rect x="202" y="100" width="8" height="58" fill="{{post}}"/>
+  <polygon points="48,112 120,44 192,112 120,148" fill="{{interior}}"/>
 </svg>

@@ -363,7 +363,7 @@ export function Scene(props: {
             const toNext = { sx: next.sx - curr.sx, sy: next.sy - curr.sy };
             const prevLen = Math.hypot(toPrev.sx, toPrev.sy) || 1;
             const nextLen = Math.hypot(toNext.sx, toNext.sy) || 1;
-            const cut = Math.min(radius, prevLen * 0.42, nextLen * 0.42);
+            const cut = Math.min(radius, prevLen * 0.18, nextLen * 0.18);
             return {
               a: { sx: curr.sx + (toPrev.sx / prevLen) * cut, sy: curr.sy + (toPrev.sy / prevLen) * cut },
               c: curr,
@@ -386,20 +386,28 @@ export function Scene(props: {
 
       function drawGround(): void {
         groundLayer.clear();
-        paintFoot(-6, WATER.y, WATER.x + WATER.w + 6, WATER.h, "water");
-        for (const plot of GRASS_PLOTS) paintRounded(plot.x, plot.y, plot.w, plot.h, 46, "grass");
-        for (const plot of [
-          { x: -5, y: 1, w: 5, h: 4 },
-          { x: 1, y: -4, w: 5, h: 4 },
-          { x: 7, y: -4, w: 4, h: 4 },
-          { x: 11, y: -4, w: 4, h: 4 },
-          { x: -5, y: 10, w: 5, h: 5 },
-          { x: 16, y: 6, w: 4, h: 4 },
-          { x: 16, y: 11, w: 4, h: 4 },
-          { x: 1, y: 16, w: 6, h: 4 },
-          { x: 9, y: 16, w: 6, h: 4 },
-        ]) paintRounded(plot.x, plot.y, plot.w, plot.h, 46, "grass");
-        paintRounded(PLAZA.x, PLAZA.y, PLAZA.w, PLAZA.h, 28, "plaza");
+        paintFoot(-28, WATER.y, 72, WATER.h, "water");
+        const overlaps = (a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) =>
+          a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+        const bands = [
+          { y: -14, h: 4 },
+          { y: -8, h: 4 },
+          { y: 0, h: 4 },
+          { y: 11, h: 6 },
+          { y: 19, h: 4 },
+          { y: 25, h: 4 },
+          { y: 31, h: 4 },
+        ];
+        const canal = { x: -28, y: WATER.y, w: 72, h: WATER.h };
+        for (let x = -20; x <= 36; x += 7) {
+          for (const band of bands) {
+            const plot = { x: x + 1, y: band.y, w: 5, h: band.h };
+            if (overlaps(plot, canal) || GRASS_PLOTS.some((lawn) => overlaps(plot, lawn))) continue;
+            paintRounded(plot.x, plot.y, plot.w, plot.h, 18, "grass");
+          }
+        }
+        for (const plot of GRASS_PLOTS) paintRounded(plot.x, plot.y, plot.w, plot.h, 18, "grass");
+        paintRounded(PLAZA.x, PLAZA.y, PLAZA.w, PLAZA.h, 12, "plaza");
         for (const bridge of BRIDGES) paintFoot(bridge.x, bridge.y, bridge.w, bridge.h, "bridge");
         groundLayer.eventMode = "none";
       }
@@ -436,27 +444,19 @@ export function Scene(props: {
         const inset = viewW >= 800 ? current.coverRight : 0;
         const availW = Math.max(1, viewW - inset);
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
-        let fitted: number;
-        let center: { sx: number; sy: number };
-        if (viewW < 800 && home) {
-          fitted = Math.min(availW, viewH) / (8 * TILE_W);
-          center = cellToScreen(home.x + home.w / 2, home.y + home.h / 2);
-        } else if (cafe) {
-          const spanX = maxSx - minSx;
-          const spanY = maxSy - minSy;
-          fitted = Math.max(availW / spanX, viewH / spanY) * 1.12;
-          const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
-          const cafeCenter = cellToScreen(cafe.x + cafe.w / 2, cafe.y + cafe.h / 2);
-          center = {
-            sx: cafeCenter.sx - (0.58 - 0.5) * availW / zoom,
-            sy: cafeCenter.sy - (0.62 - 0.5) * viewH / zoom,
-          };
-        } else {
-          const pad = 24;
-          fitted = Math.min((availW - pad) / (maxSx - minSx), (viewH - pad) / (maxSy - minSy)) * 1.16;
-          center = { sx: (minSx + maxSx) / 2 + 56, sy: (minSy + maxSy) / 2 + 48 };
-        }
+        const focus = cafe ?? home;
+        const fitted = viewW < 800
+          ? Math.max(1.15, Math.min(1.45, viewH / (7 * TILE_H)))
+          : 0.72;
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
+        const focusCenter = focus
+          ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
+          : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
+        const focusX = viewW < 800 ? 0.5 : 0.42;
+        const center = {
+          sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
+          sy: focusCenter.sy - (0.58 - 0.5) * viewH / zoom,
+        };
         camera.scale.set(zoom);
         camera.position.set(availW / 2 - center.sx * zoom + current.pan.x, viewH / 2 - center.sy * zoom + current.pan.y);
       };
