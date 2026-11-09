@@ -258,10 +258,10 @@
           "id": "shell",
           "file": "frames/cafe-shell.svg",
           "motion": "none",
-          "fit": 0.9,
+          "fit": 0.96,
           "anchor": [
             0.4,
-            0.68
+            0.42
           ],
           "tokens": [
             "wall",
@@ -375,7 +375,7 @@
           "fit": 0.1,
           "at": [
             0.18,
-            0.96
+            0.93
           ],
           "anchor": [
             0.5,
@@ -395,8 +395,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.3,
-            0.96
+            0.28,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -416,8 +416,8 @@
           "motion": "glance",
           "fit": 0.1,
           "at": [
-            0.42,
-            0.96
+            0.38,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -440,8 +440,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.54,
-            0.96
+            0.48,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -461,8 +461,8 @@
           "motion": "none",
           "fit": 0.1,
           "at": [
-            0.66,
-            0.96
+            0.58,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -482,8 +482,8 @@
           "motion": "none",
           "fit": 0.09,
           "at": [
-            0.78,
-            0.96
+            0.68,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -503,8 +503,8 @@
           "motion": "none",
           "fit": 0.08,
           "at": [
-            0.4,
-            0.6
+            0.78,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -524,8 +524,8 @@
           "motion": "none",
           "fit": 0.08,
           "at": [
-            0.62,
-            0.64
+            0.88,
+            0.93
           ],
           "anchor": [
             0.5,
@@ -742,7 +742,7 @@
           "id": "blue",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.62,
+          "fit": 0.5,
           "at": [
             0.74,
             0.26
@@ -762,7 +762,7 @@
           "id": "red",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.66,
+          "fit": 0.52,
           "at": [
             0.5,
             0.58
@@ -782,7 +782,7 @@
           "id": "cyan",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.7,
+          "fit": 0.54,
           "at": [
             0.28,
             0.92
@@ -1024,10 +1024,10 @@
           "id": "shell",
           "file": "frames/bus.svg",
           "motion": "none",
-          "fit": 0.65,
+          "fit": 0.6,
           "anchor": [
             0.5,
-            0.82
+            0.86
           ],
           "tokens": [
             "body",

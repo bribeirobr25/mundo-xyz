@@ -3,7 +3,7 @@ import { Application, Container, Graphics, Polygon, Rectangle, Sprite, Texture }
 import catalogJson from "../../assets/catalog/catalog.json" with { type: "json" };
 import type { Catalog, CatalogAsset, Palette } from "../domain/catalogModel.js";
 import { acceptedPalette, paintSvg } from "../domain/catalogModel.js";
-import { BRIDGES, CANAL, CANAL_BANK, CORNER_CUTS, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZAS, type CornerName, type GroundKind, type Plot } from "../domain/district.js";
+import { CANAL, CANAL_BANK, CORNER_CUTS, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZAS, type CornerName, type GroundKind, type Plot } from "../domain/district.js";
 import { FRAME_SOURCES } from "../scene/frames.js";
 import { TILE_H, TILE_W, buildingHit, cellToScreen, footprintQuad } from "../scene/iso.js";
 import { SCENE_MAX_RESOLUTION } from "../scene/limits.js";
@@ -422,14 +422,32 @@ export function Scene(props: {
           if (!overlapsView(plot.x, plot.y, plot.w, plot.h, view)) continue;
           paintLawn(plot);
         }
-        paintPoly(CANAL_BANK.map(([x, y]) => cellToScreen(x, y)), "road");
-        paintPoly(CANAL.map(([x, y]) => cellToScreen(x, y)), "water");
         for (const plot of PLAZAS) {
           if (overlapsView(plot.x, plot.y, plot.w, plot.h, view)) paintFoot(plot.x, plot.y, plot.w, plot.h, "plaza");
         }
-        for (const bridge of BRIDGES) {
-          if (overlapsView(bridge.x, bridge.y, bridge.w, bridge.h, view)) paintFoot(bridge.x, bridge.y, bridge.w, bridge.h, "bridge");
-        }
+        // Quads, not one ribbon: a single concave fill left lawns showing through the water.
+        const ribbon = (poly: Array<[number, number]>, kind: GroundKind) => {
+          const side = poly.length / 2;
+          const left = poly.slice(0, side).map(([x, y]) => cellToScreen(x, y));
+          const right = poly.slice(side).reverse().map(([x, y]) => cellToScreen(x, y));
+          const along = (from: { sx: number; sy: number }, to: { sx: number; sy: number }, t: number) => ({
+            sx: from.sx + (to.sx - from.sx) * t,
+            sy: from.sy + (to.sy - from.sy) * t,
+          });
+          for (let i = 0; i < side - 1; i += 1) {
+            const a = left[i];
+            const b = left[i + 1];
+            const c = right[i + 1];
+            const d = right[i];
+            if (!a || !b || !c || !d) continue;
+            // Overlap the joint so the shared edge cannot leave a cream seam.
+            const t0 = i === 0 ? 0 : -0.03;
+            const t1 = i === side - 2 ? 1 : 1.03;
+            paintPoly([along(a, b, t0), along(a, b, t1), along(d, c, t1), along(d, c, t0)], kind);
+          }
+        };
+        ribbon(CANAL_BANK, "road");
+        ribbon(CANAL, "water");
         groundLayer.eventMode = "none";
         groundLayer.cacheAsTexture({ resolution: 1, antialias: false });
       }
@@ -468,13 +486,13 @@ export function Scene(props: {
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         const focus = cafe ?? home;
         const wide = viewW >= 800;
-        const fitted = wide ? 0.96 : 0.44;
+        const fitted = wide ? 0.96 : 0.54;
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         const focusCenter = focus
           ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
           : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
-        const focusX = wide ? 0.7 : 0.64;
-        const focusY = wide ? 0.58 : 0.5;
+        const focusX = wide ? 0.7 : 0.68;
+        const focusY = wide ? 0.58 : 0.49;
         const center = {
           sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
           sy: focusCenter.sy - (focusY - 0.5) * viewH / zoom,
@@ -585,6 +603,135 @@ export function Scene(props: {
             const width = created.canvas.clientWidth || 1;
             const height = created.canvas.clientHeight || 1;
             return point.x > width * 0.25 && point.x < width * 0.75 && point.y > height * 0.2 && point.y < height * 0.8;
+          },
+          waterReport: () => {
+            const wasVisible = world.visible;
+            world.visible = false;
+            const viewW = created.canvas.clientWidth || 1;
+            const viewH = created.canvas.clientHeight || 1;
+            // Frame the seed café cell, not wherever a published row kept the café.
+            // The check is about the wide still: water under the bridges and out both edges.
+            const savedX = camera.position.x;
+            const savedY = camera.position.y;
+            const savedScale = camera.scale.x;
+            const wideZoom = 0.96;
+            const seedCafe = cellToScreen(8 + 1.5, 2 + 1.5);
+            const framed = {
+              sx: seedCafe.sx - (0.7 - 0.5) * viewW / wideZoom,
+              sy: seedCafe.sy - (0.58 - 0.5) * viewH / wideZoom,
+            };
+            camera.scale.set(wideZoom);
+            camera.position.set(viewW / 2 - framed.sx * wideZoom, viewH / 2 - framed.sy * wideZoom);
+            const shot = created.renderer.extract.pixels({
+              target: created.stage,
+              frame: new Rectangle(0, 0, viewW, viewH),
+              resolution: 1,
+            });
+            world.visible = wasVisible;
+            const { pixels, width, height } = shot;
+            const scaleX = width / viewW;
+            const scaleY = height / viewH;
+            const isWater = (r: number, g: number, b: number) => r < 120 && g > 125 && b > 140 && g > r + 35 && b > r + 25;
+            const sample = (sx: number, sy: number) => {
+              const x = Math.round(sx * scaleX);
+              const y = Math.round(sy * scaleY);
+              if (x < 0 || y < 0 || x >= width || y >= height) return { x, y, r: 0, g: 0, b: 0, water: false };
+              const index = (y * width + x) * 4;
+              const r = pixels[index] ?? 0;
+              const g = pixels[index + 1] ?? 0;
+              const b = pixels[index + 2] ?? 0;
+              return { x, y, r, g, b, water: isWater(r, g, b) };
+            };
+            const screenOf = (gx: number, gy: number) => {
+              const point = cellToScreen(gx, gy);
+              const global = camera.toGlobal({ x: point.sx, y: point.sy });
+              return { x: global.x, y: global.y };
+            };
+            const onScreen = (point: { x: number; y: number }) =>
+              point.x >= 1 && point.y >= 1 && point.x <= viewW - 2 && point.y <= viewH - 2;
+            const current = state.current;
+            const named: { name: string; x: number; y: number }[] = [];
+            for (const boat of current.objects.filter((object) => object.assetId === "canal_boat" && !object.hidden)) {
+              const center = screenOf(boat.x + boat.w / 2, boat.y + boat.h / 2);
+              named.push({ name: `boat ${boat.x},${boat.y}`, ...center });
+              for (const [dx, dy] of [[24, 0], [-24, 0], [0, 16], [0, -16]] as const) {
+                named.push({ name: `boat ${boat.x},${boat.y} ${dx},${dy}`, x: center.x + dx, y: center.y + dy });
+              }
+            }
+            for (const bridge of current.objects.filter((object) => object.assetId === "red_bridge" && !object.hidden)) {
+              const center = screenOf(bridge.x + bridge.w / 2, bridge.y + bridge.h / 2);
+              named.push({ name: `bridge ${bridge.x},${bridge.y}`, ...center });
+            }
+            const half = CANAL.length / 2;
+            const centers: { x: number; y: number }[] = [];
+            for (let i = 0; i < half; i += 1) {
+              const a = CANAL[i];
+              const b = CANAL[CANAL.length - 1 - i];
+              if (!a || !b) continue;
+              centers.push(screenOf((a[0] + b[0]) / 2, (a[1] + b[1]) / 2));
+            }
+            for (let i = 0; i < centers.length - 1; i += 1) {
+              const from = centers[i];
+              const to = centers[i + 1];
+              if (!from || !to) continue;
+              for (const t of [0.25, 0.5, 0.75]) {
+                const point = { x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t };
+                if (onScreen(point)) named.push({ name: `centerline ${i} ${t}`, ...point });
+              }
+            }
+            const mask = new Uint8Array(width * height);
+            for (let i = 0; i < width * height; i += 1) {
+              const r = pixels[i * 4] ?? 0;
+              const g = pixels[i * 4 + 1] ?? 0;
+              const b = pixels[i * 4 + 2] ?? 0;
+              if (isWater(r, g, b)) mask[i] = 1;
+            }
+            const seen = new Uint8Array(width * height);
+            let components = 0;
+            let touchesLeft = false;
+            let touchesBottom = false;
+            let biggest = 0;
+            for (let start = 0; start < mask.length; start += 1) {
+              if (!mask[start] || seen[start]) continue;
+              let size = 0;
+              let left = false;
+              let bottom = false;
+              const stack = [start];
+              seen[start] = 1;
+              while (stack.length) {
+                const cursor = stack.pop() ?? 0;
+                size += 1;
+                const x = cursor % width;
+                const y = (cursor - x) / width;
+                if (x === 0) left = true;
+                if (y === height - 1) bottom = true;
+                for (const next of [cursor - 1, cursor + 1, cursor - width, cursor + width]) {
+                  if (next < 0 || next >= mask.length || seen[next] || !mask[next]) continue;
+                  if (Math.abs((next % width) - x) > 1) continue;
+                  seen[next] = 1;
+                  stack.push(next);
+                }
+              }
+              if (size < 80) continue;
+              components += 1;
+              if (size > biggest) {
+                biggest = size;
+                touchesLeft = left;
+                touchesBottom = bottom;
+              }
+            }
+            camera.position.set(savedX, savedY);
+            camera.scale.set(savedScale);
+            return {
+              width,
+              height,
+              boats: current.objects.filter((object) => object.assetId === "canal_boat" && !object.hidden).length,
+              bridges: current.objects.filter((object) => object.assetId === "red_bridge" && !object.hidden).length,
+              samples: named.map((point) => ({ name: point.name, sx: point.x, sy: point.y, ...sample(point.x, point.y) })),
+              components,
+              touchesLeft,
+              touchesBottom,
+            };
           },
         };
       }

@@ -2,11 +2,11 @@
  * Ground measured from docs/prototypes/prototype-00.png.
  *
  * The reference is a 2:1 isometric drawing. Lawns repeat as a 4-cell block plus
- * a 1-cell street. The canal is not one of those rows: on the picture it is a
- * single diagonal band, entering the left edge about a third of the way down
- * and leaving through the bottom edge right of center. Its corners below are
- * that band, read back into grid space at the wide camera. Cream is the street
- * module plus a thin bank around the canal.
+ * a 1-cell street. The canal is not one of those rows: on the picture it is one
+ * band about 100px wide at the wide 1280 camera, entering the left edge around
+ * y 150-270 and leaving the bottom around x 720-900, passing under both
+ * bridges. Its corners below are that band, read back into grid space. Cream
+ * is the street module plus a bank on both sides of the water.
  */
 
 export const DISTRICT_W = 16;
@@ -40,22 +40,38 @@ export const MODULE = 5;
 export const BLOCK = 4;
 
 /**
- * Canal water, a closed quad in grid space. Wide enough that a 2x2 bridge
- * footprint crosses it. Read back from the prototype band at the wide camera.
+ * Canal water, one ribbon in grid space. About 104px wide perpendicular to
+ * its centerline at the wide camera, through both bridge midpoints.
  */
 export const CANAL: Array<[number, number]> = [
-  [-4.91, 5.48],
-  [15.19, 10.16],
-  [15.85, 11.69],
-  [-4.25, 7.01],
+  [-4.17, 7.86],
+  [-0.70, 8.35],
+  [3.52, 8.94],
+  [8.50, 8.95],
+  [14.15, 10.05],
+  [17.40, 10.69],
+  [16.54, 8.82],
+  [13.29, 8.19],
+  [7.50, 7.06],
+  [2.48, 7.05],
+  [-1.64, 6.47],
+  [-5.11, 5.99],
 ];
 
-/** Cream embankment, the same diagonal a little wider than the water. */
+/** Cream embankment, the same ribbon a little wider than the water. */
 export const CANAL_BANK: Array<[number, number]> = [
-  [-5.05, 5.16],
-  [15.05, 9.84],
-  [15.99, 12.01],
-  [-4.11, 7.33],
+  [-3.94, 8.33],
+  [-0.46, 8.82],
+  [3.78, 9.42],
+  [8.75, 9.43],
+  [14.36, 10.52],
+  [17.61, 11.15],
+  [16.33, 8.36],
+  [13.08, 7.72],
+  [7.25, 6.59],
+  [2.21, 6.58],
+  [-1.88, 6.00],
+  [-5.35, 5.52],
 ];
 
 /** Bounds kept for callers that still want a rectangle. The painter uses CANAL. */

@@ -161,6 +161,46 @@ test("t.origin.localhost preview and refused recovery", async ({ page }) => {
   await expect(page.getByText("That recovery code could not be used.")).toBeVisible();
 });
 
+test("t.vis.canal water is one band under boats and bridges", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await page.evaluate(() => {
+    document.querySelectorAll("header.topbar, .banner-alert").forEach((node) => {
+      (node as HTMLElement).style.display = "none";
+    });
+    window.dispatchEvent(new Event("resize"));
+  });
+  await expect.poll(() => page.evaluate(() => {
+    const canvas = document.querySelector("[data-scene-host] canvas");
+    const hook = (window as unknown as { __sharedWorldTest?: { waterReport?: () => unknown } }).__sharedWorldTest;
+    if (!canvas || !hook?.waterReport) return 0;
+    return canvas.clientWidth * 10000 + canvas.clientHeight;
+  })).toBe(1280 * 10000 + 720);
+  const report = await page.evaluate(() => {
+    const hook = (window as unknown as {
+      __sharedWorldTest?: {
+        waterReport: () => {
+          boats: number;
+          bridges: number;
+          components: number;
+          touchesLeft: boolean;
+          touchesBottom: boolean;
+          samples: { name: string; sx: number; sy: number; x: number; y: number; r: number; g: number; b: number; water: boolean }[];
+        };
+      };
+    }).__sharedWorldTest;
+    return hook?.waterReport() ?? null;
+  });
+  expect(report).not.toBeNull();
+  if (!report) return;
+  expect(report.boats).toBe(3);
+  expect(report.bridges).toBe(2);
+  expect(report.samples.filter((sample) => !sample.water).map((sample) => `${sample.name} @${sample.sx.toFixed(0)},${sample.sy.toFixed(0)} rgb(${sample.r},${sample.g},${sample.b})`)).toEqual([]);
+  expect(report.components).toBe(1);
+  expect(report.touchesLeft).toBe(true);
+  expect(report.touchesBottom).toBe(true);
+});
+
 test("t.vis.hidden-no-ticker", async ({ page }) => {
   await page.goto("/?scene=deterministic");
   await page.waitForFunction(() => {
