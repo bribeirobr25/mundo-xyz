@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="300" viewBox="0 0 220 150">
-  <ellipse cx="120" cy="144" rx="10" ry="3" fill="{{shade}}" fill-opacity="0.2"/>
-  <polygon points="48,100 120,130 120,146 48,116" fill="{{wallShade}}"/>
-  <polygon points="176,100 120,130 120,146 176,116" fill="{{wall}}"/>
-  <polygon points="48,100 86,36 120,54 120,130 48,100" fill="{{roof}}"/>
-  <polygon points="120,54 154,30 176,100 120,130" fill="{{roofShade}}"/>
-  <polygon points="92,64 108,52 120,60 104,72" fill="{{roof}}"/>
-  <polygon points="64,108 86,116 86,132 64,124" fill="{{glass}}"/>
-  <polygon points="132,114 154,104 154,132 132,142" fill="{{door}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="320" viewBox="0 0 220 160">
+  <polygon points="30,86 104,124 104,150 30,112" fill="{{wallShade}}"/>
+  <polygon points="178,82 104,124 104,150 178,108" fill="{{wall}}"/>
+  <polygon points="22,86 78,22 116,42 104,124" fill="{{roof}}"/>
+  <polygon points="186,82 124,16 116,42 104,124" fill="{{roofShade}}"/>
+  <polygon points="78,22 124,16 116,42" fill="{{roof}}"/>
+  <polygon points="46,98 72,108 72,124 46,114" fill="{{glass}}"/>
+  <polygon points="58,102 68,106 68,112 58,108" fill="{{wall}}"/>
+  <polygon points="126,112 150,102 150,136 126,146" fill="{{door}}"/>
+  <polygon points="132,118 144,114 144,124 132,128" fill="{{glass}}"/>
 </svg>

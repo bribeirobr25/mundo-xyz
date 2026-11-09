@@ -1,34 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="440" viewBox="0 0 400 440">
-  <polygon points="268,88 364,48 364,292 268,332" fill="{{wallShade}}"/>
-  <polygon points="36,64 36,308 268,332 268,88" fill="{{wall}}"/>
-  <polygon points="36,64 59,20 82,69 106,25 129,74 152,30 175,78 198,34 222,83 245,39 268,88" fill="{{roof}}"/>
-  <polygon points="36,64 268,88 268,108 36,84" fill="{{roof}}"/>
-  <polygon points="59,20 82,69 59,69" fill="{{roofShade}}"/>
-  <polygon points="106,25 129,74 106,74" fill="{{roofShade}}"/>
-  <polygon points="152,30 175,78 152,78" fill="{{roofShade}}"/>
-  <polygon points="198,34 222,83 198,83" fill="{{roofShade}}"/>
-  <polygon points="245,39 268,88 245,88" fill="{{roofShade}}"/>
-  <polygon points="268,88 364,48 364,62 268,102" fill="{{roofShade}}"/>
-  <polygon points="286,124 316,112 312,136" fill="{{roof}}"/>
-  <polygon points="316,112 352,124 322,140" fill="{{roof}}"/>
-  <polygon points="308,124 330,134 316,160" fill="{{roof}}"/>
-  <polygon points="310,148 298,174 320,156" fill="{{roof}}"/>
-  <polygon points="318,146 336,172 324,154" fill="{{roof}}"/>
-  <polygon points="346,120 362,128 348,132" fill="{{beak}}"/>
-  <polygon points="24,336 262,372 236,428 4,392" fill="{{trim}}"/>
-  <polygon points="12,190 64,200 58,340 4,328" fill="{{stripe}}"/>
-  <polygon points="64,200 92,204 86,336 58,332" fill="{{stripe}}"/>
-  <polygon points="92,204 121,207 115,339 86,336" fill="{{awning}}"/>
-  <polygon points="121,207 149,211 143,343 115,339" fill="{{stripe}}"/>
-  <polygon points="149,211 177,215 171,347 143,343" fill="{{awning}}"/>
-  <polygon points="177,215 206,218 200,350 171,347" fill="{{stripe}}"/>
-  <polygon points="206,218 234,222 228,354 200,350" fill="{{awning}}"/>
-  <polygon points="234,222 262,226 256,358 228,354" fill="{{stripe}}"/>
-  <polygon points="4,328 256,366 256,384 4,346" fill="{{stripe}}"/>
-  <rect x="52" y="332" width="5" height="72" fill="{{post}}"/>
-  <rect x="112" y="340" width="5" height="68" fill="{{post}}"/>
-  <rect x="176" y="348" width="5" height="64" fill="{{post}}"/>
-  <rect x="228" y="354" width="5" height="58" fill="{{post}}"/>
-  <polygon points="70,118 150,138 150,176 70,156" fill="{{glass}}"/>
-  <polygon points="304,188 334,200 334,268 304,256" fill="{{door}}"/>
+  <polygon points="236,126 328,80 328,320 236,366" fill="{{wallShade}}"/>
+  <polygon points="40,28 40,268 236,366 236,126" fill="{{wall}}"/>
+  <polygon points="40,28 62,2 86,18 89,53" fill="{{roof}}"/>
+  <polygon points="89,53 112,22 136,40 138,77" fill="{{roof}}"/>
+  <polygon points="138,77 160,46 184,64 187,102" fill="{{roof}}"/>
+  <polygon points="187,102 208,70 230,90 236,126" fill="{{roof}}"/>
+  <polygon points="62,2 89,53 86,18" fill="{{roofShade}}"/>
+  <polygon points="112,22 138,77 136,40" fill="{{roofShade}}"/>
+  <polygon points="160,46 187,102 184,64" fill="{{roofShade}}"/>
+  <polygon points="208,70 236,126 230,90" fill="{{roofShade}}"/>
+  <polygon points="40,28 236,126 236,136 40,38" fill="{{roof}}"/>
+  <polygon points="236,126 328,80 328,96 236,142" fill="{{roofShade}}"/>
+  <polygon points="76,112 134,132 106,152 66,130" fill="{{roof}}"/>
+  <polygon points="98,118 116,72 104,132" fill="{{roof}}"/>
+  <polygon points="102,136 74,168 114,146" fill="{{roof}}"/>
+  <polygon points="66,130 40,116 60,138" fill="{{roof}}"/>
+  <polygon points="72,138 44,156 70,148" fill="{{roof}}"/>
+  <polygon points="134,126 160,118 130,142" fill="{{beak}}"/>
+  <polygon points="168,128 214,151 214,176 168,153" fill="{{glass}}"/>
+  <polygon points="262,176 300,157 300,252 262,271" fill="{{door}}"/>
+  <polygon points="64,168 82,177 82,195 64,186" fill="{{stripe}}"/>
+  <polygon points="64,186 82,195 90,241 72,232" fill="{{stripe}}"/>
+  <polygon points="82,195 100,204 108,250 90,241" fill="{{awning}}"/>
+  <polygon points="100,204 119,213 127,259 108,250" fill="{{stripe}}"/>
+  <polygon points="119,213 137,222 145,268 127,259" fill="{{awning}}"/>
+  <polygon points="137,222 155,232 163,278 145,268" fill="{{stripe}}"/>
+  <polygon points="155,232 174,241 182,287 163,278" fill="{{awning}}"/>
+  <polygon points="174,241 192,250 200,296 182,287" fill="{{stripe}}"/>
+  <polygon points="192,250 210,259 218,305 200,296" fill="{{awning}}"/>
+  <polygon points="72,232 218,305 220,317 74,244" fill="{{roofShade}}"/>
+  <rect x="84" y="246" width="5" height="34" fill="{{post}}"/>
+  <rect x="128" y="268" width="5" height="34" fill="{{post}}"/>
+  <rect x="172" y="290" width="5" height="34" fill="{{post}}"/>
+  <rect x="208" y="308" width="5" height="32" fill="{{post}}"/>
+  <polygon points="60,252 228,336 198,392 40,308" fill="{{trim}}"/>
 </svg>

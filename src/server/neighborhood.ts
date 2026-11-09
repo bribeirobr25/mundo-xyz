@@ -25,7 +25,7 @@ export const NEIGHBORHOOD: SeedPlace[] = [
   place(4, "house_blue", 2, 10, 2, 2),
   place(5, "house_gold", 4, 10, 2, 2),
   place(6, "red_pavilion", 11, 0, 2, 2),
-  place(7, "yellow_bus", 8, 0, 2, 1),
+  place(7, "yellow_bus", 13, 4, 2, 1),
   place(8, "red_bridge", 2, 7, 2, 2),
   place(9, "red_bridge", 7, 7, 2, 2),
   place(10, "canal_boat", 0, 7, 1, 1),

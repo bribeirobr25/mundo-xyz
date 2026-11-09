@@ -118,7 +118,13 @@ def dilate(mask: np.ndarray, radius: int) -> np.ndarray:
     return out
 
 
-def detect(mask: np.ndarray, box: tuple[int, int, int, int], whole: bool, radius: int) -> tuple[int, int, int, int] | None:
+def detect(
+    mask: np.ndarray,
+    box: tuple[int, int, int, int],
+    whole: bool,
+    radius: int,
+    unite: bool = False,
+) -> tuple[int, int, int, int] | None:
     if whole:
         return union_box(components(mask))
     height, width = mask.shape
@@ -129,6 +135,20 @@ def detect(mask: np.ndarray, box: tuple[int, int, int, int], whole: bool, radius
     window = np.zeros_like(mask)
     window[y0:y1, x0:x1] = dilate(mask, radius)[y0:y1, x0:x1]
     cx, cy = x + w / 2, y + h / 2
+    # Two cottages are separate roof colors. Unite the pieces that meet the box.
+    if unite:
+        inflate = 28
+        near: list[tuple[int, int, int, int]] = []
+        for found in components(window):
+            if found[2] * found[3] < 80:
+                continue
+            ox0 = max(found[0], x - inflate)
+            oy0 = max(found[1], y - inflate)
+            ox1 = min(found[0] + found[2], x + w + inflate)
+            oy1 = min(found[1] + found[3], y + h + inflate)
+            if ox1 > ox0 and oy1 > oy0:
+                near.append(found)
+        return union_box(near)
     best: tuple[int, int, int, int] | None = None
     best_d = 140 * 140
     for found in components(window):
@@ -186,7 +206,11 @@ def score(render_path: Path) -> dict[str, object]:
     rows = []
     for name, box in spec["landmarks"].items():
         frozen = tuple(box)
-        found = detect(ren_pred[name], frozen, name == "canal", 0 if name == "bus" else 4)
+        mask = ren_pred[name]
+        # The canal is navy, so a house union must not swallow the water.
+        if name == "houses":
+            mask = mask & ~ren_pred["canal"]
+        found = detect(mask, frozen, name == "canal", 0 if name == "bus" else 4, name == "houses")
         rows.append({
             "landmark": name,
             "reference": list(frozen),
