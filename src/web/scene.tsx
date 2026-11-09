@@ -3,7 +3,7 @@ import { Application, Container, Graphics, Polygon, Rectangle, Sprite, Texture }
 import catalogJson from "../../assets/catalog/catalog.json" with { type: "json" };
 import type { Catalog, CatalogAsset, Palette } from "../domain/catalogModel.js";
 import { acceptedPalette, paintSvg } from "../domain/catalogModel.js";
-import { BRIDGES, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZAS, WATER, type GroundKind, type Plot } from "../domain/district.js";
+import { BRIDGES, CANAL, CANAL_BANK, CORNER_CUTS, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZAS, type CornerName, type GroundKind, type Plot } from "../domain/district.js";
 import { FRAME_SOURCES } from "../scene/frames.js";
 import { TILE_H, TILE_W, buildingHit, cellToScreen, footprintQuad } from "../scene/iso.js";
 import { SCENE_MAX_RESOLUTION } from "../scene/limits.js";
@@ -351,9 +351,48 @@ export function Scene(props: {
       }
 
       const hex = (role: string) => Number.parseInt(tone(role).slice(1), 16);
+      function cutFor(plot: Plot): Record<CornerName, number> {
+        const cut: Record<CornerName, number> = { top: 0, right: 0, bottom: 0, left: 0 };
+        for (const item of CORNER_CUTS) {
+          if (item.x === plot.x && item.y === plot.y) cut[item.corner] = Math.max(cut[item.corner], item.cells);
+        }
+        return cut;
+      }
+      function lawnQuad(x: number, y: number, w: number, h: number, cut: Record<CornerName, number>): { sx: number; sy: number }[] {
+        const grid: [number, number][] = [];
+        const push = (gx: number, gy: number) => {
+          const point = cellToScreen(gx, gy);
+          grid.push([point.sx, point.sy]);
+        };
+        if (cut.top > 0) {
+          push(x, y + cut.top);
+          push(x + cut.top, y);
+        } else push(x, y);
+        if (cut.right > 0) {
+          push(x + w - cut.right, y);
+          push(x + w, y + cut.right);
+        } else push(x + w, y);
+        if (cut.bottom > 0) {
+          push(x + w, y + h - cut.bottom);
+          push(x + w - cut.bottom, y + h);
+        } else push(x + w, y + h);
+        if (cut.left > 0) {
+          push(x + cut.left, y + h);
+          push(x, y + h - cut.left);
+        } else push(x, y + h);
+        return grid.map(([sx, sy]) => ({ sx, sy }));
+      }
       function paintLawn(plot: Plot): void {
-        groundLayer.poly(footprintQuad(plot.x - 0.08, plot.y - 0.08, plot.w + 0.16, plot.h + 0.16).flatMap((point) => [point.sx, point.sy])).fill(hex("field"));
-        groundLayer.poly(footprintQuad(plot.x + 0.14, plot.y + 0.14, plot.w - 0.28, plot.h - 0.28).flatMap((point) => [point.sx, point.sy])).fill(hex("grass"));
+        const cut = cutFor(plot);
+        const curb = lawnQuad(plot.x - 0.08, plot.y - 0.08, plot.w + 0.16, plot.h + 0.16, cut);
+        const inner = lawnQuad(plot.x + 0.14, plot.y + 0.14, plot.w - 0.28, plot.h - 0.28, {
+          top: Math.max(0, cut.top - 0.14),
+          right: Math.max(0, cut.right - 0.14),
+          bottom: Math.max(0, cut.bottom - 0.14),
+          left: Math.max(0, cut.left - 0.14),
+        });
+        groundLayer.poly(curb.flatMap((point) => [point.sx, point.sy])).fill(hex("field"));
+        groundLayer.poly(inner.flatMap((point) => [point.sx, point.sy])).fill(hex("grass"));
       }
 
       function viewWorld() {
@@ -379,19 +418,17 @@ export function Scene(props: {
         if (groundLayer.isCachedAsTexture) groundLayer.cacheAsTexture(false);
         groundLayer.clear();
         const view = viewWorld();
-        const x0 = Math.floor(view.sx0 / 64) - 6;
-        const x1 = Math.ceil(view.sx1 / 64) + 14;
-        paintFoot(x0, WATER.y, Math.max(4, x1 - x0), WATER.h, "water");
         for (const plot of GRASS_PLOTS) {
-          if (plot.y + plot.h > WATER.y && plot.y < WATER.y + WATER.h) continue;
           if (!overlapsView(plot.x, plot.y, plot.w, plot.h, view)) continue;
           paintLawn(plot);
         }
+        paintPoly(CANAL_BANK.map(([x, y]) => cellToScreen(x, y)), "road");
+        paintPoly(CANAL.map(([x, y]) => cellToScreen(x, y)), "water");
         for (const plot of PLAZAS) {
           if (overlapsView(plot.x, plot.y, plot.w, plot.h, view)) paintFoot(plot.x, plot.y, plot.w, plot.h, "plaza");
         }
         for (const bridge of BRIDGES) {
-          if (overlapsView(bridge.x, bridge.y, bridge.w, bridge.h, view)) paintFoot(bridge.x, bridge.y + 0.15, bridge.w, bridge.h - 0.3, "bridge");
+          if (overlapsView(bridge.x, bridge.y, bridge.w, bridge.h, view)) paintFoot(bridge.x, bridge.y, bridge.w, bridge.h, "bridge");
         }
         groundLayer.eventMode = "none";
         groundLayer.cacheAsTexture({ resolution: 1, antialias: false });
@@ -431,13 +468,13 @@ export function Scene(props: {
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         const focus = cafe ?? home;
         const wide = viewW >= 800;
-        const fitted = wide ? 0.84 : Math.min(0.72, Math.max(0.58, viewH / (14 * TILE_H)));
+        const fitted = wide ? 0.84 : 0.36;
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         const focusCenter = focus
           ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
           : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
-        const focusX = wide ? 0.62 : 0.5;
-        const focusY = wide ? 0.64 : 0.5;
+        const focusX = wide ? 0.62 : 0.58;
+        const focusY = wide ? 0.64 : 0.44;
         const center = {
           sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
           sy: focusCenter.sy - (focusY - 0.5) * viewH / zoom,

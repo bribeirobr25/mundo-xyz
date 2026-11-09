@@ -3,16 +3,16 @@
   <polygon points="34,100 80,124 80,280 34,256" fill="{{shade}}"/>
   <polygon points="126,100 80,124 80,280 126,256" fill="{{wall}}"/>
   <polygon points="34,100 80,74 126,100 80,124" fill="{{roof}}"/>
-  <polygon points="58,80 102,80 94,90 66,90" fill="{{plant}}"/>
-  <circle cx="64" cy="46" r="8" fill="{{plant}}"/>
-  <circle cx="84" cy="42" r="7" fill="{{plant}}"/>
-  <circle cx="98" cy="50" r="6" fill="{{plant}}"/>
-  <polygon points="6,124 72,154 72,166 6,136" fill="{{balcony}}"/>
-  <polygon points="6,168 72,198 72,210 6,180" fill="{{balcony}}"/>
-  <polygon points="6,212 72,242 72,254 6,224" fill="{{balcony}}"/>
-  <polygon points="88,154 154,124 154,136 88,166" fill="{{balcony}}"/>
-  <polygon points="88,198 154,168 154,180 88,210" fill="{{balcony}}"/>
-  <polygon points="88,232 154,202 154,214 88,244" fill="{{balcony}}"/>
+  <polygon points="62,96 98,96 92,106 68,106" fill="{{plant}}"/>
+  <circle cx="70" cy="92" r="7" fill="{{plant}}"/>
+  <circle cx="84" cy="88" r="6" fill="{{plant}}"/>
+  <circle cx="96" cy="94" r="5" fill="{{plant}}"/>
+  <polygon points="8,118 40,132 40,142 8,128" fill="{{balcony}}"/>
+  <polygon points="8,162 40,176 40,186 8,172" fill="{{balcony}}"/>
+  <polygon points="8,206 40,220 40,230 8,216" fill="{{balcony}}"/>
+  <polygon points="120,132 152,118 152,128 120,142" fill="{{balcony}}"/>
+  <polygon points="120,176 152,162 152,172 120,186" fill="{{balcony}}"/>
+  <polygon points="120,220 152,206 152,216 120,230" fill="{{balcony}}"/>
   <rect x="42" y="118" width="6" height="10" fill="{{glass}}"/>
   <rect x="52" y="122" width="6" height="10" fill="{{glass2}}"/>
   <rect x="62" y="126" width="6" height="10" fill="{{glass}}"/>
