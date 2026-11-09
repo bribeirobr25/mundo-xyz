@@ -20,7 +20,7 @@ const catalog = loadCatalog();
 test("t.art.script-coverage and t.art.provenance and t.art.palette", () => {
   expect(catalog.assets.map((asset) => asset.id)).toEqual([
     "cafe_for_birds", "bus_stop", "red_tower", "color_frames", "house_blue", "house_gold",
-    "red_pavilion", "yellow_bus", "canal_boat", "canal_boat_blue", "red_bridge", "round_tree", "pointed_tree",
+    "red_pavilion", "yellow_bus", "canal_boat", "canal_boat_blue", "red_bridge", "red_bridge_near", "round_tree", "pointed_tree",
     "bench", "blue_bird", "red_bird", "gold_bird", "bird_cyclist", "shrub",
   ]);
   expect(catalog.assets.every((asset) => asset.provenance.thirdPartyReference === false)).toBe(true);

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="220" height="240" viewBox="0 0 110 120">
-  <ellipse cx="55" cy="110" rx="10" ry="3" fill="{{shadow}}" fill-opacity="0.25"/>
+  <ellipse cx="55" cy="108" rx="26" ry="8" fill="{{shadow}}" fill-opacity="0.72"/>
   <polygon points="50,78 60,78 58,106 52,106" fill="{{trunk}}"/>
   <circle cx="55" cy="52" r="30" fill="{{leaf}}"/>
   <circle cx="40" cy="60" r="16" fill="{{leafShade}}"/>

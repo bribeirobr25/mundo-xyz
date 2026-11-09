@@ -367,6 +367,20 @@ export function Scene(props: {
       function paintFoot(x: number, y: number, w: number, h: number, kind: GroundKind): void {
         paintPoly(footprintQuad(x, y, w, h), kind);
       }
+      function paintPlaza(plot: Plot): void {
+        paintFoot(plot.x, plot.y, plot.w, plot.h, "plaza");
+        const ink = 0xd9cbb6;
+        const span = 0.045;
+        const band = (x0: number, y0: number, x1: number, y1: number, nx: number, ny: number) => {
+          const a = cellToScreen(x0, y0);
+          const b = cellToScreen(x1, y1);
+          const c = cellToScreen(x1 + nx, y1 + ny);
+          const d = cellToScreen(x0 + nx, y0 + ny);
+          groundLayer.poly([a.sx, a.sy, b.sx, b.sy, c.sx, c.sy, d.sx, d.sy]).fill(ink);
+        };
+        for (let x = Math.ceil(plot.x + 0.01); x < plot.x + plot.w; x += 1) band(x, plot.y, x, plot.y + plot.h, span, 0);
+        for (let y = Math.ceil(plot.y + 0.01); y < plot.y + plot.h; y += 1) band(plot.x, y, plot.x + plot.w, y, 0, span);
+      }
 
       const hex = (role: string) => Number.parseInt(tone(role).slice(1), 16);
       function cutFor(plot: Plot): Record<CornerName, number> {
@@ -441,7 +455,7 @@ export function Scene(props: {
           paintLawn(plot);
         }
         for (const plot of PLAZAS) {
-          if (overlapsView(plot.x, plot.y, plot.w, plot.h, view)) paintFoot(plot.x, plot.y, plot.w, plot.h, "plaza");
+          if (overlapsView(plot.x, plot.y, plot.w, plot.h, view)) paintPlaza(plot);
         }
         // Quads, not one ribbon: a single concave fill left lawns showing through the water.
         const ribbon = (poly: Array<[number, number]>, kind: GroundKind) => {
@@ -719,7 +733,7 @@ export function Scene(props: {
                 named.push({ name: `boat ${boat.x},${boat.y} ${dx},${dy}`, x: center.x + dx, y: center.y + dy });
               }
             }
-            for (const bridge of current.objects.filter((object) => object.assetId === "red_bridge" && !object.hidden)) {
+            for (const bridge of current.objects.filter((object) => (object.assetId === "red_bridge" || object.assetId === "red_bridge_near") && !object.hidden)) {
               const center = screenOf(bridge.x + bridge.w / 2, bridge.y + bridge.h / 2);
               named.push({ name: `bridge ${bridge.x},${bridge.y}`, ...center });
             }
@@ -787,7 +801,7 @@ export function Scene(props: {
               width,
               height,
               boats: boats.length,
-              bridges: current.objects.filter((object) => object.assetId === "red_bridge" && !object.hidden).length,
+              bridges: current.objects.filter((object) => (object.assetId === "red_bridge" || object.assetId === "red_bridge_near") && !object.hidden).length,
               samples: named.map((point) => ({ name: point.name, sx: point.x, sy: point.y, ...sample(point.x, point.y) })),
               components,
               touchesLeft,

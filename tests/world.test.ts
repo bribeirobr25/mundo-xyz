@@ -34,7 +34,7 @@ test("t.world.single and t.world.seed-labeled and t.world.empty-shape", async ()
   const world = await client.call("/api/world");
   expect(world.status).toBe(200);
   const objects = world.body.objects as { id?: string; administrator?: boolean; sentence?: string | null; name: string; assetId?: string; paletteId?: string; history?: string }[];
-  expect(objects).toHaveLength(77);
+  expect(objects).toHaveLength(89);
   expect(objects.every((object) => object.administrator)).toBe(true);
   const cafe = objects.find((object) => object.assetId === "cafe_for_birds");
   expect(cafe?.sentence).toBeNull();
@@ -106,7 +106,7 @@ test("t.preview.signed-out and t.preview.isolation and t.interp.negation and t.f
   expect(preview.body.publicWrites).toBe(0);
   const other = await boot(pool);
   const seen = await other.call("/api/world");
-  expect((seen.body.objects as unknown[]).length).toBe(77);
+  expect((seen.body.objects as unknown[]).length).toBe(89);
   const negated = await client.call("/api/interpret", { body: { text: "not a bus stop" } });
   expect(negated.body.code).toBe("unsupported");
   expect(negated.body.publicWrites).toBe(0);

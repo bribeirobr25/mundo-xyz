@@ -531,13 +531,22 @@ export function App(): ReactElement {
             {!reviewing && surface === "places" ? (
               <div className="stack">
                 <h2>Places</h2>
-                <label htmlFor="place-search">Search places</label>
+                <label className="search-label" htmlFor="place-search">Search places</label>
                 <input
                   id="place-search"
+                  className="search"
                   value={query}
                   placeholder="Search places"
                   onChange={(event) => setQuery(event.target.value)}
                   onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      const first = listed[0];
+                      if (!first) return;
+                      event.preventDefault();
+                      setSelectedId(first.id);
+                      setSurface("inspect");
+                      return;
+                    }
                     if (event.key !== "ArrowDown") return;
                     event.preventDefault();
                     document.querySelector<HTMLButtonElement>("#place-results button")?.focus();

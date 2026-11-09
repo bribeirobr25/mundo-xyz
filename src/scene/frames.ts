@@ -4,6 +4,7 @@ import bird from "../../assets/catalog/frames/bird.svg?raw";
 import birdSit from "../../assets/catalog/frames/bird-sit.svg?raw";
 import boat from "../../assets/catalog/frames/boat.svg?raw";
 import bridge from "../../assets/catalog/frames/bridge.svg?raw";
+import bridgeNear from "../../assets/catalog/frames/bridge-near.svg?raw";
 import bus from "../../assets/catalog/frames/bus.svg?raw";
 import cafeShell from "../../assets/catalog/frames/cafe-shell.svg?raw";
 import cycle from "../../assets/catalog/frames/cycle.svg?raw";
@@ -28,6 +29,7 @@ export const FRAME_SOURCES: Record<string, string> = {
   "frames/bird-sit.svg": birdSit,
   "frames/boat.svg": boat,
   "frames/bridge.svg": bridge,
+  "frames/bridge-near.svg": bridgeNear,
   "frames/bus.svg": bus,
   "frames/cafe-shell.svg": cafeShell,
   "frames/cycle.svg": cycle,
