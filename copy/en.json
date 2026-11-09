@@ -104,6 +104,7 @@
   "asset.birdRed": "Red bird",
   "asset.birdGold": "Gold bird",
   "asset.cyclist": "Bird on a bicycle",
+  "asset.shrub": "Shrub",
   "template.placed": "{name} placed {asset} {relation} {anchor}.",
   "template.seed": "Administrator placed Café for birds.",
   "template.neighborhood": "Administrator placed {asset} in the neighborhood.",

@@ -1,17 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 480 360">
-  <ellipse cx="250" cy="318" rx="150" ry="18" fill="{{door}}" fill-opacity="0.16"/>
-  <polygon points="70,168 250,258 250,312 70,230" fill="{{wallShade}}"/>
-  <polygon points="430,168 250,258 250,312 430,230" fill="{{wall}}"/>
-  <polygon points="118,188 168,214 168,252 118,226" fill="{{glass}}"/>
-  <polygon points="128,198 158,214 158,236 128,220" fill="{{trim}}"/>
-  <polygon points="300,236 338,216 338,292 300,312" fill="{{door}}"/>
-  <polygon points="312,250 328,242 328,276 312,284" fill="{{trim}}"/>
-  <polygon points="70,168 118,122 168,158 214,104 262,158 318,108 372,152 430,168 250,258" fill="{{roof}}"/>
-  <polygon points="214,104 262,158 318,108 372,152 430,168 250,258" fill="{{roofShade}}"/>
-  <ellipse cx="132" cy="196" rx="16" ry="10" fill="{{trim}}"/>
-  <circle cx="146" cy="192" r="6" fill="{{trim}}"/>
-  <polygon points="150,188 168,194 150,200" fill="{{beak}}"/>
-  <circle cx="144" cy="190" r="1.2" fill="{{wallShade}}"/>
-  <polygon points="196,214 214,204 214,246 196,256" fill="{{glass}}"/>
-  <polygon points="360,200 392,184 392,228 360,244" fill="{{glass}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+  <ellipse cx="250" cy="328" rx="150" ry="14" fill="{{door}}" fill-opacity="0.18"/>
+  <polygon points="80,150 230,220 230,292 80,222" fill="{{wallShade}}"/>
+  <polygon points="400,150 230,220 230,292 400,222" fill="{{wall}}"/>
+  <polygon points="145,248 250,298 355,248 250,202" fill="{{trim}}"/>
+  <polygon points="118,188 168,210 168,246 118,224" fill="{{glass}}"/>
+  <polygon points="292,196 334,178 334,248 292,266" fill="{{door}}"/>
+  <ellipse cx="128" cy="198" rx="16" ry="10" fill="{{roof}}"/>
+  <circle cx="140" cy="194" r="6" fill="{{roof}}"/>
+  <polygon points="145,190 162,196 145,202" fill="{{beak}}"/>
+  <polygon points="80,150 145,72 210,142 230,118 230,220" fill="{{roof}}"/>
+  <polygon points="230,118 310,64 400,150 230,220" fill="{{roofShade}}"/>
 </svg>

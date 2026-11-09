@@ -5,14 +5,14 @@ export const DISTRICT_H = 16;
 
 export type GroundKind = "grass" | "road" | "water" | "plaza" | "bridge";
 
-const BRIDGE_CELLS = new Set(["4,4", "5,4", "8,8", "9,8"]);
+const BRIDGE_CELLS = new Set(["4,8", "4,9", "4,10", "9,8", "9,9", "9,10"]);
 
 export function groundKind(x: number, y: number): GroundKind {
   const inside = x >= 0 && y >= 0 && x < DISTRICT_W && y < DISTRICT_H;
   if (inside && BRIDGE_CELLS.has(`${x},${y}`)) return "bridge";
-  if (x - y === 0 || x - y === 1) return "water";
-  if (inside && x >= 2 && x <= 3 && y >= 6 && y <= 7) return "plaza";
-  if (x % 4 === 0 || y % 4 === 0) return "road";
+  if (y >= 8 && y <= 10) return "water";
+  if (inside && x >= 3 && x <= 4 && y >= 5 && y <= 6) return "plaza";
+  if (((x % 4) + 4) % 4 === 0 || ((y % 4) + 4) % 4 === 0) return "road";
   return "grass";
 }
 

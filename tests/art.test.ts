@@ -21,12 +21,13 @@ test("t.art.script-coverage and t.art.provenance and t.art.palette", () => {
   expect(catalog.assets.map((asset) => asset.id)).toEqual([
     "cafe_for_birds", "bus_stop", "red_tower", "color_frames", "house_blue", "house_gold",
     "red_pavilion", "yellow_bus", "canal_boat", "red_bridge", "round_tree", "pointed_tree",
-    "bench", "blue_bird", "red_bird", "gold_bird", "bird_cyclist",
+    "bench", "blue_bird", "red_bird", "gold_bird", "bird_cyclist", "shrub",
   ]);
   expect(catalog.assets.every((asset) => asset.provenance.thirdPartyReference === false)).toBe(true);
   const files = catalog.assets.flatMap((asset) => asset.layers.map((layer) => layer.file));
   expect(new Set(files)).toEqual(new Set(Object.keys(FRAME_SOURCES)));
-  expect(files.filter((file) => file === "frames/bird.svg")).toHaveLength(7);
+  expect(files.filter((file) => file === "frames/bird.svg")).toHaveLength(4);
+  expect(files.filter((file) => file === "frames/bird-sit.svg")).toHaveLength(8);
   const moving = catalog.assets.flatMap((asset) => asset.layers).filter((layer) => layer.motion !== "none");
   expect(moving.map((layer) => layer.motion).sort()).toEqual(["drift", "glance"]);
   expect(JSON.stringify(catalogJson)).not.toContain("prototypes/");

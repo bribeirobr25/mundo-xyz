@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="220" viewBox="0 0 100 110">
-  <ellipse cx="50" cy="96" rx="22" ry="7" fill="{{shadow}}"/>
-  <polygon points="46,70 54,70 52,96 48,96" fill="{{trunk}}"/>
-  <circle cx="50" cy="48" r="26" fill="{{leaf}}"/>
-  <circle cx="38" cy="56" r="14" fill="{{leafShade}}"/>
-  <circle cx="62" cy="42" r="12" fill="{{leaf}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="240" viewBox="0 0 110 120">
+  <ellipse cx="55" cy="108" rx="28" ry="8" fill="{{shadow}}" fill-opacity="0.35"/>
+  <polygon points="50,78 60,78 58,106 52,106" fill="{{trunk}}"/>
+  <circle cx="55" cy="52" r="30" fill="{{leaf}}"/>
+  <circle cx="40" cy="60" r="16" fill="{{leafShade}}"/>
+  <circle cx="70" cy="46" r="14" fill="{{leaf}}"/>
 </svg>

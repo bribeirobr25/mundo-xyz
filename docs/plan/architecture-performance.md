@@ -36,9 +36,13 @@ The picture fills the viewport. A slim bar holds the title, the fixture-mode lin
 
 ## Prototype 00 measurement
 
-Same virtual machine and SwiftShader. Not a phone, and not a 10-second frame budget. Fresh `mundo_test` seed, 29 administrator places, world JSON 12,252 bytes and 1,293 bytes gzip. The files this view requests gzip to 219,212 bytes before the HTML document: entry 76,251, scene 84,171, stylesheet 1,131, and the WebGL chunks the scene loads. Canvas and WebGPU chunks are built and not requested. One short sample of 120 frames on the fresh seed, chrome hidden, was 50 ms at the median, 66.8 ms at the 95th percentile, and 83.3 ms at the maximum. That sample does not meet a 16.7 ms frame. It is SwiftShader, not a phone result. The grass field is one polygon; paths, water, the plaza, and the bridges are the tiled cells, including a skirt so the fitted view does not end as a diamond.
+Same virtual machine, Playwright Chromium, and SwiftShader. Not a phone, and not a 10-second frame budget. Device pixel ratio on this VM is 1, so the resolution cap of 2 was not exercised. Each sample is 120 frames after 600 ms, viewport 1280×720, chrome removed, fresh `mundo_test`.
 
-The seeded view draws 42 sprites across 22 textures. The earlier note said to revisit an atlas around 30 sprites and 8 textures. That note is a recommendation, not a measured failure and not a new authorization, so this change does not build an atlas. It also does not load prototypes 01–05.
+The earlier neighborhood, per-cell ground and one texture per drawing, measured 50.1 ms median, 66.7 ms at the 95th percentile, and 83.3 ms maximum. Drawing the grass as one large polygon made that worse: 66.8 / 83.4 / 83.5. An atlas, culling when the camera changes, and keeping the ground as graphics rather than a full-frame texture brought the median to 33.3 ms. Turning antialiasing off improved the tail of that sample (95th percentile 50 ms to 33.4 ms) and did not move the median. Hiding the ground entirely, so only the object sprites and the clear ran, returned 16.7 ms median. The sprites were already at the earlier median. A viewport-filling ground image costs about another frame on this software renderer, so that bake was not kept.
+
+The current scene clears the canvas to grass and draws the paths, the canal, the plaza, and the bridge decks as a few polygons. Object drawings share one atlas. Off-screen objects are skipped when the camera changes. Antialiasing stays off because the flat colors do not need it and the earlier tail improved. On the 42-place seed this measures 33.4 ms median, 50 ms at the 95th percentile, and 50.1 ms maximum. The remaining distance from 16.7 ms is that ground fill, not the atlas.
+
+The files this view requests gzip to 220,021 bytes before the HTML document: entry 76,252, scene 84,976, stylesheet 1,131, and the WebGL chunks the scene loads. Canvas and WebGPU chunks are built and not requested. The fresh world body is 17,303 bytes. Prototypes 01–05 are not loaded.
 
 ## PoC limits and when to revisit
 
@@ -47,8 +51,8 @@ The world bounds are 16 by 16 cells. The client loads every placed row on each p
 Revisit, rather than building it now, when any of these becomes true:
 
 - A production response’s gzip script total exceeds 250 KB on a cold load.
-- One view draws more than about 30 sprites across more than 8 textures. An atlas is the candidate then, not before.
-- Placed rows exceed about 40, or the world JSON gzip exceeds about 32 KB. The candidate is a revision token plus rows for the visible cells, not a million-object design.
+- One view draws more than about 30 sprites across more than 8 textures. The object drawings now share one atlas. A further split is the candidate only if that sheet stops fitting.
+- Placed rows exceed about 40, or the world JSON gzip exceeds about 32 KB. The seed is now 42 administrator places and the world body is 17,303 bytes. A revision token plus rows for the visible cells is still the candidate, and this pass does not build it.
 - Authored frame source in the scene chunk exceeds about 32 KB. The candidate is immutable versioned files fetched for the assets on screen.
 
 Backing-store resolution is capped at 2 in `src/scene/limits.ts`. This VM’s device pixel ratio was 1, so the cap was not exercised. A real phone at ratio 3 is the check that still matters.

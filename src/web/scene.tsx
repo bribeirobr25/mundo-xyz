@@ -1,9 +1,9 @@
 import { useEffect, useRef, type ReactElement } from "react";
-import { Application, Container, Graphics, Polygon, Sprite, Texture } from "pixi.js";
+import { Application, Container, Graphics, Polygon, Rectangle, Sprite, Texture } from "pixi.js";
 import catalogJson from "../../assets/catalog/catalog.json" with { type: "json" };
 import type { Catalog, CatalogAsset, Palette } from "../domain/catalogModel.js";
 import { acceptedPalette, paintSvg } from "../domain/catalogModel.js";
-import { DISTRICT_H, DISTRICT_W, districtRows, groundKind, type GroundKind } from "../domain/district.js";
+import { DISTRICT_H, DISTRICT_W, groundKind, type GroundKind } from "../domain/district.js";
 import { FRAME_SOURCES } from "../scene/frames.js";
 import { TILE_H, TILE_W, buildingHit, cellToScreen, footprintQuad } from "../scene/iso.js";
 import { SCENE_MAX_RESOLUTION } from "../scene/limits.js";
@@ -93,7 +93,7 @@ export function Scene(props: {
         preference: ["webgl"],
         background: Number.parseInt(tone("grass").slice(1), 16),
         resizeTo: el,
-        antialias: true,
+        antialias: false,
         autoDensity: true,
         resolution: Math.min(SCENE_MAX_RESOLUTION, window.devicePixelRatio || 1),
       });
@@ -138,21 +138,60 @@ export function Scene(props: {
       camera.addChild(groundLayer, world);
       const textures = new Map<string, Texture>();
       const urls: string[] = [];
-      const textureFor = async (file: string, palette: Palette) => {
-        const key = `${file}:${palette.id}`;
-        const cached = textures.get(key);
-        if (cached) return cached;
-        const source = FRAME_SOURCES[file];
-        if (!source) throw new Error("missing atlas frame");
-        const painted = paintSvg(source, palette.roles);
-        const url = URL.createObjectURL(new Blob([painted], { type: "image/svg+xml" }));
-        urls.push(url);
-        const image = new Image();
-        image.src = url;
-        await image.decode();
-        const texture = Texture.from(image);
-        textures.set(key, texture);
-        return texture;
+      const textureFor = (file: string, palette: Palette): Texture => {
+        const found = textures.get(`${file}:${palette.id}`);
+        if (!found) throw new Error("missing atlas frame");
+        return found;
+      };
+      const packAtlas = async (pairs: { key: string; file: string; palette: Palette }[]): Promise<void> => {
+        if (!pairs.length) return;
+        const images: { key: string; image: HTMLImageElement }[] = [];
+        for (const pair of pairs) {
+          const source = FRAME_SOURCES[pair.file];
+          if (!source) throw new Error("missing atlas frame");
+          const painted = paintSvg(source, pair.palette.roles);
+          const url = URL.createObjectURL(new Blob([painted], { type: "image/svg+xml" }));
+          urls.push(url);
+          const image = new Image();
+          image.src = url;
+          await image.decode();
+          images.push({ key: pair.key, image });
+        }
+        const pad = 2;
+        const maxW = 2048;
+        let cursorX = pad;
+        let cursorY = pad;
+        let rowH = 0;
+        const frames: { key: string; x: number; y: number; w: number; h: number }[] = [];
+        for (const item of images) {
+          const w = item.image.naturalWidth || item.image.width;
+          const h = item.image.naturalHeight || item.image.height;
+          if (w < 1 || h < 1) throw new Error("missing atlas frame");
+          if (cursorX + w + pad > maxW) {
+            cursorX = pad;
+            cursorY += rowH + pad;
+            rowH = 0;
+          }
+          frames.push({ key: item.key, x: cursorX, y: cursorY, w, h });
+          cursorX += w + pad;
+          rowH = Math.max(rowH, h);
+        }
+        const sheet = document.createElement("canvas");
+        sheet.width = maxW;
+        sheet.height = Math.max(1, cursorY + rowH + pad);
+        const ctx = sheet.getContext("2d");
+        if (!ctx) throw new Error("missing atlas frame");
+        for (const frame of frames) {
+          const image = images.find((item) => item.key === frame.key)?.image;
+          if (image) ctx.drawImage(image, frame.x, frame.y, frame.w, frame.h);
+        }
+        const base = Texture.from(sheet);
+        for (const frame of frames) {
+          textures.set(frame.key, new Texture({
+            source: base.source,
+            frame: new Rectangle(frame.x, frame.y, frame.w, frame.h),
+          }));
+        }
       };
       const assets = new Map(catalog.assets.map((asset) => [asset.id, asset]));
       const paletteById = new Map(catalog.palettes.map((palette) => [palette.id, palette]));
@@ -185,6 +224,23 @@ export function Scene(props: {
           const depth = (item: SceneObject) => assets.get(item.assetId ?? "")?.depthKey ?? 0;
           return front(a.object) - front(b.object) || depth(a.object) - depth(b.object);
         });
+        const wanted: { key: string; file: string; palette: Palette }[] = [];
+        const seen = new Set<string>();
+        for (const spec of specs) {
+          const asset = spec.object.assetId ? assets.get(spec.object.assetId) : undefined;
+          const palette = asset && spec.object.paletteId ? paletteFor(asset, spec.object.paletteId) : null;
+          if (!asset || !palette || spec.object.hidden) continue;
+          for (const layer of asset.layers) {
+            const layerPalette = paletteById.get(layer.paletteId ?? asset.paletteId);
+            if (!layerPalette) continue;
+            const key = `${layer.file}:${layerPalette.id}`;
+            if (textures.has(key) || seen.has(key)) continue;
+            seen.add(key);
+            wanted.push({ key, file: layer.file, palette: layerPalette });
+          }
+        }
+        await packAtlas(wanted);
+        if (gen !== generation) return;
         const drawn = [];
         for (const spec of specs) {
           drawn.push(await drawPlaced(spec.object, !spec.ghost && spec.object.id === current.selectedId, spec.ghost));
@@ -266,7 +322,15 @@ export function Scene(props: {
           container.hitArea = new Polygon(hit.flatMap((point) => [point.sx, point.sy]));
           container.on("pointerdown", (event) => {
             event.stopPropagation();
-            state.current.onSelect(object.id);
+            const local = camera.toLocal(event.global);
+            const gridX = local.x / (TILE_W / 2);
+            const gridY = local.y / (TILE_H / 2);
+            const cellX = (gridY + gridX) / 2;
+            const cellY = (gridY - gridX) / 2;
+            const occupant = state.current.objects
+              .filter((item) => !item.hidden && cellX >= item.x && cellX < item.x + item.w && cellY >= item.y && cellY < item.y + item.h)
+              .sort((a, b) => b.x + b.y + b.w + b.h - (a.x + a.y + a.w + a.h))[0];
+            state.current.onSelect((occupant ?? object).id);
           });
         }
         return container;
@@ -285,27 +349,46 @@ export function Scene(props: {
         return (r << 16) + (g << 8) + b;
       };
 
+      function paintPoly(points: { sx: number; sy: number }[], kind: GroundKind): void {
+        const top = kindColor(kind);
+        const edge = points.map((point) => ({ sx: point.sx, sy: point.sy + 4 }));
+        groundLayer.poly(edge.flatMap((point) => [point.sx, point.sy])).fill(darken(top));
+        groundLayer.poly(points.flatMap((point) => [point.sx, point.sy])).fill(top);
+      }
+      function paintFoot(x: number, y: number, w: number, h: number, kind: GroundKind): void {
+        paintPoly(footprintQuad(x, y, w, h), kind);
+      }
+
       function drawGround(): void {
         groundLayer.clear();
-        const sent = state.current.district;
-        const rows = sent?.rows?.length === DISTRICT_H ? sent.rows : districtRows();
-        const code: Record<string, GroundKind> = { g: "grass", r: "road", w: "water", p: "plaza", b: "bridge" };
-        const skirt = 10;
-        const field = footprintQuad(-skirt, -skirt, DISTRICT_W + skirt * 2, DISTRICT_H + skirt * 2);
-        groundLayer.poly(field.flatMap((point) => [point.sx, point.sy])).fill(kindColor("grass"));
-        for (let y = -skirt; y < DISTRICT_H + skirt; y++) {
-          const row = rows[y] ?? "";
-          for (let x = -skirt; x < DISTRICT_W + skirt; x++) {
-            const inside = x >= 0 && y >= 0 && x < DISTRICT_W && y < DISTRICT_H;
-            const kind = inside ? (code[row[x] ?? ""] ?? groundKind(x, y)) : groundKind(x, y);
-            if (kind === "grass") continue;
-            const quad = footprintQuad(x, y, 1, 1);
-            const edge = quad.map((point) => ({ sx: point.sx, sy: point.sy + 5 }));
-            const top = kindColor(kind);
-            groundLayer.poly(edge.flatMap((point) => [point.sx, point.sy])).fill(darken(top));
-            groundLayer.poly(quad.flatMap((point) => [point.sx, point.sy])).fill(top);
+        const skirt = 8;
+        const x0 = -skirt;
+        const y0 = -skirt;
+        const x1 = DISTRICT_W + skirt;
+        const y1 = DISTRICT_H + skirt;
+        for (let x = x0; x < x1; x += 1) {
+          if (((x % 4) + 4) % 4 !== 0) continue;
+          paintFoot(x, y0, 1, y1 - y0, "road");
+        }
+        for (let y = y0; y < y1; y += 1) {
+          if (((y % 4) + 4) % 4 !== 0) continue;
+          paintFoot(x0, y, x1 - x0, 1, "road");
+        }
+        let yMin = 99;
+        let yMax = -99;
+        for (let y = y0; y < y1; y += 1) {
+          if (groundKind(1, y) !== "water") continue;
+          yMin = Math.min(yMin, y);
+          yMax = Math.max(yMax, y);
+        }
+        if (yMin <= yMax) paintFoot(x0, yMin, x1 - x0, yMax - yMin + 1, "water");
+        for (let y = 0; y < DISTRICT_H; y += 1) {
+          for (let x = 0; x < DISTRICT_W; x += 1) {
+            const kind = groundKind(x, y);
+            if (kind === "plaza" || kind === "bridge") paintFoot(x, y, 1, 1, kind);
           }
         }
+        groundLayer.eventMode = "none";
       }
 
       let elapsed = 0;
@@ -346,8 +429,8 @@ export function Scene(props: {
           center = cellToScreen(home.x + home.w / 2, home.y + home.h / 2);
         } else {
           const pad = 24;
-          fitted = Math.min((availW - pad) / (maxSx - minSx), (viewH - pad) / (maxSy - minSy)) * 1.35;
-          center = { sx: (minSx + maxSx) / 2 + 48, sy: (minSy + maxSy) / 2 + 96 };
+          fitted = Math.min((availW - pad) / (maxSx - minSx), (viewH - pad) / (maxSy - minSy)) * 1.16;
+          center = { sx: (minSx + maxSx) / 2 + 56, sy: (minSy + maxSy) / 2 + 48 };
         }
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         camera.scale.set(zoom);
@@ -381,6 +464,20 @@ export function Scene(props: {
         void rebuild();
         poseAll(false);
         frameCamera();
+        cullOffscreen();
+      };
+      let cullKey = "";
+      const cullOffscreen = () => {
+        const width = created.canvas.clientWidth || 1;
+        const height = created.canvas.clientHeight || 1;
+        const key = `${camera.position.x.toFixed(1)}|${camera.position.y.toFixed(1)}|${camera.scale.x.toFixed(3)}|${width}|${height}|${world.children.length}`;
+        if (key === cullKey) return;
+        cullKey = key;
+        const margin = 220;
+        for (const child of world.children) {
+          const point = child.getGlobalPosition();
+          child.renderable = point.x >= -margin && point.x <= width + margin && point.y >= -margin && point.y <= height + margin;
+        }
       };
       created.ticker.add(tick);
       await rebuild();
