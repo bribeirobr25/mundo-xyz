@@ -3,7 +3,7 @@
   <polygon points="34,86 80,108 80,258 34,230" fill="{{shade}}"/>
   <polygon points="126,86 80,108 80,258 126,230" fill="{{wall}}"/>
   <polygon points="34,86 80,62 126,86 80,108" fill="{{roof}}"/>
-  <polygon points="46,52 114,52 104,66 56,66" fill="{{roof}}"/>
+  <polygon points="58,80 102,80 94,90 66,90" fill="{{plant}}"/>
   <circle cx="64" cy="46" r="8" fill="{{plant}}"/>
   <circle cx="84" cy="42" r="7" fill="{{plant}}"/>
   <circle cx="98" cy="50" r="6" fill="{{plant}}"/>

@@ -3,7 +3,7 @@ import { Application, Container, Graphics, Polygon, Rectangle, Sprite, Texture }
 import catalogJson from "../../assets/catalog/catalog.json" with { type: "json" };
 import type { Catalog, CatalogAsset, Palette } from "../domain/catalogModel.js";
 import { acceptedPalette, paintSvg } from "../domain/catalogModel.js";
-import { BRIDGES, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZA, WATER, type GroundKind } from "../domain/district.js";
+import { BRIDGES, DISTRICT_H, DISTRICT_W, GRASS_PLOTS, PLAZAS, WATER, type GroundKind, type Plot } from "../domain/district.js";
 import { FRAME_SOURCES } from "../scene/frames.js";
 import { TILE_H, TILE_W, buildingHit, cellToScreen, footprintQuad } from "../scene/iso.js";
 import { SCENE_MAX_RESOLUTION } from "../scene/limits.js";
@@ -350,64 +350,70 @@ export function Scene(props: {
         paintPoly(footprintQuad(x, y, w, h), kind);
       }
 
-      function paintRounded(x: number, y: number, w: number, h: number, radius: number, kind: GroundKind): void {
+      const hex = (role: string) => Number.parseInt(tone(role).slice(1), 16);
+      function paintRounded(x: number, y: number, w: number, h: number, radius: number, color: number): void {
         const quad = footprintQuad(x, y, w, h);
-        const draw = (dy: number) => {
-          const pts = quad.map((point) => ({ sx: point.sx, sy: point.sy + dy }));
-          const count = pts.length;
-          const corners = pts.map((curr, index) => {
-            const prev = pts[(index + count - 1) % count];
-            const next = pts[(index + 1) % count];
-            if (!prev || !next) return null;
-            const toPrev = { sx: prev.sx - curr.sx, sy: prev.sy - curr.sy };
-            const toNext = { sx: next.sx - curr.sx, sy: next.sy - curr.sy };
-            const prevLen = Math.hypot(toPrev.sx, toPrev.sy) || 1;
-            const nextLen = Math.hypot(toNext.sx, toNext.sy) || 1;
-            const cut = Math.min(radius, prevLen * 0.18, nextLen * 0.18);
-            return {
-              a: { sx: curr.sx + (toPrev.sx / prevLen) * cut, sy: curr.sy + (toPrev.sy / prevLen) * cut },
-              c: curr,
-              b: { sx: curr.sx + (toNext.sx / nextLen) * cut, sy: curr.sy + (toNext.sy / nextLen) * cut },
-            };
-          });
-          const last = corners[count - 1];
-          if (!last) return;
-          groundLayer.moveTo(last.b.sx, last.b.sy);
-          for (const corner of corners) {
-            if (!corner) continue;
-            groundLayer.lineTo(corner.a.sx, corner.a.sy);
-            groundLayer.lineTo(corner.b.sx, corner.b.sy);
+        const pts = quad.map((point) => ({ sx: point.sx, sy: point.sy }));
+        const count = pts.length;
+        const corners = pts.map((curr, index) => {
+          const prev = pts[(index + count - 1) % count];
+          const next = pts[(index + 1) % count];
+          if (!prev || !next) return null;
+          const toPrev = { sx: prev.sx - curr.sx, sy: prev.sy - curr.sy };
+          const toNext = { sx: next.sx - curr.sx, sy: next.sy - curr.sy };
+          const prevLen = Math.hypot(toPrev.sx, toPrev.sy) || 1;
+          const nextLen = Math.hypot(toNext.sx, toNext.sy) || 1;
+          const cut = Math.min(radius, prevLen * 0.18, nextLen * 0.18);
+          return {
+            a: { sx: curr.sx + (toPrev.sx / prevLen) * cut, sy: curr.sy + (toPrev.sy / prevLen) * cut },
+            b: { sx: curr.sx + (toNext.sx / nextLen) * cut, sy: curr.sy + (toNext.sy / nextLen) * cut },
+          };
+        });
+        const last = corners[count - 1];
+        if (!last) return;
+        groundLayer.moveTo(last.b.sx, last.b.sy);
+        for (const corner of corners) {
+          if (!corner) continue;
+          groundLayer.lineTo(corner.a.sx, corner.a.sy);
+          groundLayer.lineTo(corner.b.sx, corner.b.sy);
+        }
+        groundLayer.closePath();
+        groundLayer.fill(color);
+      }
+      function paintLawn(plot: Plot): void {
+        const curb = 0.12;
+        paintRounded(plot.x - curb, plot.y - curb, plot.w + curb * 2, plot.h + curb * 2, 16, hex("field"));
+        paintRounded(plot.x + 0.16, plot.y + 0.16, plot.w - 0.32, plot.h - 0.32, 14, hex("grass"));
+        const inset = 0.7;
+        if (plot.w > inset * 2 + 1 && plot.h > inset * 2 + 1) {
+          paintRounded(plot.x + inset, plot.y + inset, plot.w - inset * 2, plot.h - inset * 2, 12, hex("grassAlt"));
+        }
+        const spots: [number, number, "round" | "cone"][] = [
+          [0.28, 0.32, "round"],
+          [0.72, 0.58, "round"],
+          [0.46, 0.74, "cone"],
+        ];
+        for (const [u, v, shape] of spots) {
+          const point = cellToScreen(plot.x + 0.7 + u * (plot.w - 1.4), plot.y + 0.7 + v * (plot.h - 1.4));
+          if (shape === "cone") {
+            groundLayer.poly([point.sx, point.sy - 20, point.sx + 8, point.sy, point.sx - 8, point.sy]).fill(0x145743);
+          } else {
+            groundLayer.poly([
+              point.sx, point.sy - 16,
+              point.sx + 12, point.sy - 4,
+              point.sx + 6, point.sy,
+              point.sx - 8, point.sy,
+              point.sx - 12, point.sy - 8,
+            ]).fill(0x21784a);
           }
-          groundLayer.closePath();
-        };
-        draw(0);
-        groundLayer.fill(kindColor(kind));
+        }
       }
 
       function drawGround(): void {
         groundLayer.clear();
-        paintFoot(-28, WATER.y, 72, WATER.h, "water");
-        const overlaps = (a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) =>
-          a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
-        const bands = [
-          { y: -14, h: 4 },
-          { y: -8, h: 4 },
-          { y: 0, h: 4 },
-          { y: 11, h: 6 },
-          { y: 19, h: 4 },
-          { y: 25, h: 4 },
-          { y: 31, h: 4 },
-        ];
-        const canal = { x: -28, y: WATER.y, w: 72, h: WATER.h };
-        for (let x = -20; x <= 36; x += 7) {
-          for (const band of bands) {
-            const plot = { x: x + 1, y: band.y, w: 5, h: band.h };
-            if (overlaps(plot, canal) || GRASS_PLOTS.some((lawn) => overlaps(plot, lawn))) continue;
-            paintRounded(plot.x, plot.y, plot.w, plot.h, 18, "grass");
-          }
-        }
-        for (const plot of GRASS_PLOTS) paintRounded(plot.x, plot.y, plot.w, plot.h, 18, "grass");
-        paintRounded(PLAZA.x, PLAZA.y, PLAZA.w, PLAZA.h, 12, "plaza");
+        paintFoot(-6, WATER.y, 28, WATER.h, "water");
+        for (const plot of GRASS_PLOTS) paintLawn(plot);
+        for (const plot of PLAZAS) paintRounded(plot.x, plot.y, plot.w, plot.h, 10, hex("pad"));
         for (const bridge of BRIDGES) paintFoot(bridge.x, bridge.y, bridge.w, bridge.h, "bridge");
         groundLayer.eventMode = "none";
       }
@@ -445,17 +451,17 @@ export function Scene(props: {
         const availW = Math.max(1, viewW - inset);
         const cafe = current.objects.find((object) => object.assetId === "cafe_for_birds" && !object.hidden);
         const focus = cafe ?? home;
-        const fitted = viewW < 800
-          ? Math.max(1.15, Math.min(1.45, viewH / (7 * TILE_H)))
-          : 0.72;
+        const wide = viewW >= 800;
+        const fitted = wide ? 0.76 : Math.min(0.36, Math.max(0.3, viewH / (26 * TILE_H)));
         const zoom = Math.min(2.5, Math.max(0.2, fitted * current.zoom));
         const focusCenter = focus
           ? cellToScreen(focus.x + focus.w / 2, focus.y + focus.h / 2)
           : { sx: (minSx + maxSx) / 2, sy: (minSy + maxSy) / 2 };
-        const focusX = viewW < 800 ? 0.5 : 0.42;
+        const focusX = wide ? 0.66 : 0.56;
+        const focusY = wide ? 0.72 : 0.48;
         const center = {
           sx: focusCenter.sx - (focusX - 0.5) * availW / zoom,
-          sy: focusCenter.sy - (0.58 - 0.5) * viewH / zoom,
+          sy: focusCenter.sy - (focusY - 0.5) * viewH / zoom,
         };
         camera.scale.set(zoom);
         camera.position.set(availW / 2 - center.sx * zoom + current.pan.x, viewH / 2 - center.sy * zoom + current.pan.y);

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="160" height="220" viewBox="0 0 160 220">
-  <path fill="{{face}}" fill-rule="evenodd" d="M16 208 L16 28 L112 28 L112 208 L78 208 L78 72 L50 72 L50 208 Z"/>
-  <path fill="{{edge}}" d="M16 28 L36 8 L132 8 L112 28 Z"/>
-  <path fill="{{edge}}" d="M50 72 L66 56 L94 56 L78 72 Z"/>
-  <path fill="{{side}}" d="M112 28 L132 8 L132 188 L112 208 Z"/>
-  <path fill="{{side}}" d="M78 72 L94 56 L94 176 L78 208 Z"/>
+  <path fill="{{face}}" fill-rule="evenodd" d="M20 208 L20 36 L108 36 L108 208 L86 208 L86 78 L42 78 L42 208 Z"/>
+  <path fill="{{edge}}" d="M20 36 L40 16 L128 16 L108 36 Z"/>
+  <path fill="{{edge}}" d="M42 78 L58 62 L102 62 L86 78 Z"/>
+  <path fill="{{side}}" d="M108 36 L128 16 L128 188 L108 208 Z"/>
+  <path fill="{{side}}" d="M86 78 L102 62 L102 188 L86 208 Z"/>
 </svg>
