@@ -11,7 +11,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { reserveBudget, reconcileBudget } from "./budget.js";
 import { groupedCode, keyedHash, networkKey, randomToken } from "./crypto.js";
+import { DISTRICT_H, DISTRICT_W, districtRows } from "../domain/district.js";
 import { fixtureInterpret } from "./fixture.js";
+import { NEIGHBORHOOD, type SeedPlace } from "./neighborhood.js";
 
 export type Copy = Record<string, string | string[]>;
 
@@ -62,30 +64,123 @@ export class WorldService {
   }
 
   async seed(): Promise<void> {
+    await this.ensureNeighborhood();
+  }
+
+  /** Adds prototype 00 scenery. Existing rows, including published contributions, stay. */
+  private async ensureNeighborhood(): Promise<void> {
     const existing = await this.pool.query("SELECT id FROM world WHERE id = 1");
-    if (existing.rowCount) return;
-    const authorId = randomUUID();
-    const contributionId = randomUUID();
-    const objectId = randomUUID();
-    await this.pool.query("INSERT INTO world(id, placement_revision, feed_sequence) VALUES (1, 1, 0)");
-    await this.pool.query(
-      "INSERT INTO authors(id, pseudonym, skeleton, system) VALUES ($1, 'Administrator', 'administrator', true)",
-      [authorId],
+    let authorId: string;
+    if (!existing.rowCount) {
+      authorId = randomUUID();
+      await this.pool.query("INSERT INTO world(id, placement_revision, feed_sequence) VALUES (1, 1, 0)");
+      await this.pool.query(
+        "INSERT INTO authors(id, pseudonym, skeleton, system) VALUES ($1, 'Administrator', 'administrator', true)",
+        [authorId],
+      );
+      await this.pool.query("INSERT INTO author_roles(author_id, role) VALUES ($1, 'administrator')", [authorId]);
+      await this.pool.query(
+        "INSERT INTO role_events(id, author_id, role, action) VALUES ($1, $2, 'administrator', 'grant')",
+        [randomUUID(), authorId],
+      );
+    } else {
+      const author = await this.pool.query<{ id: string }>("SELECT id FROM authors WHERE system = true ORDER BY id LIMIT 1");
+      authorId = author.rows[0]?.id ?? randomUUID();
+      if (!author.rows[0]) {
+        await this.pool.query(
+          "INSERT INTO authors(id, pseudonym, skeleton, system) VALUES ($1, 'Administrator', 'administrator', true)",
+          [authorId],
+        );
+        await this.pool.query("INSERT INTO author_roles(author_id, role) VALUES ($1, 'administrator')", [authorId]);
+        await this.pool.query(
+          "INSERT INTO role_events(id, author_id, role, action) VALUES ($1, $2, 'administrator', 'grant')",
+          [randomUUID(), authorId],
+        );
+      }
+    }
+    const rows = await this.pool.query<{
+      id: string;
+      catalog_asset_id: string;
+      x: number;
+      y: number;
+      footprint_w: number;
+      footprint_h: number;
+      approved_text: string | null;
+      system: boolean;
+    }>(
+      `SELECT o.id, o.catalog_asset_id, o.x, o.y, o.footprint_w, o.footprint_h, c.approved_text, a.system
+       FROM placed_objects o
+       JOIN contributions c ON c.id = o.contribution_id
+       JOIN authors a ON a.id = c.author_id`,
     );
-    await this.pool.query("INSERT INTO author_roles(author_id, role) VALUES ($1, 'administrator')", [authorId]);
-    await this.pool.query(
-      "INSERT INTO role_events(id, author_id, role, action) VALUES ($1, $2, 'administrator', 'grant')",
-      [randomUUID(), authorId],
-    );
+    const occupied = rows.rows.map((row) => ({
+      id: row.id,
+      asset: row.catalog_asset_id,
+      x: row.x,
+      y: row.y,
+      w: row.footprint_w,
+      h: row.footprint_h,
+      approved: row.approved_text,
+      system: row.system,
+    }));
+    const overlaps = (a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) =>
+      a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+    const free = (spot: SeedPlace, ignoreId: string | null) =>
+      occupied.every((item) => item.id === ignoreId || !overlaps(item, spot));
+    const cafe = NEIGHBORHOOD[0];
+    const systemCafe = occupied.find((item) => item.system && item.asset === "cafe_for_birds" && item.approved == null);
+    if (cafe && systemCafe) {
+      if (free(cafe, systemCafe.id)) {
+        await this.moveSeed(systemCafe.id, cafe);
+        systemCafe.x = cafe.x;
+        systemCafe.y = cafe.y;
+        systemCafe.w = cafe.w;
+        systemCafe.h = cafe.h;
+        systemCafe.asset = cafe.asset;
+      }
+    } else if (cafe && free(cafe, null)) {
+      await this.insertSeed(authorId, cafe);
+      occupied.push({ id: cafe.id, asset: cafe.asset, x: cafe.x, y: cafe.y, w: cafe.w, h: cafe.h, approved: null, system: true });
+    }
+    for (const spot of NEIGHBORHOOD.slice(1)) {
+      const found = occupied.find((item) => item.id === spot.id);
+      if (found) {
+        if (free(spot, found.id)) {
+          await this.moveSeed(found.id, spot);
+          found.x = spot.x;
+          found.y = spot.y;
+          found.w = spot.w;
+          found.h = spot.h;
+          found.asset = spot.asset;
+        }
+      } else if (free(spot, null)) {
+        await this.insertSeed(authorId, spot);
+        occupied.push({ id: spot.id, asset: spot.asset, x: spot.x, y: spot.y, w: spot.w, h: spot.h, approved: null, system: true });
+      }
+    }
+  }
+
+  private async insertSeed(authorId: string, spot: SeedPlace): Promise<void> {
     await this.pool.query(
       `INSERT INTO contributions(id, proposal_id, author_id, approved_text, visibility)
-       VALUES ($1, NULL, $2, NULL, 'public')`,
-      [contributionId, authorId],
+       VALUES ($1, NULL, $2, NULL, 'public')
+       ON CONFLICT (id) DO NOTHING`,
+      [spot.contributionId, authorId],
     );
     await this.pool.query(
       `INSERT INTO placed_objects(id, catalog_asset_id, catalog_version, x, y, footprint_w, footprint_h, state, contribution_id, relation)
-       VALUES ($1, 'cafe_for_birds', $2, 4, 4, 2, 2, 'open', $3, NULL)`,
-      [objectId, this.config.catalogVersion, contributionId],
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'open', $8, NULL)
+       ON CONFLICT (id) DO NOTHING`,
+      [spot.id, spot.asset, this.config.catalogVersion, spot.x, spot.y, spot.w, spot.h, spot.contributionId],
+    );
+  }
+
+  private async moveSeed(id: string, spot: SeedPlace): Promise<void> {
+    await this.pool.query(
+      `UPDATE placed_objects
+       SET x = $2, y = $3, footprint_w = $4, footprint_h = $5, catalog_asset_id = $6, catalog_version = $7
+       WHERE id = $1`,
+      [id, spot.x, spot.y, spot.w, spot.h, spot.asset, this.config.catalogVersion],
     );
   }
 
@@ -164,7 +259,9 @@ export class WorldService {
         relation: row.relation,
         anchorHidden,
         history: row.system
-          ? this.text("template.seed")
+          ? row.catalog_asset_id === "cafe_for_birds"
+            ? this.text("template.seed")
+            : this.text("template.neighborhood", { asset: base })
           : this.text("template.placed", {
               name: authorLabel,
               asset: base,
@@ -173,7 +270,9 @@ export class WorldService {
             }),
       };
     });
-    const home = objects.rows.find((row) => row.system) ?? objects.rows[0];
+    const home = objects.rows.find((row) => row.system && row.catalog_asset_id === "cafe_for_birds")
+      ?? objects.rows.find((row) => row.system)
+      ?? objects.rows[0];
     const hour = new Date().getUTCHours();
     const phase = hour >= this.config.dayStartHourUtc && hour < this.config.nightStartHourUtc ? "day" : "night";
     let returnNote: Record<string, unknown> | null = null;
@@ -222,6 +321,7 @@ export class WorldService {
       body: {
         objects: publicObjects,
         homeId: home?.id ?? null,
+        district: { w: DISTRICT_W, h: DISTRICT_H, rows: districtRows() },
         phase,
         weather: this.config.weather,
         pollIntervalMs: this.config.pollIntervalMs,

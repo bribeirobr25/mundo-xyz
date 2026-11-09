@@ -5,9 +5,11 @@ import AxeBuilder from "@axe-core/playwright";
 test("t.e2e.j1 explore and t.e2e.j3 preview", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("Test mode — fixture interpreter")).toBeVisible();
+  await page.getByRole("button", { name: "Places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.getByRole("button", { name: /Café for birds/ }).click();
   await expect(page.getByText("Created by Administrator.")).toBeVisible();
+  await page.getByRole("button", { name: "Add your idea" }).first().click();
   await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
   await page.screenshot({ path: "test-results/journey-preview.png", fullPage: true });
@@ -20,15 +22,25 @@ test("t.art.select-scene café footprint", async ({ page }) => {
   await page.goto("/");
   const host = page.locator("[data-scene-host] canvas");
   await expect(host).toBeVisible();
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { homePoint: () => { x: number; y: number } | null } }).__sharedWorldTest;
+    return Boolean(hook?.homePoint());
+  });
   const box = await host.boundingBox();
   if (!box) throw new Error("scene");
-  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  const point = await page.evaluate(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { homePoint: () => { x: number; y: number } | null } }).__sharedWorldTest;
+    return hook?.homePoint() ?? null;
+  });
+  if (!point) throw new Error("home");
+  await page.mouse.click(box.x + point.x, box.y + point.y);
   await expect(page.getByText("Created by Administrator.")).toBeVisible();
 });
 
 test("t.a11y.dom webgl off still lists the world", async ({ page }) => {
   await page.goto("/?webgl=0");
   await expect(page.getByText("Illustration unavailable. The list still works.")).toBeVisible();
+  await page.getByRole("button", { name: "Places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.screenshot({ path: "test-results/journey-dom-list.png", fullPage: true });
 });
@@ -36,7 +48,9 @@ test("t.a11y.dom webgl off still lists the world", async ({ page }) => {
 test("t.e2e.j5 browser publish with invite", async ({ page }) => {
   const name = `Lane ${Math.floor(Math.random() * 9000) + 1000}`;
   await page.goto("/");
+  await page.getByRole("button", { name: "Places" }).click();
   await page.getByRole("button", { name: /Café for birds/ }).click();
+  await page.getByRole("button", { name: "Add your idea" }).first().click();
   await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
   await page.getByRole("button", { name: "This looks right" }).click();
@@ -51,6 +65,7 @@ test("t.e2e.j5 browser publish with invite", async ({ page }) => {
   expect(me.authorId).toBeTruthy();
   execFileSync("npx", ["tsx", "src/server/cli.ts", "grant-admin", me.authorId!], { cwd: process.cwd() });
   const minted = execFileSync("npx", ["tsx", "src/server/cli.ts", "mint-invite", me.authorId!], { cwd: process.cwd(), encoding: "utf8" }).trim().split("\n").at(-1) ?? "";
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByLabel("Use invitation").fill(minted);
   await page.getByRole("button", { name: "Use invitation" }).click();
   await page.getByRole("button", { name: "This looks right" }).click();
@@ -60,6 +75,7 @@ test("t.e2e.j5 browser publish with invite", async ({ page }) => {
   await page.getByText("Recovery code:").evaluate((node) => {
     node.textContent = "Recovery code: hidden in this capture";
   });
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByLabel("Use invitation").fill("");
   await page.screenshot({ path: "test-results/journey-published.png", fullPage: true });
 });
@@ -67,6 +83,7 @@ test("t.e2e.j5 browser publish with invite", async ({ page }) => {
 test("t.vis.mobile explore", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await page.getByRole("button", { name: "Places" }).click();
   await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
   await page.screenshot({ path: "test-results/journey-mobile.png", fullPage: true });
 });
@@ -111,28 +128,32 @@ test("t.vis.pause-resume and reduced motion", async ({ page }) => {
 
 test("t.copy.unsupported and curly suggestion", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Preview privately" }).click();
+  await page.getByRole("button", { name: "Add your idea" }).click();
+  await page.getByRole("button", { name: "Preview idea" }).click();
   await expect(page.getByText("Write a short phrase first.")).toBeVisible();
   await page.getByLabel("What would you add?").fill("leave it as it is");
-  await page.getByRole("button", { name: "Preview privately" }).click();
+  await page.getByRole("button", { name: "Preview idea" }).click();
   await expect(page.getByText("That phrase does not change the world.")).toBeVisible();
   await page.getByLabel("What would you add?").fill("A bus stop for the café’s regulars.");
-  await page.getByRole("button", { name: "Preview privately" }).click();
+  await page.getByRole("button", { name: "Preview idea" }).click();
   await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
 });
 
 test("t.vis.reload keeps the illustration", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByRole("button", { name: "Reload illustration" }).click();
-  await expect(page.locator("[data-scene-host]")).toBeVisible();
+  await expect(page.locator("[data-scene-host] canvas")).toBeVisible();
   await expect(page.getByText("Illustration unavailable. The list still works.")).toHaveCount(0);
 });
 
 test("t.origin.localhost preview and refused recovery", async ({ page }) => {
   await page.goto("http://localhost:4500/");
   await expect(page.getByText("Test mode — fixture interpreter")).toBeVisible();
+  await page.getByRole("button", { name: "Add your idea" }).click();
   await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByLabel("Recover with a code").fill("not-a-real-code");
   await page.getByRole("button", { name: "Recover with a code" }).click();
   await expect(page.getByText("That recovery code could not be used.")).toBeVisible();

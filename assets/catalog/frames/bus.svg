@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 180 90">
+  <polygon points="18,40 90,70 150,46 78,18" fill="{{body}}"/>
+  <polygon points="18,40 90,70 90,82 18,52" fill="{{shade}}"/>
+  <polygon points="150,46 90,70 90,82 150,58" fill="{{body}}"/>
+  <polygon points="36,38 70,52 70,46 36,32" fill="{{window}}"/>
+  <polygon points="78,28 118,44 118,38 78,22" fill="{{window}}"/>
+  <polygon points="28,52 40,58 40,64 28,58" fill="{{wheel}}"/>
+  <polygon points="96,72 108,78 108,84 96,78" fill="{{wheel}}"/>
+  <polygon points="18,46 90,76 90,80 18,50" fill="{{stripe}}"/>
+</svg>

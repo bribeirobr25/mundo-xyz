@@ -1,10 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="192" viewBox="0 0 64 48">
-  <polygon points="16,28 4,20 14,34" fill="{{wing}}"/>
-  <ellipse cx="28" cy="27" rx="13" ry="9" fill="{{bird}}"/>
-  <ellipse cx="22" cy="29" rx="6" ry="4.5" fill="{{wing}}"/>
-  <circle cx="39" cy="23" r="6.5" fill="{{bird}}"/>
-  <polygon points="44,21 58,25 44,29" fill="{{beak}}"/>
-  <circle cx="41" cy="21" r="1.5" fill="{{eye}}"/>
-  <polygon points="22,34 27,34 25,46" fill="{{beak}}"/>
-  <polygon points="31,34 36,34 34,46" fill="{{beak}}"/>
+  <ellipse cx="30" cy="28" rx="14" ry="10" fill="{{bird}}"/>
+  <ellipse cx="24" cy="30" rx="7" ry="5" fill="{{wing}}"/>
+  <circle cx="42" cy="24" r="7" fill="{{bird}}"/>
+  <polygon points="47,22 60,25 47,28" fill="{{beak}}"/>
+  <circle cx="44" cy="22" r="1.4" fill="{{eye}}"/>
+  <polygon points="22,36 26,36 24,44" fill="{{beak}}"/>
+  <polygon points="32,36 36,36 34,44" fill="{{beak}}"/>
 </svg>

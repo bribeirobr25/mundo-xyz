@@ -1,27 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1120" viewBox="0 0 640 560">
-  <ellipse cx="320" cy="500" rx="210" ry="30" fill="{{door}}" fill-opacity="0.14"/>
-  <polygon points="320,430 520,505 320,548 120,505" fill="{{trim}}"/>
-  <polygon points="168,300 320,376 320,468 168,392" fill="{{wallShade}}"/>
-  <polygon points="472,300 320,376 320,468 472,392" fill="{{wall}}"/>
-  <polygon points="198,328 258,358 258,400 198,370" fill="{{glass}}"/>
-  <polygon points="210,338 246,356 246,388 210,370" fill="{{trim}}"/>
-  <polygon points="352,388 388,370 388,446 352,464" fill="{{door}}"/>
-  <polygon points="360,404 380,394 380,432 360,442" fill="{{trim}}"/>
-  <polygon points="320,348 150,262 214,196 268,242 320,168 372,242 426,196 490,262" fill="{{roof}}"/>
-  <polygon points="320,168 426,196 490,262 320,348 372,242" fill="{{roofShade}}"/>
-  <ellipse cx="292" cy="268" rx="16" ry="10" fill="{{wall}}"/>
-  <circle cx="308" cy="262" r="6" fill="{{wall}}"/>
-  <polygon points="314,258 332,264 314,270" fill="{{beak}}"/>
-  <circle cx="310" cy="260" r="1.4" fill="{{trim}}"/>
-  <polygon points="408,400 422,392 422,458 408,466" fill="{{door}}"/>
-  <polygon points="548,348 562,340 562,430 548,438" fill="{{door}}"/>
-  <polygon points="424,404 462,384 462,394 424,414" fill="{{trim}}"/>
-  <polygon points="432,414 440,410 440,436 432,440" fill="{{door}}"/>
-  <polygon points="450,404 458,400 458,426 450,430" fill="{{door}}"/>
-  <polygon points="470,418 508,398 508,408 470,428" fill="{{trim}}"/>
-  <polygon points="478,428 486,424 486,450 478,454" fill="{{door}}"/>
-  <polygon points="496,418 504,414 504,440 496,444" fill="{{door}}"/>
-  <polygon points="512,392 548,374 548,384 512,402" fill="{{trim}}"/>
-  <polygon points="520,402 528,398 528,422 520,426" fill="{{door}}"/>
-  <polygon points="536,392 544,388 544,412 536,416" fill="{{door}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 480 360">
+  <ellipse cx="250" cy="318" rx="150" ry="18" fill="{{door}}" fill-opacity="0.16"/>
+  <polygon points="70,168 250,258 250,312 70,230" fill="{{wallShade}}"/>
+  <polygon points="430,168 250,258 250,312 430,230" fill="{{wall}}"/>
+  <polygon points="118,188 168,214 168,252 118,226" fill="{{glass}}"/>
+  <polygon points="128,198 158,214 158,236 128,220" fill="{{trim}}"/>
+  <polygon points="300,236 338,216 338,292 300,312" fill="{{door}}"/>
+  <polygon points="312,250 328,242 328,276 312,284" fill="{{trim}}"/>
+  <polygon points="70,168 118,122 168,158 214,104 262,158 318,108 372,152 430,168 250,258" fill="{{roof}}"/>
+  <polygon points="214,104 262,158 318,108 372,152 430,168 250,258" fill="{{roofShade}}"/>
+  <ellipse cx="132" cy="196" rx="16" ry="10" fill="{{trim}}"/>
+  <circle cx="146" cy="192" r="6" fill="{{trim}}"/>
+  <polygon points="150,188 168,194 150,200" fill="{{beak}}"/>
+  <circle cx="144" cy="190" r="1.2" fill="{{wallShade}}"/>
+  <polygon points="196,214 214,204 214,246 196,256" fill="{{glass}}"/>
+  <polygon points="360,200 392,184 392,228 360,244" fill="{{glass}}"/>
 </svg>

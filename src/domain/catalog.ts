@@ -5,9 +5,9 @@ import type { Catalog, Motion, Palette } from "./catalogModel.js";
 export type { Catalog, CatalogAsset, CatalogLayer, Motion, Palette } from "./catalogModel.js";
 export { acceptedPalette, paintSvg, shownAsset } from "./catalogModel.js";
 
-const MOTIONS = new Set<Motion>(["none", "hop", "sway"]);
+const MOTIONS = new Set<Motion>(["none", "hop", "sway", "glance", "drift"]);
 const HEX = /^#[0-9a-f]{6}$/;
-const GROUND_ROLES = ["field", "grass", "grassAlt", "pad", "path", "marker", "select"];
+const GROUND_ROLES = ["field", "grass", "grassAlt", "pad", "path", "marker", "select", "water"];
 const REQUIRED_ASSETS = ["cafe_for_birds", "bus_stop"];
 
 export type CatalogCheck = {

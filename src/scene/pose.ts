@@ -23,6 +23,15 @@ export function partPose(
     const y = -amplitude * Math.sin(Math.PI * u);
     return { x: 0, y: y === 0 ? 0 : y, rotation: 0 };
   }
+  if (motion === "glance") {
+    if (u > 0.08) return rest;
+    const y = -amplitude * Math.sin(Math.PI * (u / 0.08));
+    return { x: 0, y: y === 0 ? 0 : y, rotation: 0 };
+  }
+  if (motion === "drift") {
+    const x = amplitude * Math.sin(u * Math.PI * 2);
+    return { x: x === 0 ? 0 : x, y: 0, rotation: 0 };
+  }
   const rotation = Math.sin(u * Math.PI * 2) * amplitude * (Math.PI / 180);
   return { x: 0, y: 0, rotation: rotation === 0 ? 0 : rotation };
 }

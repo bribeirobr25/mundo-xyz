@@ -33,14 +33,52 @@ async function close(): Promise<void> {
 test("t.world.single and t.world.seed-labeled and t.world.empty-shape", async () => {
   const world = await client.call("/api/world");
   expect(world.status).toBe(200);
-  const objects = world.body.objects as { administrator?: boolean; sentence?: string | null; name: string; assetId?: string; paletteId?: string }[];
-  expect(objects).toHaveLength(1);
-  expect(objects[0]?.administrator).toBe(true);
-  expect(objects[0]?.sentence).toBeNull();
-  expect(objects[0]?.name).toBe("Café for birds");
-  expect(objects[0]?.assetId).toBe("cafe_for_birds");
-  expect(objects[0]?.paletteId).toBe("cafe-day");
-  expect(objects[0]).not.toHaveProperty("fill");
+  const objects = world.body.objects as { id?: string; administrator?: boolean; sentence?: string | null; name: string; assetId?: string; paletteId?: string; history?: string }[];
+  expect(objects).toHaveLength(29);
+  expect(objects.every((object) => object.administrator)).toBe(true);
+  const cafe = objects.find((object) => object.assetId === "cafe_for_birds");
+  expect(cafe?.sentence).toBeNull();
+  expect(cafe?.name).toBe("Café for birds");
+  expect(cafe?.paletteId).toBe("cafe-day");
+  expect(cafe?.history).toBe("Administrator placed Café for birds.");
+  expect(world.body.homeId).toBe(cafe?.id);
+  expect(objects.filter((object) => object.assetId === "bus_stop")).toHaveLength(0);
+  expect(objects.find((object) => object.assetId === "red_tower")?.history).toContain("Red tower");
+  const district = world.body.district as { w: number; h: number; rows: string[] };
+  expect(district.w).toBe(16);
+  expect(district.rows).toHaveLength(16);
+  expect(cafe).not.toHaveProperty("fill");
+  await close();
+});
+
+test("t.world.seed-keeps-published", async () => {
+  const world = await client.call("/api/world");
+  const tree = (world.body.objects as { id: string; contributionId: string; assetId: string; x: number; y: number }[])
+    .find((object) => object.assetId === "round_tree");
+  if (!tree) throw new Error("tree");
+  await pool.query("DELETE FROM placed_objects WHERE id = $1", [tree.id]);
+  await pool.query("DELETE FROM contributions WHERE id = $1", [tree.contributionId]);
+  const author = await client.call("/api/identity", { body: { pseudonym: "River Stone", acknowledge: true } });
+  const objectId = "11111111-1111-4111-8111-111111111111";
+  const contributionId = "22222222-2222-4222-8222-222222222222";
+  await pool.query(
+    `INSERT INTO contributions(id, proposal_id, author_id, approved_text, visibility)
+     VALUES ($1, NULL, $2, 'A kept stop', 'public')`,
+    [contributionId, author.body.authorId],
+  );
+  await pool.query(
+    `INSERT INTO placed_objects(id, catalog_asset_id, catalog_version, x, y, footprint_w, footprint_h, state, contribution_id, relation)
+     VALUES ($1, 'bus_stop', '1', $2, $3, 1, 1, 'open', $4, NULL)`,
+    [objectId, tree.x, tree.y, contributionId],
+  );
+  await client.service.seed();
+  const again = await client.call("/api/world");
+  const objects = again.body.objects as { id: string; assetId: string; x: number; y: number }[];
+  const kept = objects.find((object) => object.id === objectId);
+  expect(kept?.assetId).toBe("bus_stop");
+  expect(kept?.x).toBe(tree.x);
+  expect(objects.filter((object) => object.assetId === "round_tree" && object.x === tree.x && object.y === tree.y)).toHaveLength(0);
+  expect(objects.some((object) => object.assetId === "cafe_for_birds")).toBe(true);
   await close();
 });
 
@@ -68,7 +106,7 @@ test("t.preview.signed-out and t.preview.isolation and t.interp.negation and t.f
   expect(preview.body.publicWrites).toBe(0);
   const other = await boot(pool);
   const seen = await other.call("/api/world");
-  expect((seen.body.objects as unknown[]).length).toBe(1);
+  expect((seen.body.objects as unknown[]).length).toBe(29);
   const negated = await client.call("/api/interpret", { body: { text: "not a bus stop" } });
   expect(negated.body.code).toBe("unsupported");
   expect(negated.body.publicWrites).toBe(0);

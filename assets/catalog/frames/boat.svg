@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="160" viewBox="0 0 140 80">
+  <polygon points="18,48 70,68 122,48 70,36" fill="{{hull}}"/>
+  <polygon points="18,48 70,68 70,76 24,56" fill="{{trim}}"/>
+  <polygon points="122,48 70,68 70,76 116,56" fill="{{hull}}"/>
+  <polygon points="58,28 86,40 70,48 42,36" fill="{{cabin}}"/>
+  <polygon points="42,36 70,48 70,56 42,44" fill="{{trim}}"/>
+  <polygon points="86,40 70,48 70,56 86,48" fill="{{cabin}}"/>
+</svg>

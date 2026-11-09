@@ -8,7 +8,7 @@ PixiJS 8 with `preference: ['webgl']` stays. The rejected picture was the catalo
 
 Authored SVG files remain the source. The document measured zero `<svg>` elements and one WebGL canvas. Textures are created once per file and palette id and were not recreated during motion.
 
-The catalog is still the café and the bus stop. Prototypes 00–05 show a neighborhood. That city is not in this change. It needs a separate owner decision.
+The owner later authorized the elements visible in prototype 00, and only those, as administrator scenery. `bus_stop` remains the contribution the fixture can place. Prototypes 01–05 are not loaded. The notes below the first measurement still describe the two-asset build; the prototype 00 measurement follows them.
 
 ## What was measured
 
@@ -32,7 +32,13 @@ After, same profiles:
 
 ## Layout
 
-The base CSS is one column. The scene is about 46 vh and at least 240 px, so the places list starts on a short screen. From 801 px the list sits beside the scene and the stage grows. Zoom, pause, and reduced motion are unchanged.
+The picture fills the viewport. A slim bar holds the title, the fixture-mode line, Places, Add your idea, pause, reduced motion, and Account. The place list and the selected place share one surface: a right inspector from 800 px, and a bottom sheet below that, with Expand, Collapse, and Close. Search filters the list. ArrowUp and ArrowDown move through the results when one of them is focused. Back returns from a place to the list. History sits behind “What changed” so the name, the author, and Add your idea stay first. Zoom, Back to café, and a Navigation disclosure stay on the picture. Dragging empty ground pans. The illustration’s loading and unavailable lines stay in the page, because a separate browser pass saw delayed first renders and did not treat that delay as a defect to copy.
+
+## Prototype 00 measurement
+
+Same virtual machine and SwiftShader. Not a phone, and not a 10-second frame budget. Fresh `mundo_test` seed, 29 administrator places, world JSON 12,252 bytes and 1,293 bytes gzip. The files this view requests gzip to 219,212 bytes before the HTML document: entry 76,251, scene 84,171, stylesheet 1,131, and the WebGL chunks the scene loads. Canvas and WebGPU chunks are built and not requested. One short sample of 120 frames on the fresh seed, chrome hidden, was 50 ms at the median, 66.8 ms at the 95th percentile, and 83.3 ms at the maximum. That sample does not meet a 16.7 ms frame. It is SwiftShader, not a phone result. The grass field is one polygon; paths, water, the plaza, and the bridges are the tiled cells, including a skirt so the fitted view does not end as a diamond.
+
+The seeded view draws 42 sprites across 22 textures. The earlier note said to revisit an atlas around 30 sprites and 8 textures. That note is a recommendation, not a measured failure and not a new authorization, so this change does not build an atlas. It also does not load prototypes 01–05.
 
 ## PoC limits and when to revisit
 
@@ -65,4 +71,4 @@ A physical phone still has to confirm decode time, memory, thermal behavior, and
 
 ## Fidelity that remains
 
-The café has a folded yellow roof, a striped canopy lifted off the terrace, and a small roof emblem. The three birds are drawn in front of that canopy so the cloth does not hide them. They are still three colors of one drawing, not the distinct guests seated at tables in prototype 00. The shelter posts meet the red roof, and the sign stands to the side and swings through the angles in between. The ground is still one plot rather than the streets, water, and trees in prototypes 00–05. Owner review of a normal-motion recording is still required. A passing test or a still image is not that acceptance.
+Prototype 00 is the art target. The current drawing is not a match and is not accepted. The café has a sawtooth roof, a striped awning, two tables, and three birds, one of which glances. It does not have the reference terrace’s row of birds, stools, and depth. The tower, frames, houses, pavilion, bus, bridges, boats, and trees are simplified masses in the same palette, not the reference’s balconies, interlocking frames, or open red pavilion. The canal is two cells wide. Grass, paths, and the canal continue past the 16×16 district so the fitted view is not a hard diamond; the path grid is still coarser than the reference. The server still sends 16 rows. `bus_stop` is redrawn quieter and does not sway; published bus stops stay in the database and are not deleted to tidy a screenshot. The comparison still is a fresh seed. Boats drift out of phase. Buildings stay still. Reduced motion is still. No Mobbin screens were inspected. A passing test is not visual acceptance.

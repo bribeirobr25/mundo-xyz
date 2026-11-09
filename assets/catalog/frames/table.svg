@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 80 60">
+  <ellipse cx="40" cy="46" rx="18" ry="6" fill="{{leg}}" fill-opacity="0.25"/>
+  <polygon points="40,18 62,28 40,38 18,28" fill="{{top}}"/>
+  <polygon points="18,28 40,38 40,48 18,38" fill="{{leg}}"/>
+  <polygon points="62,28 40,38 40,48 62,38" fill="{{top}}"/>
+</svg>

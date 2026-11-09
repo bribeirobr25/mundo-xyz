@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="280" viewBox="0 0 200 140">
+  <polygon points="24,78 100,112 100,124 24,92" fill="{{post}}"/>
+  <polygon points="176,78 100,112 100,124 176,92" fill="{{post}}"/>
+  <polygon points="24,78 100,40 176,78 100,112" fill="{{roof}}"/>
+  <polygon points="100,40 176,78 100,112" fill="{{shade}}"/>
+  <polygon points="70,86 100,100 130,86 100,74" fill="{{interior}}"/>
+  <polygon points="36,84 42,87 42,108 36,105" fill="{{post}}"/>
+  <polygon points="158,84 164,87 164,108 158,105" fill="{{post}}"/>
+</svg>

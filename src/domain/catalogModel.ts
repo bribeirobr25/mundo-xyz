@@ -1,4 +1,4 @@
-export type Motion = "none" | "hop" | "sway";
+export type Motion = "none" | "hop" | "sway" | "glance" | "drift";
 
 /** A named set of role colors. Geometry does not live here. */
 export type Palette = { id: string; roles: Record<string, string> };

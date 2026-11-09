@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1120" viewBox="0 0 640 560">
-  <polygon points="336,276 468,210 548,258 416,324" fill="{{awning}}"/>
-  <polygon points="344,292 476,226 556,274 424,340" fill="{{stripe}}"/>
-  <polygon points="352,308 484,242 564,290 432,356" fill="{{awning}}"/>
-  <polygon points="360,324 492,258 572,306 440,372" fill="{{stripe}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="280" viewBox="0 0 360 140">
+  <polygon points="40,36 300,36 250,78 8,78" fill="{{stripe}}"/>
+  <polygon points="40,36 88,36 62,78 8,78" fill="{{awning}}"/>
+  <polygon points="136,36 184,36 158,78 110,78" fill="{{awning}}"/>
+  <polygon points="232,36 280,36 254,78 206,78" fill="{{awning}}"/>
+  <polygon points="8,78 250,78 236,96 20,96" fill="{{stripe}}"/>
+  <polygon points="28,78 28,118 36,114 36,74" fill="{{stripe}}"/>
+  <polygon points="210,70 210,112 218,108 218,66" fill="{{stripe}}"/>
 </svg>

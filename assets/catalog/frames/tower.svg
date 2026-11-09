@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="720" viewBox="0 0 210 360">
+  <ellipse cx="100" cy="332" rx="46" ry="10" fill="{{shade}}" fill-opacity="0.2"/>
+  <polygon points="58,78 100,98 100,320 58,292" fill="{{shade}}"/>
+  <polygon points="142,78 100,98 100,320 142,292" fill="{{wall}}"/>
+  <polygon points="58,78 100,58 142,78 100,98" fill="{{roof}}"/>
+  <polygon points="86,48 114,48 114,62 86,62" fill="{{plant}}"/>
+  <polygon points="92,40 108,40 100,50" fill="{{plant}}"/>
+  <polygon points="64,118 92,132 92,150 64,136" fill="{{balcony}}"/>
+  <polygon points="64,168 92,182 92,200 64,186" fill="{{balcony}}"/>
+  <polygon points="108,150 136,136 136,168 108,182" fill="{{balcony}}"/>
+  <polygon points="108,214 136,200 136,232 108,246" fill="{{balcony}}"/>
+  <rect x="70" y="110" width="8" height="10" fill="{{glass}}" transform="skewY(20)"/>
+  <rect x="112" y="126" width="8" height="10" fill="{{glass2}}" transform="skewY(-20)"/>
+  <rect x="72" y="188" width="8" height="10" fill="{{glass2}}" transform="skewY(20)"/>
+  <rect x="114" y="204" width="8" height="10" fill="{{glass}}" transform="skewY(-20)"/>
+  <rect x="74" y="250" width="8" height="12" fill="{{glass}}" transform="skewY(20)"/>
+  <rect x="116" y="262" width="8" height="12" fill="{{glass2}}" transform="skewY(-20)"/>
+</svg>

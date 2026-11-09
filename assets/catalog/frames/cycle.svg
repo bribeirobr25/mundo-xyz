@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 100 60">
+  <circle cx="28" cy="44" r="10" fill="none" stroke="{{frame}}" stroke-width="3"/>
+  <circle cx="74" cy="44" r="10" fill="none" stroke="{{frame}}" stroke-width="3"/>
+  <polygon points="28,44 50,28 74,44 58,44 46,36" fill="none" stroke="{{frame}}" stroke-width="3"/>
+</svg>

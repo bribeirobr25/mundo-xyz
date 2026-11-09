@@ -1,52 +1,72 @@
 {
   "version": "1",
-  "motionStepMs": 480,
-  "ground": { "paletteId": "plaza" },
+  "motionStepMs": 2000,
+  "ground": {
+    "paletteId": "plaza"
+  },
   "palettes": [
     {
       "id": "plaza",
       "roles": {
-        "field": "#efe6d4",
-        "grass": "#7dbe4a",
-        "grassAlt": "#69ad3e",
-        "pad": "#f7f3ea",
-        "path": "#e4d8c4",
-        "marker": "#8a8478",
-        "select": "#1c1915"
+        "field": "#1a6b52",
+        "grass": "#1c7a58",
+        "grassAlt": "#145743",
+        "pad": "#f4f1ea",
+        "path": "#f3ecdc",
+        "marker": "#e7dcc8",
+        "select": "#20372f",
+        "water": "#3aa2bd"
       }
     },
     {
       "id": "cafe-day",
       "roles": {
-        "wall": "#3c7fd0",
-        "wallShade": "#245a9e",
-        "roof": "#f2c14e",
-        "roofShade": "#d9a43a",
-        "awning": "#fff8ec",
-        "stripe": "#f2c14e",
-        "trim": "#f7f1e4",
+        "wall": "#15489b",
+        "wallShade": "#0e3270",
+        "roof": "#efb00d",
+        "roofShade": "#d49a09",
+        "awning": "#fffaf2",
+        "stripe": "#efb00d",
+        "trim": "#f7f4ee",
         "beak": "#e07a2f",
-        "door": "#1c1915",
-        "glass": "#d7ebf8"
+        "door": "#f0d7a0",
+        "glass": "#d7ebf8",
+        "top": "#efb00d",
+        "leg": "#e0b15a"
       }
     },
     {
       "id": "bird-blue",
-      "roles": { "bird": "#2c6ec4", "wing": "#1d4e90", "beak": "#f08a24", "eye": "#1c1915" }
+      "roles": {
+        "bird": "#2f6ec4",
+        "wing": "#1d4e90",
+        "beak": "#f08a24",
+        "eye": "#1c1915"
+      }
     },
     {
       "id": "bird-red",
-      "roles": { "bird": "#e24b4b", "wing": "#b43333", "beak": "#f2c14e", "eye": "#1c1915" }
+      "roles": {
+        "bird": "#e24b4b",
+        "wing": "#b43333",
+        "beak": "#f2c14e",
+        "eye": "#1c1915"
+      }
     },
     {
       "id": "bird-gold",
-      "roles": { "bird": "#f2c14e", "wing": "#d9a428", "beak": "#e07a2f", "eye": "#1c1915" }
+      "roles": {
+        "bird": "#f2c14e",
+        "wing": "#d9a428",
+        "beak": "#e07a2f",
+        "eye": "#1c1915"
+      }
     },
     {
       "id": "stop-day",
       "roles": {
-        "roof": "#e24b4b",
-        "roofShade": "#c43737",
+        "roof": "#d23b3b",
+        "roofShade": "#a82828",
         "post": "#2a2622",
         "panel": "#f7f3ea",
         "bench": "#d08a3a",
@@ -56,78 +76,326 @@
         "mark": "#245a9e",
         "wheel": "#1c1915"
       }
+    },
+    {
+      "id": "tower-day",
+      "roles": {
+        "wall": "#d23b3b",
+        "shade": "#a82828",
+        "roof": "#2f6ec8",
+        "plant": "#2f9a62",
+        "balcony": "#f4efe6",
+        "glass": "#f2c14e",
+        "glass2": "#7eb6d8"
+      }
+    },
+    {
+      "id": "plinth-day",
+      "roles": {
+        "top": "#f7f4ee",
+        "side": "#e4d9c8",
+        "edge": "#fbfaf6"
+      }
+    },
+    {
+      "id": "frame-cyan",
+      "roles": {
+        "face": "#3ec4d4",
+        "side": "#2a9aab",
+        "edge": "#7ad7e2"
+      }
+    },
+    {
+      "id": "frame-red",
+      "roles": {
+        "face": "#e24b4b",
+        "side": "#b43333",
+        "edge": "#f08a84"
+      }
+    },
+    {
+      "id": "frame-blue",
+      "roles": {
+        "face": "#2f6ec4",
+        "side": "#1d4e90",
+        "edge": "#7eb0e8"
+      }
+    },
+    {
+      "id": "house-blue",
+      "roles": {
+        "wall": "#f4efe6",
+        "wallShade": "#e4d9c8",
+        "roof": "#2f62c8",
+        "roofShade": "#244e9e",
+        "door": "#d23b3b",
+        "glass": "#d7ebf8",
+        "shade": "#143f30"
+      }
+    },
+    {
+      "id": "house-gold",
+      "roles": {
+        "wall": "#f7f4ee",
+        "wallShade": "#e7dcc8",
+        "roof": "#f0b429",
+        "roofShade": "#d9a00a",
+        "door": "#2f62c8",
+        "glass": "#d7ebf8",
+        "shade": "#143f30"
+      }
+    },
+    {
+      "id": "pavilion-day",
+      "roles": {
+        "roof": "#d23b3b",
+        "shade": "#a82828",
+        "post": "#f4efe6",
+        "interior": "#2a2420"
+      }
+    },
+    {
+      "id": "bus-day",
+      "roles": {
+        "body": "#f2c14e",
+        "shade": "#d9a428",
+        "window": "#7eb6d8",
+        "wheel": "#1c1915",
+        "stripe": "#2a6ea8"
+      }
+    },
+    {
+      "id": "boat-day",
+      "roles": {
+        "hull": "#f2c14e",
+        "trim": "#2a6ea8",
+        "cabin": "#f7f4ee",
+        "shadow": "#143f30"
+      }
+    },
+    {
+      "id": "bridge-day",
+      "roles": {
+        "deck": "#d23b3b",
+        "shade": "#a82828",
+        "rail": "#2a2622"
+      }
+    },
+    {
+      "id": "tree-round",
+      "roles": {
+        "leaf": "#2f9a62",
+        "leafShade": "#1d7a4c",
+        "trunk": "#8a5a32",
+        "shadow": "#143f30"
+      }
+    },
+    {
+      "id": "tree-pine",
+      "roles": {
+        "leaf": "#1f6b48",
+        "leafShade": "#145743",
+        "trunk": "#6b4528",
+        "shadow": "#143f30"
+      }
+    },
+    {
+      "id": "bench-day",
+      "roles": {
+        "seat": "#d08a3a",
+        "leg": "#8a5a32"
+      }
+    },
+    {
+      "id": "cycle-day",
+      "roles": {
+        "frame": "#1c1915",
+        "bird": "#2f6ec4",
+        "wing": "#1d4e90",
+        "beak": "#f08a24",
+        "eye": "#1c1915"
+      }
     }
   ],
   "assets": [
     {
       "id": "cafe_for_birds",
       "copyKey": "asset.cafeForBirds",
-      "footprint": [2, 2],
-      "anchor": [1, 1],
-      "hit": [[0, 0], [2, 0], [2, 2], [0, 2]],
-      "depthKey": 2,
-      "states": ["open"],
+      "footprint": [
+        3,
+        3
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "depthKey": 6,
+      "states": [
+        "open"
+      ],
       "paletteId": "cafe-day",
       "layers": [
         {
           "id": "shell",
           "file": "frames/cafe-shell.svg",
           "motion": "none",
-          "fit": 1.08,
-          "anchor": [0.5, 0.75],
-          "tokens": ["wall", "wallShade", "roof", "roofShade", "trim", "beak", "door", "glass"]
+          "fit": 1.15,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "wall",
+            "wallShade",
+            "roof",
+            "roofShade",
+            "trim",
+            "beak",
+            "door",
+            "glass"
+          ]
         },
         {
           "id": "awning",
           "file": "frames/awning.svg",
           "motion": "none",
-          "fit": 1,
-          "at": [0.5, 0.75],
-          "anchor": [0.5, 0.75],
-          "tokens": ["awning", "stripe"]
+          "fit": 0.78,
+          "at": [
+            0.46,
+            0.7
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "awning",
+            "stripe"
+          ]
+        },
+        {
+          "id": "table-a",
+          "file": "frames/table.svg",
+          "motion": "none",
+          "fit": 0.16,
+          "at": [
+            0.34,
+            0.9
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "top",
+            "leg"
+          ]
+        },
+        {
+          "id": "table-b",
+          "file": "frames/table.svg",
+          "motion": "none",
+          "fit": 0.14,
+          "at": [
+            0.62,
+            0.86
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "top",
+            "leg"
+          ]
         },
         {
           "id": "bird-blue",
           "file": "frames/bird.svg",
-          "paletteId": "bird-blue",
-          "motion": "hop",
-          "amplitude": 10,
-          "steps": 4,
-          "phase": 0,
-          "fit": 0.14,
-          "at": [0.7, 0.9],
-          "anchor": [0.5, 1],
-          "tokens": ["bird", "wing", "beak", "eye"]
+          "motion": "none",
+          "fit": 0.11,
+          "at": [
+            0.3,
+            0.86
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ],
+          "paletteId": "bird-blue"
         },
         {
           "id": "bird-red",
           "file": "frames/bird.svg",
-          "paletteId": "bird-red",
-          "motion": "hop",
-          "amplitude": 10,
-          "steps": 4,
-          "phase": 1,
-          "fit": 0.13,
-          "at": [0.72, 0.84],
-          "anchor": [0.5, 1],
-          "tokens": ["bird", "wing", "beak", "eye"]
+          "motion": "none",
+          "fit": 0.1,
+          "at": [
+            0.48,
+            0.62
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ],
+          "paletteId": "bird-red"
         },
         {
           "id": "bird-gold",
           "file": "frames/bird.svg",
+          "motion": "glance",
+          "fit": 0.1,
+          "at": [
+            0.58,
+            0.9
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ],
           "paletteId": "bird-gold",
-          "motion": "hop",
-          "amplitude": 8,
-          "steps": 4,
-          "phase": 2,
-          "fit": 0.12,
-          "at": [0.82, 0.88],
-          "anchor": [0.5, 1],
-          "tokens": ["bird", "wing", "beak", "eye"]
+          "amplitude": 3,
+          "steps": 8,
+          "phase": 1
         }
       ],
       "provenance": {
-        "method": "authored SVG layers from the isometric grammar, rasterized once to WebGL textures",
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
         "date": "2026-11-09",
         "thirdPartyReference": false
       }
@@ -135,36 +403,1053 @@
     {
       "id": "bus_stop",
       "copyKey": "asset.busStop",
-      "footprint": [1, 1],
-      "anchor": [0, 0],
-      "hit": [[0, 0], [1, 0], [1, 1], [0, 1]],
-      "depthKey": 1,
-      "states": ["open"],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 3,
+      "states": [
+        "open"
+      ],
       "paletteId": "stop-day",
       "layers": [
         {
-          "id": "shelter",
+          "id": "shell",
           "file": "frames/stop-shelter.svg",
           "motion": "none",
-          "fit": 0.95,
-          "anchor": [0.5, 0.82],
-          "tokens": ["pad", "panel", "glass", "roof", "roofShade", "post", "bench"]
+          "fit": 0.9,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "pad",
+            "panel",
+            "glass",
+            "roof",
+            "roofShade",
+            "post",
+            "bench"
+          ]
         },
         {
           "id": "sign",
           "file": "frames/stop-sign.svg",
-          "motion": "sway",
-          "amplitude": 3,
-          "steps": 4,
-          "phase": 0,
-          "fit": 0.26,
-          "at": [0.88, 0.76],
-          "anchor": [0.5, 1],
-          "tokens": ["post", "sign", "mark", "wheel"]
+          "motion": "none",
+          "fit": 0.28,
+          "at": [
+            0.82,
+            0.78
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "post",
+            "sign",
+            "mark",
+            "wheel"
+          ]
         }
       ],
       "provenance": {
-        "method": "authored SVG layers from the isometric grammar, rasterized once to WebGL textures",
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "red_tower",
+      "copyKey": "asset.tower",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "depthKey": 8,
+      "states": [
+        "open"
+      ],
+      "paletteId": "tower-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/tower.svg",
+          "motion": "none",
+          "fit": 1.7,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "wall",
+            "shade",
+            "roof",
+            "plant",
+            "balcony",
+            "glass",
+            "glass2"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "color_frames",
+      "copyKey": "asset.sculpture",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "depthKey": 5,
+      "states": [
+        "open"
+      ],
+      "paletteId": "plinth-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/plinth.svg",
+          "motion": "none",
+          "fit": 1.15,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "top",
+            "side",
+            "edge"
+          ]
+        },
+        {
+          "id": "cyan",
+          "file": "frames/frame.svg",
+          "motion": "none",
+          "fit": 0.42,
+          "at": [
+            0.32,
+            0.55
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "face",
+            "side",
+            "edge"
+          ],
+          "paletteId": "frame-cyan"
+        },
+        {
+          "id": "red",
+          "file": "frames/frame.svg",
+          "motion": "none",
+          "fit": 0.42,
+          "at": [
+            0.5,
+            0.42
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "face",
+            "side",
+            "edge"
+          ],
+          "paletteId": "frame-red"
+        },
+        {
+          "id": "blue",
+          "file": "frames/frame.svg",
+          "motion": "none",
+          "fit": 0.42,
+          "at": [
+            0.68,
+            0.3
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "face",
+            "side",
+            "edge"
+          ],
+          "paletteId": "frame-blue"
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "house_blue",
+      "copyKey": "asset.houseBlue",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "depthKey": 4,
+      "states": [
+        "open"
+      ],
+      "paletteId": "house-blue",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/house.svg",
+          "motion": "none",
+          "fit": 1.05,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "wall",
+            "wallShade",
+            "roof",
+            "roofShade",
+            "door",
+            "glass",
+            "shade"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "house_gold",
+      "copyKey": "asset.houseGold",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "depthKey": 4,
+      "states": [
+        "open"
+      ],
+      "paletteId": "house-gold",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/house.svg",
+          "motion": "none",
+          "fit": 1.05,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "wall",
+            "wallShade",
+            "roof",
+            "roofShade",
+            "door",
+            "glass",
+            "shade"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "red_pavilion",
+      "copyKey": "asset.pavilion",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "depthKey": 4,
+      "states": [
+        "open"
+      ],
+      "paletteId": "pavilion-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/pavilion.svg",
+          "motion": "none",
+          "fit": 1.05,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "roof",
+            "shade",
+            "post",
+            "interior"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "yellow_bus",
+      "copyKey": "asset.bus",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 3,
+      "states": [
+        "open"
+      ],
+      "paletteId": "bus-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/bus.svg",
+          "motion": "none",
+          "fit": 1.2,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "body",
+            "shade",
+            "window",
+            "wheel",
+            "stripe"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "canal_boat",
+      "copyKey": "asset.boat",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 2,
+      "states": [
+        "open"
+      ],
+      "paletteId": "boat-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/shadow.svg",
+          "motion": "none",
+          "fit": 0.7,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "shadow"
+          ]
+        },
+        {
+          "id": "hull",
+          "file": "frames/boat.svg",
+          "motion": "drift",
+          "fit": 0.95,
+          "at": [
+            0.5,
+            0.7
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "hull",
+            "trim",
+            "cabin"
+          ],
+          "amplitude": 5,
+          "steps": 8,
+          "phase": 0
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "red_bridge",
+      "copyKey": "asset.bridge",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 2,
+      "states": [
+        "open"
+      ],
+      "paletteId": "bridge-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/bridge.svg",
+          "motion": "none",
+          "fit": 1.35,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "deck",
+            "shade",
+            "rail"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "round_tree",
+      "copyKey": "asset.treeRound",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 3,
+      "states": [
+        "open"
+      ],
+      "paletteId": "tree-round",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/tree-round.svg",
+          "motion": "none",
+          "fit": 0.95,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "leaf",
+            "leafShade",
+            "trunk",
+            "shadow"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "pointed_tree",
+      "copyKey": "asset.treePine",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 3,
+      "states": [
+        "open"
+      ],
+      "paletteId": "tree-pine",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/tree-cone.svg",
+          "motion": "none",
+          "fit": 1.05,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "leaf",
+            "leafShade",
+            "trunk",
+            "shadow"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "bench",
+      "copyKey": "asset.bench",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 1,
+      "states": [
+        "open"
+      ],
+      "paletteId": "bench-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/bench.svg",
+          "motion": "none",
+          "fit": 0.7,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "seat",
+            "leg"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "blue_bird",
+      "copyKey": "asset.birdBlue",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 2,
+      "states": [
+        "open"
+      ],
+      "paletteId": "bird-blue",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/bird.svg",
+          "motion": "none",
+          "fit": 0.62,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "red_bird",
+      "copyKey": "asset.birdRed",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 2,
+      "states": [
+        "open"
+      ],
+      "paletteId": "bird-red",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/bird.svg",
+          "motion": "none",
+          "fit": 0.62,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "gold_bird",
+      "copyKey": "asset.birdGold",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 2,
+      "states": [
+        "open"
+      ],
+      "paletteId": "bird-gold",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/bird.svg",
+          "motion": "none",
+          "fit": 0.62,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ]
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
+        "date": "2026-11-09",
+        "thirdPartyReference": false
+      }
+    },
+    {
+      "id": "bird_cyclist",
+      "copyKey": "asset.cyclist",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0,
+        0
+      ],
+      "hit": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "depthKey": 2,
+      "states": [
+        "open"
+      ],
+      "paletteId": "cycle-day",
+      "layers": [
+        {
+          "id": "shell",
+          "file": "frames/cycle.svg",
+          "motion": "none",
+          "fit": 0.7,
+          "anchor": [
+            0.5,
+            0.82
+          ],
+          "tokens": [
+            "frame"
+          ]
+        },
+        {
+          "id": "rider",
+          "file": "frames/bird.svg",
+          "motion": "none",
+          "fit": 0.55,
+          "at": [
+            0.48,
+            0.42
+          ],
+          "anchor": [
+            0.5,
+            1
+          ],
+          "tokens": [
+            "bird",
+            "wing",
+            "beak",
+            "eye"
+          ],
+          "paletteId": "bird-blue"
+        }
+      ],
+      "provenance": {
+        "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
         "date": "2026-11-09",
         "thirdPartyReference": false
       }

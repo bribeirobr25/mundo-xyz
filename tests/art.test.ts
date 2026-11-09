@@ -18,11 +18,17 @@ import type pg from "pg";
 const catalog = loadCatalog();
 
 test("t.art.script-coverage and t.art.provenance and t.art.palette", () => {
-  expect(catalog.assets.map((asset) => asset.id)).toEqual(["cafe_for_birds", "bus_stop"]);
+  expect(catalog.assets.map((asset) => asset.id)).toEqual([
+    "cafe_for_birds", "bus_stop", "red_tower", "color_frames", "house_blue", "house_gold",
+    "red_pavilion", "yellow_bus", "canal_boat", "red_bridge", "round_tree", "pointed_tree",
+    "bench", "blue_bird", "red_bird", "gold_bird", "bird_cyclist",
+  ]);
   expect(catalog.assets.every((asset) => asset.provenance.thirdPartyReference === false)).toBe(true);
   const files = catalog.assets.flatMap((asset) => asset.layers.map((layer) => layer.file));
   expect(new Set(files)).toEqual(new Set(Object.keys(FRAME_SOURCES)));
-  expect(files.filter((file) => file === "frames/bird.svg")).toHaveLength(3);
+  expect(files.filter((file) => file === "frames/bird.svg")).toHaveLength(7);
+  const moving = catalog.assets.flatMap((asset) => asset.layers).filter((layer) => layer.motion !== "none");
+  expect(moving.map((layer) => layer.motion).sort()).toEqual(["drift", "glance"]);
   expect(JSON.stringify(catalogJson)).not.toContain("prototypes/");
   const bird = readFileSync("assets/catalog/frames/bird.svg", "utf8");
   expect(bird.match(/<svg/g)).toHaveLength(1);
@@ -57,7 +63,8 @@ test("t.art.variant-separation rejects a broken catalog", () => {
   const dropped = structuredClone(base);
   dropped.assets = dropped.assets.filter((asset) => asset.id !== "bus_stop");
   expect(() => validateCatalog(dropped, read)).toThrow(/bus_stop/);
-  const copyKeys = new Set(["asset.cafeForBirds", "asset.busStop"]);
+  const copy = JSON.parse(readFileSync("copy/en.json", "utf8")) as Record<string, unknown>;
+  const copyKeys = new Set(Object.keys(copy).filter((key) => typeof copy[key] === "string"));
   expect(() => validateCatalog(base, read, { copyKeys })).not.toThrow();
   const typo = structuredClone(base);
   const cafeAsset = typo.assets[0];
@@ -94,6 +101,12 @@ test("t.art.hidden-asset and t.art.motion and t.art.hit", () => {
   expect(swayPeak.rotation).toBeCloseTo((4 * Math.PI) / 180, 5);
   expect(swayBetween.rotation).toBeGreaterThan(0);
   expect(swayBetween.rotation).toBeLessThan(swayPeak.rotation);
+  expect(partPose("glance", 0, 2000, 8, 0, 3, false).y).toBe(0);
+  expect(partPose("glance", 2000 * 8 * 0.04, 2000, 8, 0, 3, false).y).toBeLessThan(0);
+  expect(partPose("glance", 2000 * 8 * 0.5, 2000, 8, 0, 3, false)).toEqual({ x: 0, y: 0, rotation: 0 });
+  expect(partPose("drift", 0, 2000, 8, 0, 5, false).x).toBe(0);
+  expect(partPose("drift", 2000 * 2, 2000, 8, 0, 5, false).x).toBeCloseTo(5, 5);
+  expect(partPose("drift", 2000 * 8, 2000, 8, 0, 5, false).x).toBeCloseTo(0, 5);
   expect(partPose("none", step, step, 4, 1, 8, false)).toEqual({ x: 0, y: 0, rotation: 0 });
   expect(partPose("hop", step, step, 1, 0, 8, false)).toEqual({ x: 0, y: 0, rotation: 0 });
 
@@ -155,8 +168,8 @@ test("t.art.instances separate rows and hidden marker", async () => {
   expect(replayed.body.code).toBe("already_published");
   const onceBody = await client.call("/api/world");
   const once = onceBody.body.objects as { id: string; assetId: string; administrator?: boolean }[];
-  const seed = once.find((object) => object.administrator);
-  expect(seed?.assetId).toBe("cafe_for_birds");
+  const seed = once.find((object) => object.assetId === "cafe_for_birds");
+  expect(seed?.administrator).toBe(true);
   expect(onceBody.body.homeId).toBe(seed?.id);
   expect(once.filter((object) => object.assetId === "bus_stop")).toHaveLength(1);
   await placeStop("stop-b");

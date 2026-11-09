@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="200" viewBox="0 0 180 100">
+  <polygon points="90,18 162,50 90,82 18,50" fill="{{top}}"/>
+  <polygon points="18,50 90,82 90,92 18,60" fill="{{side}}"/>
+  <polygon points="162,50 90,82 90,92 162,60" fill="{{edge}}"/>
+</svg>
