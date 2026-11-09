@@ -27,6 +27,7 @@ const byStage: Record<string, string> = {
   forbidden_field: text.pii,
   provider_failed: text.providerFailed,
   superseded: text.superseded,
+  origin: text.origin,
 };
 
 export function stageNotice(stage: string): string | null {

@@ -61,6 +61,7 @@
   "paused": "New previews are paused. Already prepared ideas can still be published.",
   "previewUnavailable": "Preview is unavailable.",
   "loadFailed": "The world could not be loaded.",
+  "origin": "This page address cannot change the world. Open localhost or 127.0.0.1 on this server's port.",
   "retry": "Retry",
   "illustrationUnavailable": "Illustration unavailable. The list still works.",
   "illustrationLoading": "The illustration is loading. The list already works.",

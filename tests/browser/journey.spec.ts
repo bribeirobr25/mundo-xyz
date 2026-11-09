@@ -128,6 +128,16 @@ test("t.vis.reload keeps the illustration", async ({ page }) => {
   await expect(page.getByText("Illustration unavailable. The list still works.")).toHaveCount(0);
 });
 
+test("t.origin.localhost preview and refused recovery", async ({ page }) => {
+  await page.goto("http://localhost:4500/");
+  await expect(page.getByText("Test mode — fixture interpreter")).toBeVisible();
+  await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
+  await page.getByLabel("Recover with a code").fill("not-a-real-code");
+  await page.getByRole("button", { name: "Recover with a code" }).click();
+  await expect(page.getByText("That recovery code could not be used.")).toBeVisible();
+});
+
 test("t.vis.hidden-no-ticker", async ({ page }) => {
   await page.goto("/?scene=deterministic");
   await page.waitForTimeout(500);

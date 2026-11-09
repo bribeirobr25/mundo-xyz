@@ -6,35 +6,55 @@ import { gzipSync } from "node:zlib";
 import type { AppConfig } from "../domain/config.js";
 import { assertNoExtra } from "../domain/action.js";
 import { listenPort } from "../local-dev.js";
+import { originAllowed } from "./origin.js";
 import type { Result, WorldService } from "./service.js";
 
 export function startHttp(service: WorldService, port = listenPort()): Promise<{ url: string; close: () => Promise<void> }> {
-  const server = createServer((req, res) => {
-    void handle(service, req, res);
-  });
+  let boundPort = port;
+  const onRequest = (req: IncomingMessage, res: ServerResponse) => {
+    void handle(service, req, res, boundPort);
+  };
+  const server = createServer(onRequest);
+  const v6 = createServer(onRequest);
   return new Promise((resolveListen, reject) => {
     server.once("error", reject);
     server.listen(port, "127.0.0.1", () => {
       const address = server.address();
-      const chosen = typeof address === "object" && address ? address.port : port;
-      resolveListen({
-        url: `http://127.0.0.1:${chosen}`,
-        close: () => new Promise((done) => server.close(() => done())),
-      });
+      boundPort = typeof address === "object" && address ? address.port : port;
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolveListen({
+          url: `http://127.0.0.1:${boundPort}`,
+          close: () => new Promise((done) => {
+            let pending = 2;
+            const step = () => {
+              pending -= 1;
+              if (pending === 0) done();
+            };
+            server.close(() => step());
+            v6.close(() => step());
+          }),
+        });
+      };
+      v6.once("error", finish);
+      v6.once("listening", finish);
+      v6.listen(boundPort, "::1");
     });
   });
 }
 
-async function handle(service: WorldService, req: IncomingMessage, res: ServerResponse): Promise<void> {
+async function handle(service: WorldService, req: IncomingMessage, res: ServerResponse, boundPort: number): Promise<void> {
   const requestId = crypto.randomUUID();
   try {
     const url = new URL(req.url ?? "/", "http://127.0.0.1");
     const method = req.method ?? "GET";
     const cookies = parseCookies(req.headers.cookie);
     const author = await service.sessionAuthor(cookies["__Host-sw_session"] ?? null);
-    const origin = req.headers.origin;
+    const origin = typeof req.headers.origin === "string" ? req.headers.origin : undefined;
     const mutating = method !== "GET" && method !== "HEAD";
-    if (mutating && origin !== service.config.appOrigin) {
+    if (mutating && !originAllowed(origin, service.config.appOrigin, service.config.runMode, boundPort)) {
       send(res, { status: 403, body: { code: "origin" } });
       return;
     }

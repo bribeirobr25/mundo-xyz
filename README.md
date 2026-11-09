@@ -6,7 +6,7 @@ This repository is a local implementation of the final plan in `docs/plan/`. The
 
 ## Run locally
 
-The app listens on port **4500** unless `PORT` is set. `APP_ORIGIN` defaults to `http://127.0.0.1:4500`. Set either variable to point the server and the browser origin check somewhere else.
+The app listens on port **4500** unless `PORT` is set, on `127.0.0.1` and `::1`. In local test, private preview and recovery accept a page opened at `http://127.0.0.1:4500`, `http://localhost:4500`, or `http://[::1]:4500`. Production still requires the `Origin` header to match `APP_ORIGIN` exactly. `APP_ORIGIN` defaults to `http://127.0.0.1:4500`.
 
 PostgreSQL must already be running. With no `DATABASE_URL`, the server uses the first socket it finds: the Linux directory `/var/run/postgresql`, `/tmp` (the usual Homebrew socket), or a Homebrew data directory for PostgreSQL 16 or 17. If none of those sockets exist, it uses `postgresql://localhost:5432/` and the database name `mundo_dev` (the tests use `mundo_test`). Set `DATABASE_URL` to override that choice.
 
@@ -25,7 +25,7 @@ npm run build
 npm start
 ```
 
-Open http://127.0.0.1:4500. If Postgres is not on port 5432, set `DATABASE_URL`.
+Open http://127.0.0.1:4500 or http://localhost:4500. If Postgres is not on port 5432, set `DATABASE_URL`.
 
 ### Linux
 
