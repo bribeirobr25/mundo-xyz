@@ -38,6 +38,19 @@ test("t.gate.staged denylist and t.art.provenance", () => {
   expect(docx.includes(Buffer.from("Optional related working notes"))).toBe(false);
 });
 
+test("t.ci.privacy-range fetches the base and checks the pull request head", () => {
+  const workflow = readFileSync(".github/workflows/ci.yml", "utf8");
+  expect(workflow).toContain("fetch-depth: 0");
+  expect(workflow).toContain("github.event_name == 'pull_request'");
+  expect(workflow).toContain("github.base_ref");
+  expect(workflow).toContain("refs/remotes/origin/");
+  expect(workflow).toContain("github.event.pull_request.head.sha");
+  expect(workflow).toContain("node scripts/privacy-gate.mjs ci");
+  expect(workflow).toContain("npm test");
+  expect(workflow).toContain("npm run typecheck");
+  expect(workflow).toContain("branches: [main]");
+});
+
 test("t.plan.milestones and t.rtm.coverage", () => {
   const plan = readFileSync("docs/plan/implementation-plan.md", "utf8");
   for (const milestone of ["M1 Explore", "M2 Try", "M3 Publish", "M4 Continue", "M5 Deliver"]) {

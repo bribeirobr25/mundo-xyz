@@ -22,7 +22,17 @@ jobs:
       DATABASE_URL: postgresql://postgres:local-test@localhost:5432/mundo_test
       RUN_MODE: local-test
     steps:
+      # A depth-1 checkout of the pull-request merge commit has no origin/main,
+      # and that merge commit is committed by GitHub, which the privacy gate rejects.
+      # Fetch the full history, name the base origin/main, and check out the head.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check out the pull request head for the privacy range
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags origin "${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}"
+          git checkout --detach "${{ github.event.pull_request.head.sha }}"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
