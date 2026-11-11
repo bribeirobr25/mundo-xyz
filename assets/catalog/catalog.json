@@ -202,6 +202,16 @@
       }
     },
     {
+      "id": "tree-round-lit",
+      "roles": {
+        "lit": "#6bc84f",
+        "leaf": "#3f9844",
+        "leafShade": "#2f8640",
+        "trunk": "#644931",
+        "shadow": "#083528"
+      }
+    },
+    {
       "id": "tree-pine",
       "roles": {
         "leaf": "#1f6b48",
@@ -1350,7 +1360,7 @@
       "states": [
         "open"
       ],
-      "paletteId": "tree-round",
+      "paletteId": "tree-round-lit",
       "layers": [
         {
           "id": "shell",
@@ -1362,6 +1372,7 @@
             0.82
           ],
           "tokens": [
+            "lit",
             "leaf",
             "leafShade",
             "trunk",
@@ -1371,7 +1382,7 @@
       ],
       "provenance": {
         "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
-        "date": "2026-11-09",
+        "date": "2026-11-11",
         "thirdPartyReference": false
       }
     },

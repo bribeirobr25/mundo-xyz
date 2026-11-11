@@ -1,25 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="480" viewBox="0 0 110 120">
   <defs>
-    <radialGradient id="canopy" gradientUnits="userSpaceOnUse" cx="28" cy="22" r="72" fx="32" fy="26">
-      <stop offset="0" stop-color="{{leaf}}"/>
-      <stop offset="0.42" stop-color="{{leaf}}"/>
+    <radialGradient id="canopy" gradientUnits="userSpaceOnUse" cx="42" cy="22" r="64" fx="40" fy="20">
+      <stop offset="0" stop-color="{{lit}}"/>
+      <stop offset="0.30" stop-color="{{lit}}"/>
+      <stop offset="0.62" stop-color="{{leaf}}"/>
       <stop offset="1" stop-color="{{leafShade}}"/>
     </radialGradient>
-    <radialGradient id="rim" gradientUnits="userSpaceOnUse" cx="55" cy="52" r="31">
-      <stop offset="0.94" stop-color="#ffffff"/>
+    <radialGradient id="rim" gradientUnits="userSpaceOnUse" cx="55" cy="48" r="31">
+      <stop offset="0.91" stop-color="#ffffff"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="cast" gradientUnits="userSpaceOnUse" cx="55" cy="108" r="28">
+    <radialGradient id="cast" gradientUnits="userSpaceOnUse" cx="58" cy="104" r="28">
       <stop offset="0" stop-color="{{shadow}}" stop-opacity="0.5"/>
-      <stop offset="0.62" stop-color="{{shadow}}" stop-opacity="0.22"/>
+      <stop offset="0.45" stop-color="{{shadow}}" stop-opacity="0.18"/>
       <stop offset="1" stop-color="{{shadow}}" stop-opacity="0"/>
     </radialGradient>
     <mask id="soft" maskUnits="userSpaceOnUse">
       <rect x="0" y="0" width="110" height="120" fill="#000000"/>
-      <circle cx="55" cy="52" r="31" fill="url(#rim)"/>
+      <circle cx="55" cy="48" r="31" fill="url(#rim)"/>
     </mask>
   </defs>
-  <ellipse cx="55" cy="108" rx="28" ry="9" fill="url(#cast)"/>
-  <polygon points="50,78 60,78 58,106 52,106" fill="{{trunk}}"/>
-  <circle cx="55" cy="52" r="31" fill="url(#canopy)" mask="url(#soft)"/>
+  <ellipse cx="58" cy="104" rx="22" ry="7" fill="url(#cast)"/>
+  <polygon points="51.5,74 58.5,74 57,103 53,103" fill="{{trunk}}"/>
+  <circle cx="55" cy="48" r="31" fill="url(#canopy)" mask="url(#soft)"/>
 </svg>
