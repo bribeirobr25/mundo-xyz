@@ -59,6 +59,24 @@ test("t.art.variant-separation rejects a broken catalog", () => {
   expect(() => validateCatalog(injected, () => "<svg>{{wall}} prototypes/</svg>")).toThrow(/missing atlas frame/);
   expect(() => validateCatalog(injected, () => "<svg>{{wall}} data:image/png;base64,aa</svg>")).toThrow(/missing atlas frame/);
   expect(() => validateCatalog(injected, () => "<svg>{{wall}}<image href='x'/></svg>")).toThrow(/missing atlas frame/);
+  expect(() => validateCatalog(injected, () => "<svg>{{wall}}<rect fill='url(https://evil.test/a)'/></svg>")).toThrow(/missing atlas frame/);
+  expect(() => validateCatalog(injected, () => "<svg>{{wall}}<rect fill='url(shade.png)'/></svg>")).toThrow(/missing atlas frame/);
+  const shaded = structuredClone(base);
+  const shadedCafe = shaded.assets[0];
+  if (!shadedCafe?.layers[0]) throw new Error("catalog");
+  const cafeFile = shadedCafe.layers[0].file;
+  shadedCafe.layers = [shadedCafe.layers[0]];
+  shadedCafe.layers[0].tokens = ["wall"];
+  expect(() => validateCatalog(shaded, (file) => file === cafeFile
+    ? "<svg>{{wall}}<circle fill='url(#shade)'/></svg>"
+    : read(file))).not.toThrow();
+  const roundTree = readFileSync("assets/catalog/frames/tree-round.svg", "utf8");
+  const coneTree = readFileSync("assets/catalog/frames/tree-cone.svg", "utf8");
+  expect(roundTree.match(/fill="url\(#canopy\)"/g)).toHaveLength(1);
+  expect(roundTree).not.toContain('r="16"');
+  expect(roundTree).toContain("radialGradient");
+  expect(coneTree).not.toContain("radialGradient");
+  expect(coneTree.match(/<polygon/g)?.length).toBeGreaterThan(1);
   expect(() => validateCatalog(injected, () => "<svg>{{wall}} deadbeef</svg>", { digests: ["deadbeef"] })).toThrow(/missing atlas frame/);
   expect(() => validateCatalog(injected, () => "<svg>{{wall}} {{extra}}</svg>")).toThrow(/missing atlas frame/);
   const dropped = structuredClone(base);

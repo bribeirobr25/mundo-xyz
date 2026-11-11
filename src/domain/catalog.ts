@@ -73,7 +73,7 @@ export function validateCatalog(catalog: Catalog, read: (file: string) => string
       }
       const svg = read(layer.file);
       const authored = svg.replaceAll("http://www.w3.org/2000/svg", "");
-      if (/<script|https?:|url\s*\(|prototypes\/|<image|data:/i.test(authored)) {
+      if (/<script|https?:|url\s*\(\s*(?!#)|prototypes\/|<image|data:/i.test(authored)) {
         throw new Error(`missing atlas frame: ${asset.id}/${layer.id}`);
       }
       if (check.digests?.some((digest) => digest && svg.includes(digest))) {
