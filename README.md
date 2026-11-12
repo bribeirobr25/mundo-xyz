@@ -59,6 +59,10 @@ Color skins are not a visitor choice, and there is no second night palette. The 
 
 Several bus stops in a local database are separate published rows. The browser journey creates one each time it runs. They are not one object drawn more than once. This scene does not claim it can draw a million instances. It draws the rows the server returns.
 
+## Art direction — owner-selected 3B (2026-11-12)
+
+The owner selected a **soft 3D isometric diorama with painterly lighting** as the visual direction. See [the 3B decision and approved image](docs/visual/STYLE-DIRECTION-3B.md). This is an **art reference only**, not an approved implementation or a change to prototype 00, and does not authorize paid calls, deployment, or merging.
+
 ## What this is not
 
 - Not product acceptance. Hosting, backups, the legal checkpoint, and an uncoached human pair were not run.
