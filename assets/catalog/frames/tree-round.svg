@@ -1,49 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="480" viewBox="0 0 110 120">
   <defs>
-    <radialGradient id="rim" gradientUnits="userSpaceOnUse" cx="55" cy="48" r="30.5">
-      <stop offset="0.94" stop-color="#ffffff"/>
+    <radialGradient id="rim" gradientUnits="userSpaceOnUse" cx="55" cy="48" r="30.6">
+      <stop offset="0.93" stop-color="#ffffff"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="lit" gradientUnits="userSpaceOnUse" cx="40" cy="32" r="28">
+    <radialGradient id="lit" gradientUnits="userSpaceOnUse" cx="38" cy="31" r="28">
       <stop offset="0" stop-color="{{lit}}"/>
-      <stop offset="0.34" stop-color="{{lit}}" stop-opacity="0.88"/>
-      <stop offset="0.58" stop-color="{{lit}}" stop-opacity="0.42"/>
-      <stop offset="0.8" stop-color="{{lit}}" stop-opacity="0.12"/>
+      <stop offset="0.5" stop-color="{{lit}}" stop-opacity="0.9"/>
+      <stop offset="0.6" stop-color="{{lit}}" stop-opacity="0.16"/>
+      <stop offset="0.68" stop-color="{{lit}}" stop-opacity="0"/>
       <stop offset="1" stop-color="{{lit}}" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="shade" gradientUnits="userSpaceOnUse" cx="74" cy="66" r="26">
+    <radialGradient id="shade" gradientUnits="userSpaceOnUse" cx="74" cy="66" r="23">
       <stop offset="0" stop-color="{{leafShade}}"/>
-      <stop offset="0.4" stop-color="{{leafShade}}" stop-opacity="0.82"/>
-      <stop offset="0.72" stop-color="{{leafShade}}" stop-opacity="0.34"/>
+      <stop offset="0.38" stop-color="{{leafShade}}" stop-opacity="0.9"/>
+      <stop offset="0.66" stop-color="{{leafShade}}" stop-opacity="0.42"/>
       <stop offset="1" stop-color="{{leafShade}}" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="cast" gradientUnits="userSpaceOnUse" cx="63" cy="106" r="30">
-      <stop offset="0" stop-color="{{shadow}}" stop-opacity="0.62"/>
-      <stop offset="0.4" stop-color="{{shadow}}" stop-opacity="0.3"/>
+      <stop offset="0" stop-color="{{shadow}}" stop-opacity="0.78"/>
+      <stop offset="0.48" stop-color="{{shadow}}" stop-opacity="0.42"/>
+      <stop offset="0.8" stop-color="{{shadow}}" stop-opacity="0.1"/>
       <stop offset="1" stop-color="{{shadow}}" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="contact" gradientUnits="userSpaceOnUse" cx="55" cy="101" r="11">
-      <stop offset="0" stop-color="{{shadow}}" stop-opacity="0.78"/>
-      <stop offset="0.5" stop-color="{{shadow}}" stop-opacity="0.36"/>
+      <stop offset="0" stop-color="{{shadow}}" stop-opacity="0.7"/>
+      <stop offset="0.55" stop-color="{{shadow}}" stop-opacity="0.28"/>
       <stop offset="1" stop-color="{{shadow}}" stop-opacity="0"/>
     </radialGradient>
-    <filter id="grain" x="-2%" y="-2%" width="104%" height="104%">
+    <radialGradient id="brush" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="14">
+      <stop offset="0" stop-color="{{leaf}}" stop-opacity="0.72"/>
+      <stop offset="0.7" stop-color="{{leaf}}" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="{{leaf}}" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dab" gradientUnits="userSpaceOnUse" cx="68" cy="56" r="10">
+      <stop offset="0" stop-color="{{leafShade}}" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="{{leafShade}}" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.14" numOctaves="2" seed="4" result="paint"/>
+      <feColorMatrix in="paint" type="matrix" values="0 0 0 0 0.18  0 0 0 0 0.42  0 0 0 0 0.14  0 0 0 0.32 0" result="paintTint"/>
+      <feBlend in="SourceGraphic" in2="paintTint" mode="overlay" result="painted"/>
       <feTurbulence type="fractalNoise" baseFrequency="5.5" numOctaves="2" seed="7" result="noise"/>
-      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.22  0 0 0 0 0.42  0 0 0 0 0.16  0 0 0 0.16 0" result="tint"/>
-      <feBlend in="SourceGraphic" in2="tint" mode="overlay"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.22  0 0 0 0 0.44  0 0 0 0 0.16  0 0 0 0.18 0" result="tint"/>
+      <feBlend in="painted" in2="tint" mode="overlay"/>
     </filter>
     <mask id="soft" maskUnits="userSpaceOnUse">
       <rect x="0" y="0" width="110" height="120" fill="#000000"/>
-      <circle cx="55" cy="48" r="30.5" fill="url(#rim)"/>
+      <circle cx="55" cy="48" r="30.6" fill="url(#rim)"/>
     </mask>
   </defs>
-  <ellipse cx="63" cy="106" rx="24" ry="8" fill="url(#cast)"/>
-  <ellipse cx="55" cy="101" rx="10" ry="3.6" fill="url(#contact)"/>
+  <ellipse cx="63" cy="106" rx="24" ry="9" fill="url(#cast)"/>
+  <ellipse cx="55" cy="101" rx="9" ry="3.4" fill="url(#contact)"/>
   <polygon points="56.2,76 58.6,76 57.4,102 56.2,102" fill="{{trunkShade}}"/>
   <polygon points="51.6,76 57.4,76 56.2,102 53.2,102" fill="{{trunk}}"/>
   <g mask="url(#soft)" filter="url(#grain)">
-    <circle cx="55" cy="48" r="30.5" fill="{{leaf}}"/>
-    <circle cx="74" cy="66" r="26" fill="url(#shade)"/>
-    <circle cx="40" cy="32" r="28" fill="url(#lit)"/>
+    <circle cx="55" cy="48" r="30.6" fill="{{leaf}}"/>
+    <circle cx="74" cy="66" r="23" fill="url(#shade)"/>
+    <circle cx="38" cy="31" r="28" fill="url(#lit)"/>
+    <ellipse cx="50" cy="50" rx="15" ry="12" fill="url(#brush)"/>
+    <ellipse cx="68" cy="56" rx="11" ry="8" fill="url(#dab)"/>
   </g>
 </svg>

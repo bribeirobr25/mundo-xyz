@@ -90,6 +90,7 @@ test("t.art.variant-separation rejects a broken catalog", () => {
   };
   expect(catalogJson.palettes.find((palette) => palette.id === "tree-round")?.roles.leaf).toBe("#2f9a62");
   expect(catalogJson.palettes.find((palette) => palette.id === "tree-round-lit")?.roles.leaf).toBe("#3c9648");
+  expect(catalogJson.palettes.find((palette) => palette.id === "tree-round-lit")?.roles.lit).toBe("#68be52");
   expect(catalogJson.assets.find((asset) => asset.id === "round_tree")?.paletteId).toBe("tree-round-lit");
   expect(catalogJson.assets.find((asset) => asset.id === "shrub")?.paletteId).toBe("tree-round");
   expect(() => validateCatalog(injected, () => "<svg>{{wall}} deadbeef</svg>", { digests: ["deadbeef"] })).toThrow(/missing atlas frame/);

@@ -204,12 +204,12 @@
     {
       "id": "tree-round-lit",
       "roles": {
-        "lit": "#f6f1d4",
+        "lit": "#68be52",
         "leaf": "#3c9648",
         "leafShade": "#1f5a38",
         "trunk": "#6b4a32",
         "trunkShade": "#4a3224",
-        "shadow": "#123528"
+        "shadow": "#064030"
       }
     },
     {
