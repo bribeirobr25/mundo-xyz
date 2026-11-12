@@ -72,8 +72,10 @@ test("t.art.variant-separation rejects a broken catalog", () => {
     : read(file))).not.toThrow();
   const roundTree = readFileSync("assets/catalog/frames/tree-round.svg", "utf8");
   const coneTree = readFileSync("assets/catalog/frames/tree-cone.svg", "utf8");
-  expect(roundTree.match(/fill="url\(#canopy\)"/g)).toHaveLength(1);
-  expect(roundTree).toContain("{{lit}}");
+  expect(roundTree).not.toContain('id="canopy"');
+  expect(roundTree.match(/fill="url\(#lit\)"/g)).toHaveLength(1);
+  expect(roundTree).toContain("{{blot}}");
+  expect(roundTree).toContain("feTurbulence");
   expect(roundTree).not.toContain('r="16"');
   expect(roundTree).toContain("radialGradient");
   expect(coneTree).not.toContain("radialGradient");

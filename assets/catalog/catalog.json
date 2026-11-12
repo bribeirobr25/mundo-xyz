@@ -204,11 +204,13 @@
     {
       "id": "tree-round-lit",
       "roles": {
-        "lit": "#6bc84f",
-        "leaf": "#3f9844",
-        "leafShade": "#2f8640",
-        "trunk": "#644931",
-        "shadow": "#083528"
+        "lit": "#e8f45a",
+        "leaf": "#3c9648",
+        "blot": "#5aaf4e",
+        "leafShade": "#2a6840",
+        "trunk": "#6b4a32",
+        "trunkShade": "#4a3224",
+        "shadow": "#0a3224"
       }
     },
     {
@@ -1374,15 +1376,17 @@
           "tokens": [
             "lit",
             "leaf",
+            "blot",
             "leafShade",
             "trunk",
+            "trunkShade",
             "shadow"
           ]
         }
       ],
       "provenance": {
         "method": "authored SVG for prototype 00, rasterized once to a WebGL texture",
-        "date": "2026-11-11",
+        "date": "2026-11-12",
         "thirdPartyReference": false
       }
     },
