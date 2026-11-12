@@ -1,7 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="266" viewBox="0 0 200 133">
-  <path d="M-3 84 Q77 22 159 6 L195 24 Q113 40 33 102 Z" fill="{{deck}}"/>
-  <path d="M33 102 Q113 40 195 24 L199 32 Q117 48 37 110 Z" fill="{{shade}}"/>
-  <path d="M42 53 L78 71 M78 34 L114 52 M113 19 L149 37" fill="none" stroke="{{shade}}" stroke-width="2"/>
-  <path d="M-3 84 Q77 22 159 6" fill="none" stroke="{{rail}}" stroke-width="5" stroke-linecap="round"/>
-  <path d="M33 102 Q113 40 195 24" fill="none" stroke="{{rail}}" stroke-width="3" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 200 125">
+  <path d="M8 76 Q90 18 166 6 L180 26 Q98 48 24 100 Q14 90 8 76 Z" fill="{{deck}}"/>
+  <path d="M24 100 Q98 48 180 26 L186 42 Q102 66 30 116 Q20 108 24 100 Z" fill="{{shade}}"/>
+  <path d="M8 76 Q90 18 166 6" fill="none" stroke="{{rail}}" stroke-width="1.5"/>
+  <path d="M24 100 Q98 48 180 26" fill="none" stroke="{{rail}}" stroke-width="1.1"/>
 </svg>

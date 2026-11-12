@@ -368,18 +368,19 @@ export function Scene(props: {
         paintPoly(footprintQuad(x, y, w, h), kind);
       }
       function paintPlaza(plot: Plot): void {
+        // One cream slab. A cell grid read as a checker and broke the white base.
         paintFoot(plot.x, plot.y, plot.w, plot.h, "plaza");
-        const ink = 0xd9cbb6;
-        const span = 0.045;
+        const lip = 0xe6d8c4;
+        const span = 0.06;
         const band = (x0: number, y0: number, x1: number, y1: number, nx: number, ny: number) => {
           const a = cellToScreen(x0, y0);
           const b = cellToScreen(x1, y1);
           const c = cellToScreen(x1 + nx, y1 + ny);
           const d = cellToScreen(x0 + nx, y0 + ny);
-          groundLayer.poly([a.sx, a.sy, b.sx, b.sy, c.sx, c.sy, d.sx, d.sy]).fill(ink);
+          groundLayer.poly([a.sx, a.sy, b.sx, b.sy, c.sx, c.sy, d.sx, d.sy]).fill(lip);
         };
-        for (let x = Math.ceil(plot.x + 0.01); x < plot.x + plot.w; x += 1) band(x, plot.y, x, plot.y + plot.h, span, 0);
-        for (let y = Math.ceil(plot.y + 0.01); y < plot.y + plot.h; y += 1) band(plot.x, y, plot.x + plot.w, y, 0, span);
+        band(plot.x, plot.y + plot.h, plot.x + plot.w, plot.y + plot.h, 0, span);
+        band(plot.x + plot.w, plot.y, plot.x + plot.w, plot.y + plot.h, span, 0);
       }
 
       const hex = (role: string) => Number.parseInt(tone(role).slice(1), 16);

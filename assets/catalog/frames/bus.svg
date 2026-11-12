@@ -1,12 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 160 90">
-  <polygon points="14,30 112,30 148,12 50,12" fill="{{body}}"/>
-  <polygon points="14,30 112,30 112,78 14,78" fill="{{body}}"/>
-  <polygon points="112,30 148,12 148,60 112,78" fill="{{shade}}"/>
-  <polygon points="24,38 48,38 48,54 24,54" fill="{{window}}"/>
-  <polygon points="54,38 78,38 78,54 54,54" fill="{{window}}"/>
-  <polygon points="84,38 104,38 104,54 84,54" fill="{{window}}"/>
-  <polygon points="120,36 140,24 140,40 120,52" fill="{{window}}"/>
-  <polygon points="18,62 106,62 106,68 18,68" fill="{{stripe}}"/>
-  <circle cx="38" cy="78" r="6" fill="{{wheel}}"/>
-  <circle cx="92" cy="78" r="6" fill="{{wheel}}"/>
+  <polygon points="18,28 108,28 146,10 56,10" fill="{{body}}"/>
+  <polygon points="18,28 108,28 108,72 18,72" fill="{{body}}"/>
+  <polygon points="108,28 146,10 146,54 108,72" fill="{{shade}}"/>
+  <polygon points="26,34 46,34 46,50 26,50" fill="{{window}}"/>
+  <polygon points="50,34 70,34 70,50 50,50" fill="{{window}}"/>
+  <polygon points="74,34 96,34 96,50 74,50" fill="{{window}}"/>
+  <polygon points="116,24 138,14 138,32 116,42" fill="{{window}}"/>
+  <polygon points="20,56 104,56 104,62 20,62" fill="{{stripe}}"/>
+  <circle cx="40" cy="74" r="7" fill="{{wheel}}"/>
+  <circle cx="92" cy="74" r="7" fill="{{wheel}}"/>
+  <circle cx="40" cy="74" r="3" fill="{{shade}}"/>
+  <circle cx="92" cy="74" r="3" fill="{{shade}}"/>
 </svg>

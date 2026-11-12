@@ -748,7 +748,7 @@
           "id": "shell",
           "file": "frames/plinth.svg",
           "motion": "none",
-          "fit": 0.95,
+          "fit": 1.2,
           "anchor": [
             0.72,
             0.86
@@ -763,10 +763,10 @@
           "id": "blue",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.5,
+          "fit": 0.62,
           "at": [
-            0.74,
-            0.26
+            0.78,
+            0.2
           ],
           "anchor": [
             0.5,
@@ -783,10 +783,10 @@
           "id": "red",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.54,
+          "fit": 0.68,
           "at": [
             0.5,
-            0.58
+            0.52
           ],
           "anchor": [
             0.5,
@@ -803,10 +803,10 @@
           "id": "cyan",
           "file": "frames/frame.svg",
           "motion": "none",
-          "fit": 0.58,
+          "fit": 0.74,
           "at": [
-            0.28,
-            0.92
+            0.22,
+            0.96
           ],
           "anchor": [
             0.5,
@@ -1043,7 +1043,7 @@
           "id": "shell",
           "file": "frames/bus.svg",
           "motion": "none",
-          "fit": 0.6,
+          "fit": 0.92,
           "anchor": [
             0.5,
             0.82

@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="242" viewBox="0 0 200 121">
-  <path d="M14 88 Q96 28 172 10 L202 26 Q126 44 44 104 Z" fill="{{deck}}"/>
-  <path d="M44 104 Q126 44 202 26 L208 38 Q130 58 50 116 Z" fill="{{shade}}"/>
-  <path d="M59 58 L89 74 M94 38 L124 54 M129 23 L159 39" fill="none" stroke="{{shade}}" stroke-width="2"/>
-  <path d="M14 88 Q96 28 172 10" fill="none" stroke="{{rail}}" stroke-width="5" stroke-linecap="round"/>
-  <path d="M44 104 Q126 44 202 26" fill="none" stroke="{{rail}}" stroke-width="4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 200 125">
+  <!-- red arch: thick ends, soffit rising in the middle, thin rails. The span is not widened. -->
+  <path d="M16 72 Q98 16 174 8 L186 26 Q104 46 30 96 Q20 86 16 72 Z" fill="{{deck}}"/>
+  <path d="M30 96 Q104 46 186 26 L192 42 Q108 64 36 112 Q26 104 30 96 Z" fill="{{shade}}"/>
+  <path d="M16 72 Q98 16 174 8" fill="none" stroke="{{rail}}" stroke-width="1.5"/>
+  <path d="M30 96 Q104 46 186 26" fill="none" stroke="{{rail}}" stroke-width="1.1"/>
 </svg>

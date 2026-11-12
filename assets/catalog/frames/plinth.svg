@@ -1,8 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 220 140">
-  <polygon points="110,4 210,54 110,104 10,54" fill="{{edge}}"/>
-  <polygon points="10,54 110,104 110,118 10,68" fill="{{side}}"/>
-  <polygon points="210,54 110,104 110,118 210,68" fill="{{side}}"/>
-  <polygon points="110,20 186,58 110,96 34,58" fill="{{top}}"/>
-  <polygon points="34,58 110,96 110,108 34,70" fill="{{side}}"/>
-  <polygon points="186,58 110,96 110,108 186,70" fill="{{edge}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="260" viewBox="0 0 220 130">
+  <polygon points="110,8 206,56 110,104 14,56" fill="{{edge}}"/>
+  <polygon points="14,56 110,104 110,122 14,74" fill="{{side}}"/>
+  <polygon points="206,56 110,104 110,122 206,74" fill="{{side}}"/>
+  <polygon points="110,18 190,58 110,98 30,58" fill="{{top}}"/>
 </svg>
