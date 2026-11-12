@@ -204,13 +204,12 @@
     {
       "id": "tree-round-lit",
       "roles": {
-        "lit": "#e8f45a",
+        "lit": "#f6f1d4",
         "leaf": "#3c9648",
-        "blot": "#5aaf4e",
-        "leafShade": "#2a6840",
+        "leafShade": "#1f5a38",
         "trunk": "#6b4a32",
         "trunkShade": "#4a3224",
-        "shadow": "#0a3224"
+        "shadow": "#123528"
       }
     },
     {
@@ -1376,7 +1375,6 @@
           "tokens": [
             "lit",
             "leaf",
-            "blot",
             "leafShade",
             "trunk",
             "trunkShade",

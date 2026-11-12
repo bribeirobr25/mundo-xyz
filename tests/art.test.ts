@@ -74,8 +74,9 @@ test("t.art.variant-separation rejects a broken catalog", () => {
   const coneTree = readFileSync("assets/catalog/frames/tree-cone.svg", "utf8");
   expect(roundTree).not.toContain('id="canopy"');
   expect(roundTree.match(/fill="url\(#lit\)"/g)).toHaveLength(1);
-  expect(roundTree).toContain("{{blot}}");
-  expect(roundTree).toContain("feTurbulence");
+  expect(roundTree.match(/fill="url\(#shade\)"/g)).toHaveLength(1);
+  expect(roundTree).not.toContain("{{blot}}");
+  expect(roundTree).toContain('baseFrequency="5.5"');
   expect(roundTree).not.toContain('r="16"');
   expect(roundTree).toContain("radialGradient");
   expect(coneTree).not.toContain("radialGradient");
@@ -88,6 +89,7 @@ test("t.art.variant-separation rejects a broken catalog", () => {
     assets: { id: string; paletteId: string }[];
   };
   expect(catalogJson.palettes.find((palette) => palette.id === "tree-round")?.roles.leaf).toBe("#2f9a62");
+  expect(catalogJson.palettes.find((palette) => palette.id === "tree-round-lit")?.roles.leaf).toBe("#3c9648");
   expect(catalogJson.assets.find((asset) => asset.id === "round_tree")?.paletteId).toBe("tree-round-lit");
   expect(catalogJson.assets.find((asset) => asset.id === "shrub")?.paletteId).toBe("tree-round");
   expect(() => validateCatalog(injected, () => "<svg>{{wall}} deadbeef</svg>", { digests: ["deadbeef"] })).toThrow(/missing atlas frame/);
