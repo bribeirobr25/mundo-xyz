@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="260" viewBox="0 0 220 130">
+  <polygon points="110,8 206,56 110,104 14,56" fill="{{edge}}"/>
+  <polygon points="14,56 110,104 110,122 14,74" fill="{{side}}"/>
+  <polygon points="206,56 110,104 110,122 206,74" fill="{{side}}"/>
+  <polygon points="110,18 190,58 110,98 30,58" fill="{{top}}"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="320" viewBox="0 0 220 160">
+  <polygon points="28,90 104,128 104,152 28,114" fill="{{wallShade}}"/>
+  <polygon points="180,86 104,128 104,152 180,110" fill="{{wall}}"/>
+  <polygon points="16,90 74,18 112,38 104,128" fill="{{roof}}"/>
+  <polygon points="190,86 122,12 112,38 104,128" fill="{{roofShade}}"/>
+  <polygon points="74,18 122,12 112,38" fill="{{roof}}"/>
+  <polygon points="42,100 74,114 74,132 42,118" fill="{{glass}}"/>
+  <polygon points="52,106 64,112 64,120 52,114" fill="{{wall}}"/>
+  <polygon points="124,114 152,102 152,140 124,152" fill="{{door}}"/>
+  <polygon points="132,120 144,116 144,128 132,132" fill="{{glass}}"/>
+</svg>

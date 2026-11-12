@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="560" viewBox="0 0 160 280">
+  <polygon points="28,118 80,144 80,268 28,242" fill="{{shade}}"/>
+  <polygon points="132,118 80,144 80,268 132,242" fill="{{wall}}"/>
+  <polygon points="28,118 80,92 132,118 80,144" fill="{{roof}}"/>
+  <!-- roof garden sitting on the roof, not floating -->
+  <polygon points="58,112 74,86 90,112" fill="{{plant}}"/>
+  <polygon points="78,114 96,82 114,114" fill="{{plant}}"/>
+  <polygon points="68,110 80,92 92,110" fill="{{plant}}"/>
+  <!-- projecting balconies: slab plus front lip, both faces -->
+  <polygon points="32,150 72,166 72,174 32,158" fill="{{balcony}}"/>
+  <polygon points="32,158 72,174 72,180 32,164" fill="{{shade}}"/>
+  <polygon points="88,166 132,148 132,156 88,174" fill="{{balcony}}"/>
+  <polygon points="88,174 132,156 132,162 88,180" fill="{{shade}}"/>
+  <polygon points="34,188 74,204 74,212 34,196" fill="{{balcony}}"/>
+  <polygon points="34,196 74,212 74,218 34,202" fill="{{shade}}"/>
+  <polygon points="86,204 130,186 130,194 86,212" fill="{{balcony}}"/>
+  <polygon points="86,212 130,194 130,200 86,218" fill="{{shade}}"/>
+  <polygon points="36,226 76,242 76,250 36,234" fill="{{balcony}}"/>
+  <polygon points="36,234 76,250 76,256 36,240" fill="{{shade}}"/>
+  <polygon points="84,242 128,224 128,232 84,250" fill="{{balcony}}"/>
+  <polygon points="84,250 128,232 128,238 84,256" fill="{{shade}}"/>
+  <!-- window openings, large enough to read -->
+  <rect x="40" y="132" width="8" height="12" fill="{{glass}}"/>
+  <rect x="54" y="138" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="68" y="144" width="8" height="12" fill="{{glass}}"/>
+  <rect x="40" y="166" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="54" y="172" width="8" height="12" fill="{{glass}}"/>
+  <rect x="68" y="178" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="40" y="204" width="8" height="12" fill="{{glass}}"/>
+  <rect x="54" y="210" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="68" y="216" width="8" height="12" fill="{{glass}}"/>
+  <rect x="92" y="140" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="106" y="134" width="8" height="12" fill="{{glass}}"/>
+  <rect x="120" y="128" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="92" y="178" width="8" height="12" fill="{{glass}}"/>
+  <rect x="106" y="172" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="120" y="166" width="8" height="12" fill="{{glass}}"/>
+  <rect x="92" y="216" width="8" height="12" fill="{{glass2}}"/>
+  <rect x="106" y="210" width="8" height="12" fill="{{glass}}"/>
+  <rect x="120" y="204" width="8" height="12" fill="{{glass2}}"/>
+</svg>

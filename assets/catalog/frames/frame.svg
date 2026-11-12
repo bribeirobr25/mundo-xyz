@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="240" viewBox="0 0 220 240">
+  <!-- thick open portico: a deep slab with a tall opening, not a compact icon -->
+  <path fill="{{side}}" d="M168 28 L196 8 L196 214 L168 234 Z"/>
+  <path fill="{{side}}" d="M132 78 L160 58 L160 214 L132 234 Z"/>
+  <path fill="{{edge}}" d="M18 28 L46 8 L196 8 L168 28 Z"/>
+  <path fill="{{edge}}" d="M54 78 L82 58 L160 58 L132 78 Z"/>
+  <path fill="{{face}}" fill-rule="evenodd" d="M18 234 L18 28 L168 28 L168 234 L132 234 L132 78 L54 78 L54 234 Z"/>
+</svg>

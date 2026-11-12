@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 80 56">
+  <rect x="37" y="30" width="6" height="16" fill="{{leg}}"/>
+  <ellipse cx="40" cy="34" rx="8" ry="3" fill="{{leg}}"/>
+  <ellipse cx="40" cy="24" rx="22" ry="9" fill="{{top}}"/>
+  <ellipse cx="40" cy="22" rx="18" ry="7" fill="{{top}}"/>
+</svg>

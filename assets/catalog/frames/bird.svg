@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120">
+  <ellipse cx="78" cy="62" rx="28" ry="18" fill="{{bird}}"/>
+  <ellipse cx="64" cy="66" rx="14" ry="9" fill="{{wing}}"/>
+  <circle cx="104" cy="52" r="14" fill="{{bird}}"/>
+  <polygon points="114,48 142,54 114,60" fill="{{beak}}"/>
+  <circle cx="108" cy="48" r="2.2" fill="{{eye}}"/>
+  <polygon points="62,76 70,76 66,92" fill="{{beak}}"/>
+  <polygon points="82,78 90,78 86,94" fill="{{beak}}"/>
+</svg>

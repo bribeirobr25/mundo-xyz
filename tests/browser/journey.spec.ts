@@ -1,0 +1,215 @@
+import { execFileSync } from "node:child_process";
+import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test("t.e2e.j1 explore and t.e2e.j3 preview", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("status", { name: "Test mode" })).toHaveAttribute("title", "Test mode — fixture interpreter");
+  await page.getByRole("textbox", { name: "Search places" }).click();
+  await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
+  await page.getByRole("button", { name: /Café for birds/ }).click();
+  await expect(page.getByText("Created by Administrator.")).toBeVisible();
+  await page.getByRole("button", { name: "Add your idea" }).first().click();
+  await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
+  await page.screenshot({ path: "test-results/journey-preview.png", fullPage: true });
+  const axe = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
+  const serious = axe.violations.filter((item) => item.impact === "serious" || item.impact === "critical");
+  expect(serious.map((item) => item.id)).toEqual([]);
+});
+
+test("t.art.select-scene café footprint", async ({ page }) => {
+  await page.goto("/");
+  const host = page.locator("[data-scene-host] canvas");
+  await expect(host).toBeVisible();
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { homePoint: () => { x: number; y: number } | null } }).__sharedWorldTest;
+    return Boolean(hook?.homePoint());
+  });
+  const box = await host.boundingBox();
+  if (!box) throw new Error("scene");
+  const point = await page.evaluate(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { homePoint: () => { x: number; y: number } | null } }).__sharedWorldTest;
+    return hook?.homePoint() ?? null;
+  });
+  if (!point) throw new Error("home");
+  await page.mouse.click(box.x + point.x, box.y + point.y);
+  await expect(page.getByText("Created by Administrator.")).toBeVisible();
+});
+
+test("t.a11y.dom webgl off still lists the world", async ({ page }) => {
+  await page.goto("/?webgl=0");
+  await expect(page.getByText("Illustration unavailable. The list still works.")).toBeVisible();
+  await page.getByRole("textbox", { name: "Search places" }).click();
+  await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
+  await page.screenshot({ path: "test-results/journey-dom-list.png", fullPage: true });
+});
+
+test("t.e2e.j5 browser publish with invite", async ({ page }) => {
+  const name = `Lane ${Math.floor(Math.random() * 9000) + 1000}`;
+  await page.goto("/");
+  await page.getByRole("textbox", { name: "Search places" }).click();
+  await page.getByRole("button", { name: /Café for birds/ }).click();
+  await page.getByRole("button", { name: "Add your idea" }).first().click();
+  await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
+  await page.getByRole("button", { name: "This looks right" }).click();
+  await page.getByLabel("Pseudonym").fill(name);
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Create pseudonym" }).click();
+  await expect(page.getByText("Recovery code:")).toBeVisible();
+  const me = await page.evaluate(async () => {
+    const response = await fetch("/api/me");
+    return response.json() as Promise<{ authorId?: string }>;
+  });
+  expect(me.authorId).toBeTruthy();
+  execFileSync("npx", ["tsx", "src/server/cli.ts", "grant-admin", me.authorId!], { cwd: process.cwd() });
+  const minted = execFileSync("npx", ["tsx", "src/server/cli.ts", "mint-invite", me.authorId!], { cwd: process.cwd(), encoding: "utf8" }).trim().split("\n").at(-1) ?? "";
+  await page.getByRole("button", { name: "Account" }).click();
+  await page.getByLabel("Use invitation").fill(minted);
+  await page.getByRole("button", { name: "Use invitation" }).click();
+  await page.getByRole("button", { name: "This looks right" }).click();
+  await page.getByRole("button", { name: "Publish" }).click();
+  await expect(page.getByText("Published. It’s part of the shared world.")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Bus stop/ }).first()).toBeVisible();
+  await page.getByText("Recovery code:").evaluate((node) => {
+    node.textContent = "Recovery code: hidden in this capture";
+  });
+  await page.getByRole("button", { name: "Account" }).click();
+  await page.getByLabel("Use invitation").fill("");
+  await page.screenshot({ path: "test-results/journey-published.png", fullPage: true });
+});
+
+test("t.vis.mobile explore", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("textbox", { name: "Search places" }).click();
+  await expect(page.getByRole("button", { name: /Café for birds/ })).toBeVisible();
+  await page.screenshot({ path: "test-results/journey-mobile.png", fullPage: true });
+});
+
+test("t.vis.pause-resize keeps the home in frame", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto("/");
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
+    return hook?.tickerStarted() === true;
+  });
+  await page.getByRole("button", { name: "Account" }).click();
+  await page.getByRole("button", { name: "Pause motion" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
+  await page.getByRole("button", { name: "Reduced motion" }).click();
+  await page.setViewportSize({ width: 700, height: 500 });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { homeOnScreen: () => boolean } }).__sharedWorldTest.homeOnScreen())).toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
+  await page.getByRole("button", { name: "Resume motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
+  await page.getByRole("button", { name: "Reduced motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(true);
+});
+
+test("t.vis.pause-resume and reduced motion", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
+    return hook?.tickerStarted() === true;
+  });
+  await page.getByRole("button", { name: "Account" }).click();
+  await page.getByRole("button", { name: "Pause motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
+  await page.getByRole("button", { name: "Resume motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(true);
+  await page.getByRole("button", { name: "Reduced motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(false);
+  await page.getByRole("button", { name: "Reduced motion" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedWorldTest: { tickerStarted: () => boolean } }).__sharedWorldTest.tickerStarted())).toBe(true);
+});
+
+test("t.copy.unsupported and curly suggestion", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Add your idea" }).click();
+  await page.getByRole("button", { name: "Preview idea" }).click();
+  await expect(page.getByText("Write a short phrase first.")).toBeVisible();
+  await page.getByLabel("What would you add?").fill("leave it as it is");
+  await page.getByRole("button", { name: "Preview idea" }).click();
+  await expect(page.getByText("That phrase does not change the world.")).toBeVisible();
+  await page.getByLabel("What would you add?").fill("A bus stop for the café’s regulars.");
+  await page.getByRole("button", { name: "Preview idea" }).click();
+  await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
+});
+
+test("t.vis.reload keeps the illustration", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Account" }).click();
+  await page.getByRole("button", { name: "Reload illustration" }).click();
+  await expect(page.locator("[data-scene-host] canvas")).toBeVisible();
+  await expect(page.getByText("Illustration unavailable. The list still works.")).toHaveCount(0);
+});
+
+test("t.origin.localhost preview and refused recovery", async ({ page }) => {
+  await page.goto("http://localhost:4500/");
+  await expect(page.getByRole("status", { name: "Test mode" })).toHaveAttribute("title", "Test mode — fixture interpreter");
+  await page.getByRole("button", { name: "Add your idea" }).click();
+  await page.getByRole("button", { name: "A bus stop for the café's regulars.", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Private preview — only you can see this." })).toBeVisible();
+  await page.getByRole("button", { name: "Account" }).click();
+  await page.getByLabel("Recover with a code").fill("not-a-real-code");
+  await page.getByRole("button", { name: "Recover with a code" }).click();
+  await expect(page.getByText("That recovery code could not be used.")).toBeVisible();
+});
+
+test("t.vis.canal water is one band under boats and bridges", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await page.evaluate(() => {
+    document.querySelectorAll("header.topbar, .banner-alert").forEach((node) => {
+      (node as HTMLElement).style.display = "none";
+    });
+    window.dispatchEvent(new Event("resize"));
+  });
+  await expect.poll(() => page.evaluate(() => {
+    const canvas = document.querySelector("[data-scene-host] canvas");
+    const hook = (window as unknown as { __sharedWorldTest?: { waterReport?: () => unknown } }).__sharedWorldTest;
+    if (!canvas || !hook?.waterReport) return 0;
+    return canvas.clientWidth * 10000 + canvas.clientHeight;
+  })).toBe(1280 * 10000 + 720);
+  const report = await page.evaluate(() => {
+    const hook = (window as unknown as {
+      __sharedWorldTest?: {
+        waterReport: () => {
+          boats: number;
+          bridges: number;
+          components: number;
+          touchesLeft: boolean;
+          touchesBottom: boolean;
+          samples: { name: string; sx: number; sy: number; x: number; y: number; r: number; g: number; b: number; water: boolean }[];
+        };
+      };
+    }).__sharedWorldTest;
+    return hook?.waterReport() ?? null;
+  });
+  expect(report).not.toBeNull();
+  if (!report) return;
+  expect(report.boats).toBe(3);
+  expect(report.bridges).toBe(2);
+  expect(report.samples.filter((sample) => !sample.water).map((sample) => `${sample.name} @${sample.sx.toFixed(0)},${sample.sy.toFixed(0)} rgb(${sample.r},${sample.g},${sample.b})`)).toEqual([]);
+  expect(report.components).toBe(1);
+  expect(report.touchesLeft).toBe(true);
+  expect(report.touchesBottom).toBe(true);
+});
+
+test("t.vis.hidden-no-ticker", async ({ page }) => {
+  await page.goto("/?scene=deterministic");
+  await page.waitForFunction(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
+    return typeof hook?.tickerStarted === "function";
+  });
+  const started = await page.evaluate(() => {
+    const hook = (window as unknown as { __sharedWorldTest?: { tickerStarted: () => boolean } }).__sharedWorldTest;
+    return hook?.tickerStarted() ?? null;
+  });
+  expect(started).toBe(false);
+});

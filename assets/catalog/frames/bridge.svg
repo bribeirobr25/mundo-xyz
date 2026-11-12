@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 200 125">
+  <!-- red arch: thick ends, soffit rising in the middle, thin rails. The span is not widened. -->
+  <path d="M16 72 Q98 16 174 8 L186 26 Q104 46 30 96 Q20 86 16 72 Z" fill="{{deck}}"/>
+  <path d="M30 96 Q104 46 186 26 L192 42 Q108 64 36 112 Q26 104 30 96 Z" fill="{{shade}}"/>
+  <path d="M16 72 Q98 16 174 8" fill="none" stroke="{{rail}}" stroke-width="1.5"/>
+  <path d="M30 96 Q104 46 186 26" fill="none" stroke="{{rail}}" stroke-width="1.1"/>
+</svg>

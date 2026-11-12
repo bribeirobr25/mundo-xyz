@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 100 60">
+  <polygon points="16,28 78,28 84,36 22,36" fill="{{seat}}"/>
+  <polygon points="22,36 84,36 84,42 22,42" fill="{{leg}}"/>
+  <polygon points="26,42 30,42 30,52 26,52" fill="{{leg}}"/>
+  <polygon points="74,42 78,42 78,52 74,52" fill="{{leg}}"/>
+</svg>

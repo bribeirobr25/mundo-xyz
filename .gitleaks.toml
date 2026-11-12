@@ -1,0 +1,9 @@
+title = "mundo-xyz"
+
+[allowlist]
+paths = [
+  '''(^|/)node_modules(/|$)''',
+  '''(^|/)dist(/|$)''',
+  '''(^|/)tools(/|$)''',
+  '''(^|/)package-lock\.json$'''
+]

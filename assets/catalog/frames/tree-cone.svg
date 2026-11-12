@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="240" viewBox="0 0 90 120">
+  <ellipse cx="45" cy="110" rx="22" ry="7" fill="{{shadow}}" fill-opacity="0.72"/>
+  <polygon points="42,78 48,78 47,108 43,108" fill="{{trunk}}"/>
+  <polygon points="45,8 78,84 12,84" fill="{{leaf}}"/>
+  <polygon points="45,28 70,84 45,84" fill="{{leafShade}}"/>
+</svg>

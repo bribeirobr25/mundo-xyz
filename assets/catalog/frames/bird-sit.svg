@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="140" viewBox="0 0 80 70">
+  <rect x="30" y="50" width="4" height="14" fill="{{wing}}"/>
+  <rect x="46" y="50" width="4" height="14" fill="{{wing}}"/>
+  <ellipse cx="40" cy="50" rx="16" ry="5" fill="{{beak}}"/>
+  <ellipse cx="38" cy="40" rx="20" ry="12" fill="{{bird}}"/>
+  <ellipse cx="28" cy="42" rx="10" ry="6" fill="{{wing}}"/>
+  <circle cx="56" cy="30" r="10" fill="{{bird}}"/>
+  <polygon points="64,28 78,32 64,36" fill="{{beak}}"/>
+  <circle cx="58" cy="28" r="1.6" fill="{{eye}}"/>
+</svg>
